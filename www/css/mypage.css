@@ -1,0 +1,145 @@
+.btn-unregister{
+  font-size: 10px;
+}
+
+.change_name,
+.change_major,
+.change_school,
+.change_birth,
+.sch_empty,
+.school_search_form,
+.now_searching,
+.major_search_form
+{
+    margin-top: 10px;
+ display: none;
+}
+
+.sch_item{
+    cursor: pointer;
+}
+.sch_item:hover{
+    background-color: rgba(35,63,149, 0.03);
+}
+.sch_selected{
+
+    background-color: rgba(35,63,149, 0.1);
+}
+.mp_title{
+    font-size: 1.25rem;
+}
+.mp_desc{
+    border: 1px solid rgba(35,63,149, 0.2);
+    padding: 10px;
+}
+.mp_desc_important{
+    padding: 10px;
+    background-color: rgba(35,63,149, 0.8);
+    color: #fff;
+
+}
+.mp_basic{
+    margin-bottom: 20px;
+}
+.mp_bottom{
+    text-align: center;
+    padding-top: 20px;
+    margin-bottom: 20px;
+
+    border-top: 1px solid #f2f2f2;
+}
+.mp_item{
+    padding: 10px 0;
+    clear: both;
+}
+.mp-p-title{
+    color: #868686;
+}
+.mp-p-val{
+    color: #363636;
+}
+.mp-setting-icon{
+    cursor: pointer;
+    color: rgba(100,100,100,0.5);
+    float: right;
+}
+
+.mp-setting-icon:hover{
+
+    color: rgba(100,100,100,0.8);
+}
+
+.mp_title_more{
+    float: right;
+    font-size: 0.85rem;
+}
+
+/*point*/
+/*학교 검색*/
+.sch_empty{
+    text-align: center;
+}
+.major_search_desc,
+.school_search_wrap{
+    margin-top: 10px;
+}
+.sch_item {
+    padding: 5px;
+}
+.now_searching,
+.major_search_desc{
+    padding: 10px;
+    text-align: center;
+}
+@media (max-width: 767px) {
+
+    .mp_ness{
+        margin-top: 60px;
+    }
+    .nav-mypage {
+        margin-top: 47px;
+    }
+}
+
+/*tap*/
+
+.with_tap{
+    margin-top: -1px !important;
+    border-top: 1px solid #fff;
+}
+
+
+#comp_tab{
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    border-top: 1px solid #f2f2f2;
+}
+.ctab_item:first-child{
+
+    border-left: 1px solid #f2f2f2;
+    border-left: 1px solid #f2f2f2;
+}
+
+.ctab_item:last-child{
+
+    border-right: 1px solid #f2f2f2;
+}
+.ctab_item{
+    color: #666666;
+    border-right: 1px solid #f2f2f2;
+    border-bottom: 1px solid #f2f2f2;
+    border-top: 2px solid transparent;
+    text-align: center;
+    padding: 10px;
+    display: inline-block;
+}
+.ctab_item:hover{
+    color: #233f95;
+    border-top: 2px solid #233f95;
+    text-decoration: none;
+}
+.ctab_active{
+    border-bottom: 1px solid transparent;
+    border-top: 2px solid #233f95;
+}

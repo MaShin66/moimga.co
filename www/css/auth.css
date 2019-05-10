@@ -1,0 +1,258 @@
+.auth_logo_wrap{
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 20px;
+}
+.auth_logo_wrap > a> img{
+    margin-top: -10px;
+}
+
+.auth_logo{
+    max-width: 160px;
+}
+.auth_footer{
+    font-family: 'Questrial', sans-serif;
+    padding: 20px 0;
+    color: rgba(0,0,0,0.7);
+    text-align: center;
+    font-size: 0.7rem;
+}
+
+.auth_desc{
+    text-align: center;
+    display: block;
+    margin-top: 20px;
+}
+
+.google_icon{
+    max-height: 21px;
+    margin: 0 10px;
+}
+.buttonText{
+    margin-top: 6px;
+    display: inline-block;
+}
+#gSignInWrapper{
+    font-weight: bold;
+    color: #1e1e1e;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    text-align: center;
+}
+#customBtn {
+    display: inline-block;
+    background: white;
+    width: 100%;
+    height: 35px;
+    border: 1px solid #e0e0e0;
+}
+
+#customBtn:hover {
+    border: 1px solid #888;
+    cursor: pointer;
+}
+
+/*login form*/
+.login_or{
+    padding: 20px 0;
+    text-align: center;
+    color: rgba(0,0,0,0.6);
+}
+.auth_notice{
+    padding: 20px 0;
+}
+.unregi_title{
+    font-size: 1.25rem;
+    padding-left: 10px;
+    margin: 10px 0;
+    border-left: 8px solid #b8516e;
+}
+.unregi_desc{
+
+    color: rgba(0,0,0,0.6);
+}
+.unregi_go{
+    margin-top: 40px;
+    text-align: center;
+    border: 1px solid rgba(0,0,0,0.1);
+    padding: 10px 0;
+}
+.login_or_line{
+    height: 1px;
+    background-color: #e0e0e0;
+    margin-bottom: 5px;
+}
+.login_bottom{
+    margin-top: 40px;
+}
+
+.login_or > div{
+    display: inline-block;
+}
+.login_or_line{
+    width: 40%;
+}
+
+.login_or_text{
+    width: 15%;
+}
+.login_id_wrap{
+    padding-bottom: 10px;
+}
+.login_form_left{
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 110px; /*login/register ok*/ /*비밀번호 변경*/
+    color: rgba(0,0,0,0.6);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.login_line{
+
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 10px 0;
+}
+.login_else{
+    margin-bottom: 5px;
+}
+.login_error{
+    font-size: 1rem;
+    color: #ef4b2c;
+    text-align: right;
+}
+.forgot_pw_desc{
+    padding: 10px 0;
+    margin-bottom: 20px;
+    text-align: center;
+}
+/*register*/
+.regi_agree{
+    padding: 10px 0;
+    text-align: center;
+    color: rgba(0,0,0,0.6);
+    font-size: 0.85rem;
+    margin: 10px 0;
+
+}
+.regi_title{
+    margin-left: 5px;
+    font-size: 1.5rem;
+}
+.regi_guide{
+    font-size: 0.75rem;
+    color: rgba(0,0,0,0.6);
+    text-align: right;
+}
+
+.regi_agree_wrap{
+    padding: 20px 0;
+    margin: 20px 0;
+}
+.auth_agree_title{
+
+    font-size: 1rem;
+    color: rgba(0,0,0,0.8);
+    text-align: center;
+}
+.agree_guide{
+
+    font-size: 0.75rem;
+    color: rgba(0,0,0,0.6);
+}
+/*auth_naver*/
+.naver_logging_in{
+    text-align: center;
+    margin: 40px 0;
+}
+.naver_logging_in > h1,
+.naver_denied > h1{
+    font-size: 1.25rem;
+}
+.logging_email{
+    padding: 10px 0;
+    font-size: 0.75rem;
+    color: rgba(0,0,0,0.8);
+}
+.logging_url{
+    font-size: 0.75rem;
+    color: rgba(0,0,0,0.8);
+    overflow: auto;
+    word-break: break-all;
+}
+
+.logging_browser{
+    margin-top: 20px;
+    border-top: 1px solid #e0e0e0;
+    text-align: left;
+    padding: 10px 0;
+    font-size: 0.75rem;
+}
+.logging_browser > span{
+    color: #000;
+    text-decoration: underline;
+}
+.naver_denied{
+    margin: 20px 0;
+    display: none;
+}
+.naver_why{
+
+    padding-bottom: 10px;
+}
+@media (max-width: 575px){
+    .auth_logo_wrap {
+        padding: inherit;
+        margin-top: 30px;
+    }
+}
+
+
+
+
+
+.kakao_btn_img{
+    max-height: 17px;
+    margin: 0 10px;
+    margin-top: -4px;
+}
+
+#customGoogleBtn {
+    cursor: pointer;
+    display: inline-block;
+    background: white;
+    width: 100%;
+    height: 35px;
+    border: 1px solid #e0e0e0;
+}
+
+.social_login_btn{
+    text-align: center;
+}
+.social_login_btn > div,
+.social_login_btn > a{
+    padding: 0 10px;
+    display: inline-block;
+}
+.btn-kakao-img{
+    max-height: 40px;
+}
+.btn-kakao{
+    font-weight: bold !important;;
+    color: #1e1e1e;
+    background-color: #fae100;
+    font-size: 0.9rem !important;
+}
+.btn-kakao:hover{
+
+    color: #1e1e1e;
+    background-color: #f0d800;
+}
+
+.buttonText {
+    margin-top: 6px;
+    display: inline-block;
+}
