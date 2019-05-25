@@ -250,7 +250,7 @@ class Admin extends Admin_Controller
         $result = $this->Admin_model->get_pricing($pricing_id);
 
 
-        $this->_send_email('pricing_ok', $result['email'], $result, '[TMM] 상품 관리자 안내 메일');
+        $this->_send_email('pricing_ok', $result['email'], $result, '[moimga] 상품 관리자 안내 메일');
 
         alert('완료되었습니다.');
 
@@ -280,12 +280,12 @@ class Admin extends Admin_Controller
             $result = $this->Admin_model->load_refund($prod_id);
 
             $file_name = urldecode($prod_info['title']);
-            //[TMM] 상품이름_폼.xls
+            //[moimga] 상품이름_폼.xls
             header("Content-type: application/vnd.ms-excel; charset=utf-8");
             header("Expires: 0");
             header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
             header("Pragma: no-cache");
-            header("Content-Disposition: attachment; filename='TMM_" . $file_name . "_환불목록.xls");
+            header("Content-Disposition: attachment; filename='moimga_" . $file_name . "_환불목록.xls");
 
 
             echo "
@@ -333,12 +333,12 @@ class Admin extends Admin_Controller
         $delivery_name= explode(',',$prod_info['del_name']);
 
         $file_name = urldecode($prod_info['title']);
-        //[TMM] 상품이름_폼.xls
+        //[moimga] 상품이름_폼.xls
         header( "Content-type: application/vnd.ms-excel; charset=euc-kr" );
         header( "Expires: 0" );
         header( "Cache-Control: must-revalidate, post-check=0,pre-check=0" );
         header( "Pragma: no-cache" );
-        header( "Content-Disposition: attachment; filename='TMM_".$file_name."_폼.xls" );
+        header( "Content-Disposition: attachment; filename='moimga_".$file_name."_폼.xls" );
 
         $list = $this->Form_model->load_form($prod_id); //정보
 

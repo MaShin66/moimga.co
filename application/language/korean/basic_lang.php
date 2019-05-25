@@ -52,8 +52,8 @@ $lang['add']='추가';
 $lang['prod_upload']='상품 등록';
 
 /*form 작성*/
-$lang['tmm_form_write'] = 'TMM 폼 작성';
-$lang['tmm_demand_form_write'] = 'TMM 수요조사 폼 작성';
+$lang['moimga_form_write'] = 'moimga 폼 작성';
+$lang['moimga_demand_form_write'] = 'moimga 수요조사 폼 작성';
 $lang['form_option'] = '주문 상품';
 $lang['form_only_num'] = '수량을 숫자로만 입력하세요. (예시: 1)';
 $lang['form_only_num_without_char'] = '특수문자를 제외한 숫자만 입력해주세요.';

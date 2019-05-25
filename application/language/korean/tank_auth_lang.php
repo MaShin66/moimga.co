@@ -31,7 +31,7 @@ $lang['auth_message_banned'] = 'You are banned.';
 $lang['auth_message_unregistered'] = 'Your account has been deleted...';
 
 // Email subjects
-$lang['auth_subject_welcome'] = '[%s] 잡스런공간에 가입해주셔서 감사합니다.';
+$lang['auth_subject_welcome'] = '[%s] 모임가에 가입해주셔서 감사합니다.';
 $lang['auth_subject_activate'] = '[%s] 회원 가입 인증 메일';
 $lang['auth_subject_forgot_password'] = '[%s] 비밀번호 찾기 메일';
 $lang['auth_subject_reset_password'] = '[%s] 비밀번호 재설정 메일';

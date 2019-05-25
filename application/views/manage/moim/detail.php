@@ -24,5 +24,15 @@
 <?php foreach ($app_list as $key=>$item){?>
     <a href="/manage/application/detail/<?=$item['application_id']?>"><?=$item['title']?></a>
 
+<?php }?>
+
+<h3>파트너</h3>
+<a href="/manage/partner/upload?moim=<?=$moim_info['moim_id']?>">파트너 지정</a>
+//파트너 목록
+
+<a href="/manage/partner/lists/<?=$moim_info['moim_id']?>">파트너 목록</a>
+
+<?php foreach ($partner_list as $key=>$item){?>
+    <a href="/manage/partner/detail/<?=$item['partner_id']?>"><?=$item['realname']?></a>
 
 <?php }?>

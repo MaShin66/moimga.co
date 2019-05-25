@@ -5,7 +5,7 @@ class MY_Controller extends CI_Controller{
     {
         parent::__construct();
         $this->load->library('tank_auth');
-        $this->load->model(array('user_model','moim_model','form_model','application_model'));
+        $this->load->model(array('user_model','moim_model','form_model','application_model','after_model','like_model','deposit_model'));
 
         if ($this->tank_auth->is_logged_in()) {									// logged in
             $this->data['user_id'] = $this->tank_auth->get_user_id();
@@ -34,7 +34,7 @@ class Admin_Controller extends CI_Controller{
     {
         parent::__construct();
         $this->load->library('tank_auth');
-        $this->load->model(array('user_model','moim_model','form_model','application_model'));
+        $this->load->model(array('user_model','moim_model','form_model','application_model','after_model','like_model','deposit_model','partner_model'));
         //redirect('/welcome'); //업데이트
         if ($this->tank_auth->is_logged_in()) {									// logged in
             $this->data['user_id'] = $this->tank_auth->get_user_id();
@@ -47,7 +47,6 @@ class Admin_Controller extends CI_Controller{
                 redirect('/');
             }
 
-
         } else{
             redirect('/auth/login');
         }
@@ -55,4 +54,52 @@ class Admin_Controller extends CI_Controller{
     }
 }
 
+
+class Manage_Controller extends CI_Controller{
+    function __construct()
+    {
+        parent::__construct();
+        $this->load->library('tank_auth');
+        $this->load->model(array('user_model','moim_model','form_model','application_model','after_model','like_model','deposit_model','partner_model'));
+        //redirect('/welcome'); //업데이트
+        if ($this->tank_auth->is_logged_in()) {									// logged in
+            $this->data['user_id'] = $this->tank_auth->get_user_id();
+            $this->data['username'] = $this->tank_auth->get_username($this->data['user_id']);
+            $this->data['level'] = $this->tank_auth->get_level($this->data['user_id']);
+            $this->data['status'] = 'yes';
+
+            //access 권한 주기..
+            $location = $this->uri->segment(2);
+            $section = $this->uri->segment(3);
+            $unique_id = $this->uri->segment(4);
+
+            switch ($location){
+                //unique 로 얘만 moim_id를 사용
+                case 'moim':
+                    $basic_info = $this->moim_model->get_moim_info($unique_id);
+
+                    break;
+                //unique 로 모두 application_id 을 쓴다
+                default:
+                case 'application':
+                case 'after':
+                case 'deposit':
+                $basic_info = $this->application_model->get_application_info($unique_id);
+
+                    break;
+            }
+
+            if($location!=null&&$section!='upload'){
+                //redirect 하기
+                if($basic_info['user_id']!=$this->data['user_id']){
+                    redirect('/');
+                }
+            }
+
+        } else{
+            redirect('/auth/login');
+        }
+
+    }
+}
 ?>

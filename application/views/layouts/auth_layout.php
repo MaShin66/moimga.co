@@ -69,7 +69,7 @@
 
                 <a class="top_sm_logo" href="/">
 
-                    <img src="/www/img/logo.png" class="nav-logo" alt="TMM logo">
+                    <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo">
                 </a>
             </div>
             <div class="col top_sm_right">
@@ -110,7 +110,7 @@
         <ul class="nav">
             <a class="navbar-brand" href="/" style="padding: 10px;  z-index: 9;">
 
-                <img src="/www/img/logo.png" class="nav-logo" alt="TMM logo">
+                <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo">
             </a>
             <li class="nav-item">
                 <a class="nav-link  <?php if(($location == 'prod')&&($section != 'search'))  {
@@ -143,7 +143,13 @@
 </nav>
 
 <div class="container container-top">
-<?= $content_for_layout ?>
+
+    <div class="row justify-content-md-center">
+        <div class="col-lg-6 col-md-8 col-sm-12">
+            <?= $content_for_layout ?>
+        </div>
+    </div>
+
 </div>
 <footer class="footer">
     <div class="container">
@@ -151,14 +157,14 @@
             <div class="row">
                 <div class="col-lg-3 col-md-2 col-sm-12 footer_left">
                     <a class="footer_logo" href="/" >
-                        <img src="/www/img/logo_white.png" alt="TMM logo">
+                        <img src="/www/img/logo_white.png" alt="moimga logo">
                     </a>
                 </div>
                 <div class="col-lg-6 col-md-7 col-sm-12">
                     <a href="/info/faq" class="footer_link"><?=$this->lang->line('faq')?></a> | <a href="/info/terms" class="footer_link"><?=$this->lang->line('term')?></a> |
                     <a href="/info/privacy" class="footer_link"><?=$this->lang->line('privacy')?></a> | <a href="/info/pricing" class="footer_link"><?=$this->lang->line('refund_term')?></a>
                     <br>
-                    COPYRIGHT <span class="footer_bold">TMM</span> ALL RIGHTS RESERVED
+                    COPYRIGHT <span class="footer_bold">moimga</span> ALL RIGHTS RESERVED
                     <div class="footer_more_link">
                         <a href="/info/why" class="footer_link"><?=$this->lang->line('about')?></a> | <a href="/blog" class="footer_link">BLOG</a>
                     </div>

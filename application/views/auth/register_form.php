@@ -94,7 +94,7 @@ $captcha = array(
 </div>
 <div class="regi_agree_wrap">
     <h4 class="auth_agree_title">개인정보 수집·이용 동의(필수)</h4>
-    <p class="agree_guide" style="margin-bottom: 10px">잡스런공간 서비스 이용자의 개인정보를 수집하는 목적은 다음과 같습니다. 표가 보이지 않는다면 화면을 옆으로 밀어주세요.</P>
+    <p class="agree_guide" style="margin-bottom: 10px">모임가 서비스 이용자의 개인정보를 수집하는 목적은 다음과 같습니다. 표가 보이지 않는다면 화면을 옆으로 밀어주세요.</P>
     <table class="table-bordered table table table-responsive">
         <thead>
         <tr>

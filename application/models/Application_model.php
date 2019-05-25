@@ -28,7 +28,6 @@ class Application_model extends CI_Model
         return $result;
     }
 
-
     function load_moim_application($moim_id,$status=null){
 
         if($status){//조건이 있으면

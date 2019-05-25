@@ -10,3 +10,15 @@
 기본 정보가 여기잇고..
 
 <a href="/manage/application/forms/<?=$app_info['application_id']?>">폼 목록</a>
+
+<a href="/manage/after/detail/<?=$app_info['application_id']?>" class="btn btn-outline-secondary">후기 보기</a>
+
+
+<a href="/manage/after/upload/?app_id=<?=$app_info['application_id']?>" class="btn btn-outline-secondary">후기 작성</a>
+
+<div class="">
+
+
+    <a href="/manage/deposit/lists/<?=$app_info['application_id']?>">입금 목록</a>
+
+</div>

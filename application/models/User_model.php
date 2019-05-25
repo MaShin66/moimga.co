@@ -100,6 +100,20 @@ class User_model extends CI_Model
         return $result;
     }
 
+    function check_gen_email($email){
+        $this->db->where('level !=',5); //레벨이 5면 추가 안됨..
+        $this->db->where('email',$email);
+        $query = $this->db->get('users');
+        $data = $query->row();
+
+        if($query->num_rows()!=0){ // 값이 있으면
+            $result = $data->id; //user_id 출력해서 이걸 ajax로 보낸다.
+        }else{ // 데이터가 없으면
+            $result = 0;
+        }
+        return $result;
+    }
+
 
     function get_realname($user_id)
     {

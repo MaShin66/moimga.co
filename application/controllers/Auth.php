@@ -8,7 +8,7 @@ class Auth extends MY_Controller
 
 
         $this->lang->load(array('auth', 'tank_auth'));
-//        $this->load->model(array('User_model','Prod_model','Form_model','Demand_model'));
+        $this->load->model(array('user_model','partner_model'));
 		$this->load->helper(array('form', 'url'));
 		$this->load->library('form_validation');
 		//$this->load->library('security');
@@ -317,7 +317,7 @@ class Auth extends MY_Controller
         $sns_type = $this->input->post('sns_type');
         $remember = $this->input->post('remember');
         $unique_id = $this->input->post('unique_id');
-        $result = $this-> User_model ->check_sns_user($sns_email,$sns_type); // user table 에서 해당 아이디로 있는지 없는지 확인
+        $result = $this-> user_model ->check_sns_user($sns_email,$sns_type); // user table 에서 해당 아이디로 있는지 없는지 확인
 
         //$result==1이면 가입 된건데, sns_profile에도 있는지 확인..
         $type = 'default';
@@ -354,7 +354,25 @@ class Auth extends MY_Controller
     //이메일 중복있는지 확인
     function check_email_dup(){
         $email = $this->input->post('email');
-        $result = $this-> User_model ->check_email($email); // user table 에서 해당 아이디로 있는지 없는지 확인
+        $result = $this-> user_model ->check_email($email); // user table 에서 해당 아이디로 있는지 없는지 확인
+
+        echo $result;
+    }
+
+
+    //파트너 지정시
+    function find_gen_user($moim_id){
+
+        $email = $this->input->post('email');
+        $result = $this-> user_model ->check_gen_email($email); // user table 에서 해당 아이디로 있는지 없는지 확인 + 레벨이 5가 아닌 (모임장이 아닌) 사람들
+
+        //이미 지정되어있는지 확인하기 .
+        if($result!=0){ //지정할 수 있는 상태인데
+            $dup_result = $this->partner_model->check_dup_partner($result,$moim_id);
+            if($dup_result>0){ //이미 있는경우에
+                $result = -1;
+            }
+        }
 
         echo $result;
     }
@@ -598,7 +616,7 @@ class Auth extends MY_Controller
             $user_id = $this->data['user_id'];
             $level = $this->data['level'];
             $alarm_cnt = $this->data['alarm'];
-            $sns_type = $this->User_model-> get_user_sns_type($user_id);
+            $sns_type = $this->user_model-> get_user_sns_type($user_id);
             $user_data = array(
                 'status' => $status,
                 'user_id' => $user_id,
@@ -623,7 +641,7 @@ class Auth extends MY_Controller
             );
             if(($this->input->post('user_id')!=null)&&($prod_count==0||$import_count==0||$demand_count==0)){ // 모두 0이어야한다..
                // $this->do_unregister($user_data);
-                $is_sns = $this->User_model->drop_user($user_id);
+                $is_sns = $this->user_model->drop_user($user_id);
                 $this->tank_auth->logout();
                 alert('탈퇴가 완료되었습니다. 이용해주셔서 감사합니다.','/');
 
@@ -653,7 +671,7 @@ class Auth extends MY_Controller
         $demand_count =$this->Demand_model->load_demand_by_user_id($user_id,'','','count');// 게시물 전체 개수
 
         if(($user_id!=null)&&($prod_count==0||$import_count==0||$demand_count==0)){ // 모두 0이어야한다..
-           $this->User_model->drop_user($user_id);
+           $this->user_model->drop_user($user_id);
 
             $client_secret = "JnKYMsmJ4T";
             $client_id = "Sny1aaXz6uLFaDTDWUvO";
@@ -700,7 +718,7 @@ class Auth extends MY_Controller
                         alert(serialize($res_array));
                     }
                 }else{
-                    alert('TMM 탈퇴는 완료되었지만, 네이버에서 TMM 탈퇴를 실패했습니다. 네이버로 로그인하신 후 보안 설정에서 TMM을 직접 끝어주세요.','/');
+                    alert('moimga 탈퇴는 완료되었지만, 네이버에서 moimga 탈퇴를 실패했습니다. 네이버로 로그인하신 후 보안 설정에서 moimga을 직접 끝어주세요.','/');
                 }
             }
 
