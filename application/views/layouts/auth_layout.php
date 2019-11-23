@@ -84,7 +84,7 @@
 
     <div id="full_menu" class="overlay">
         <div class="full-item">
-            <form action="/prod/search/1/q?" class="form-inline mobile_search">
+            <form action="/search/1/q?" class="form-inline mobile_search">
 
                 <div class="input-group">
                     <input class="form-control" type="search" placeholder="<?=$this->lang->line('search')?>" aria-label="Search" name="search" value="">

@@ -52,5 +52,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'main';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
-$route['moim/(:any)'] = 'moim/info/$1';
-$route['moim/(:any)/view/(:num)'] = 'moim/view/$1/$2';
+$route['team/@(:any)'] = 'team/view/$1'; //moim/@url 로 입장
+//$route['team/(:any)'] = 'moim/info/$1';
+//$route['moim/(:any)/view/(:num)'] = 'moim/view/$1/$2';

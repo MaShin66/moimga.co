@@ -45,8 +45,8 @@
     <link rel="stylesheet" href="/www/css/overlay.css">
     <link rel="stylesheet" href="/www/css/bootstrap.css">
     <link rel="stylesheet" href="/www/css/basic.css">
-    <?php if(($section=='application'||$section=='moim')&&$detail=='upload'){?>
-
+    <link rel="stylesheet" href="/www/css/quill.css"> <!--wzwg--->
+    <?php if($section=='upload'){?>
         <link rel="stylesheet" href="/www/css/asDatepicker.css">
     <?php }?>
 
@@ -96,7 +96,7 @@
     </div>
     <div id="full_menu" class="overlay">
         <div class="full-item">
-            <a class="full-link" href="/moim">모임</a>
+            <a class="full-link" href="/team">팀</a>
         </div>
 
         <div class="full-line"></div>
@@ -112,9 +112,19 @@
                 <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo" >
             </a>
             <li class="nav-item">
-                <a class="nav-link  <?php if ($location== 'moim') {
+                <a class="nav-link  <?php if ($location== 'team') {
                     echo 'active';
-                } ?>" href="/moim" style="padding: 0.85rem 1rem;">모임</a>
+                } ?>" href="/team" style="padding: 0.85rem 1rem;">팀</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link  <?php if ($location== 'program') {
+                    echo 'active';
+                } ?>" href="/program" style="padding: 0.85rem 1rem;">프로그램</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link  <?php if ($location== 'after') {
+                    echo 'active';
+                } ?>" href="/after" style="padding: 0.85rem 1rem;">후기</a>
             </li>
         </ul>
         <ul class="nav">
@@ -157,27 +167,41 @@
 
 </footer>
 <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+        crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
         integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
 
-<?php if(($section=='application'||$section=='moim')&&$detail=='upload'){?>
+<?php if($section=='upload'){?>
 
     <script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>
     <script type="text/javascript" src="/www/js/moment-with-locales.min.js"></script>
     <script type="text/javascript" src="/www/js/jquery-asDatepicker.js"></script>
     <script type="text/javascript" src="/www/js/postcode.js"></script>
     <script type="text/javascript" src="/www/js/language.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script type="text/javascript" src="/www/js/editor.js"></script>
 <?php }?>
 <script type="text/javascript" src="/www/js/overlay.js"></script>
 <script type="text/javascript" src="/www/js/basic.js"></script>
 <script type="text/javascript" src="/www/js/<?= $location ?>.js"></script>
 
+<?php if($location=='team'){?>
+    <script type="text/javascript" src="/www/js/subscribe.js"></script>
+<?php }?>
+<?php if($location=='program'&&$section=='upload'){?>
+
+<!--    <script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>-->
+<!--    <script type="text/javascript" src="/www/js/moment-with-locales.min.js"></script>-->
+<!--    <script type="text/javascript" src="/www/js/jquery-asDatepicker.js"></script>-->
+<!--    <script type="text/javascript" src="/www/js/language.js"></script>-->
+
+<?php }?>
 <?php if($location=='manage'){?>
     <script type="text/javascript" src="/www/js/<?= $section ?>.js"></script>
 <?php }?>
-</body>
 </body>
 </html>

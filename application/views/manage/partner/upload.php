@@ -1,6 +1,6 @@
 
 
-<h1>파트너 지정하기</h1>
+<h1>팀 멤버 지정하기</h1>
 <?php echo form_open(base_url().'manage/partner/upload?moim='.$moim_info['moim_id']);?>
 모임 이름 <?=$moim_info['title']?>
 
