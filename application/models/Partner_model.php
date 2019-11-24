@@ -9,29 +9,31 @@ class Partner_model extends CI_Model
 
     //load, get, update, delete
 
-    function load_partner($type = '', $offset = '', $limit = '', $search_query){
-        $this->db->join('users','users.id = partner.user_id');
-        $this->db->join('moim','moim.moim_id = partner.moim_id');
+    function load_team_member($type = '', $offset = '', $limit = '', $search_query){
+        $this->db->join('users','users.id = team_member.user_id');
+        $this->db->join('team','team.team_id = team_member.team_id');
 
-        if($search_query['user_id']!=null) {
-            $this->db->where('partner.user_id',$search_query['user_id']);
+        $this->db->order_by('team_member.team_id',$search_query['team_id']);//필수
+        if(!is_null($search_query['user_id'])) {
+            $this->db->where('team_member.user_id',$search_query['user_id']);
         }
-        if($search_query['search']!=null){
+        if(!is_null($search_query['search'])){
 
-            $name_query = '(moim.title like "%'.$search_query['search'].'%" or realname like "%'.$search_query['search'].'%")';
+            $name_query = '(team.title like "%'.$search_query['search'].'%" or users.realname like "%'.$search_query['search'].'%")';
             $this->db->where($name_query);
 
         }
-        if($search_query['crt_date']==null){
-            $this->db->order_by('partner.crt_date','desc');
+        if(!is_null($search_query['crt_date'])){
+            $this->db->order_by('team_member.crt_date',$search_query['crt_date']);
         }else{
-            $this->db->order_by('partner.crt_date',$search_query['crt_date']);
+            $this->db->order_by('team_member.crt_date','desc');
         }
+
         if ($limit != '' || $offset != '') {
             $this->db->limit($limit, $offset);
         }
 
-        $query = $this->db->get('partner');
+        $query = $this->db->get('team_member');
 
         if ($type == 'count') {
             $result = $query -> num_rows();
@@ -42,65 +44,55 @@ class Partner_model extends CI_Model
         return $result;
     }
 
-    function get_partner_info($partner_id)
-    {//특정 필드에서 $partner_id값이 이것 인것을 찾아라.
-        $this->db->where('partner_id' ,$partner_id);
+    function get_team_member_info($team_member_id)
+    {//특정 필드에서 $team_member_id값이 이것 인것을 찾아라.
+        $this->db->where('team_member_id' ,$team_member_id);
 
-        $query = $this->db->get('partner');
+        $query = $this->db->get('team_member');
         $result = $query -> row_array();
 
         return $result;
     }
 
 
-    function get_partner_info_by_url($url_name)
+    function get_team_member_info_by_url($url_name)
     {
         $this->db->where('url_name' ,$url_name);
 
-        $query = $this->db->get('partner');
+        $query = $this->db->get('team_member');
         $result = $query -> row_array();
 
         return $result;
     }
-    function insert_partner($data) {
+    function insert_team_member($data) {
 
-        $result = $this->db->insert('partner', $data);
+        $result = $this->db->insert('team_member', $data);
 
         $latest_id = $this->db->insert_id();
         return $latest_id;
     }
 
-    function update_partner($partner_id,$data){ // 전체 invoice null로 초기화
+    function update_team_member($team_member_id,$data){ // 전체 invoice null로 초기화
 
         $this->db->set( $data);
-        $this->db->where('partner_id' ,$partner_id);
-        $this->db->update('partner');
+        $this->db->where('team_member_id' ,$team_member_id);
+        $this->db->update('team_member');
 
         return 0;
     }
 
-    function delete_partner($partner_id){
+    function delete_team_member($team_member_id){
 
         //삭제
-        $this->db->where('partner_id' ,$partner_id);
-        $this->db->delete('partner');
+        $this->db->where('team_member_id' ,$team_member_id);
+        $this->db->delete('team_member');
         return 0;
     }
-    function load_moim_partner($moim_id){
-
-        $this->db->join('users','users.id = partner.user_id');
-        $this->db->where('moim_id' ,$moim_id);
-        $query = $this->db->get('partner');
-        $result = $query -> result_array();
-
-        return $result;
-    }
-
-    function check_dup_partner($user_id, $moim_id){
+    function check_dup_team_member($user_id, $team_id){
 
         $this->db->where('user_id' ,$user_id);
-        $this->db->where('moim_id' ,$moim_id);
-        $query = $this->db->get('partner');
+        $this->db->where('team_id' ,$team_id);
+        $query = $this->db->get('team_member');
         $result = $query -> num_rows();
 
         return $result;

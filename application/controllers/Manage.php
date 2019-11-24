@@ -7,20 +7,17 @@ class Manage extends Manage_Controller {
     {
         parent::__construct();
         $this->load->database();
-
         $this->load->library('tank_auth');
         $this->load->library('layout', 'layouts/default');
         $this->layout->setLayout("layouts/default");
-
     }
-
 
     public function index()
     {
-        $this->moim('lists');
+        $this->team('lists');
     }
 
-    function moim($type='lists', $moim_id=null){
+    function team($type='lists', $team_id=null){
 
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
@@ -34,23 +31,23 @@ class Manage extends Manage_Controller {
 
         switch ($type){
             case 'upload':
-                $this->_moim_upload($moim_id,$user_data);
+                $this->_team_upload($team_id,$user_data);
                 break;
             case 'detail':
-                $this->_moim_detail($moim_id,$user_data);
+                $this->_team_detail($team_id,$user_data);
                 break;
 
             case 'delete':
-                $this->_moim_delete($moim_id,$user_data);
+                $this->_team_delete($team_id,$user_data);
                 break;
             default:
             case 'lists':
-                $this->_moim_lists($user_data);
+                $this->_team_lists($user_data);
                 break;
         }
     }
 
-    function _moim_lists($user_data){
+    function _team_lists($user_data){
 
         $search = $this->uri->segment(5);
 
@@ -58,6 +55,7 @@ class Manage extends Manage_Controller {
             $search_query = array(
                 'crt_date' => '',
                 'search' => '',
+                'status' => null,
                 'user_id'=>$user_data['user_id']
             );
 
@@ -68,6 +66,7 @@ class Manage extends Manage_Controller {
             $search_query = array(
                 'crt_date' => $sort_date,
                 'search' => $sort_search,
+                'status' => null,
                 'user_id'=>$user_data['user_id']
             );
 
@@ -76,8 +75,8 @@ class Manage extends Manage_Controller {
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
-        $config['base_url'] = '/manage/moim/lists'; // 페이징 주소
-        $config['total_rows'] = $this -> moim_model -> load_moim('count','','',$search_query); // 게시물 전체 개수
+        $config['base_url'] = '/manage/team/lists'; // 페이징 주소
+        $config['total_rows'] = $this -> team_model -> load_team('count','','',$search_query); // 게시물 전체 개수
 
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
@@ -99,21 +98,21 @@ class Manage extends Manage_Controller {
 
         $limit = $config['per_page'];
 
-        $data['result'] = $this->moim_model->load_moim('', $start, $limit, $search_query);
+        $data['result'] = $this->team_model->load_team('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
-        $this->layout->view('manage/moim/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+        $this->layout->view('manage/team/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
 
     }
 
-    function _moim_upload($moim_id = null,$user_data){
+    function _team_upload($team_id = null,$user_data){
         //업로드 합시다..
 
-        $cate_list = $this->moim_model->load_category();
+        $cate_list = $this->team_model->load_category();
         if($this->input->post()){
 
             $form_data = $this->input->post();
-            $moim_info = array(
+            $team_info = array(
                 'user_id'=>$user_data['user_id'],
                 'title'=>$form_data['title'],
                 'url_name'=>$form_data['url_name'],
@@ -122,17 +121,17 @@ class Manage extends Manage_Controller {
                 'district'=>$form_data['district'],
 
             );
-            if($moim_id){ //수정
+            if($team_id){ //수정
 
-                $this->moim_model->update_moim($moim_id,$moim_info);
-                alert('수정되었습니다.','/moim/'.$form_data['url_name']);
+                $this->team_model->update_team($team_id,$team_info);
+                alert('수정되었습니다.','/team/'.$form_data['url_name']);
             }else{//등록
-                $moim_info['crt_date'] = date('Y-m-d H:i:s');
-                $this->moim_model->insert_moim($moim_info);
-                alert('모임이 생성되었습니다.','/moim/'.$form_data['url_name']);
+                $team_info['crt_date'] = date('Y-m-d H:i:s');
+                $this->team_model->insert_team($team_info);
+                alert('팀이 생성되었습니다.','/team/'.$form_data['url_name']);
             }
         }else{
-            $moim_info = array(
+            $team_info = array(
                 'title'=>null,
                 'url_name'=>null,
                 'category_id'=>null,
@@ -140,15 +139,15 @@ class Manage extends Manage_Controller {
                 'district'=>null,
 
             );
-            if($moim_id){//이거면 수정
-                $moim_info =   $this->moim_model->get_moim_info($moim_id);
+            if($team_id){//이거면 수정
+                $team_info =   $this->team_model->get_team_info($team_id);
             }
-            $this->layout->view('/manage/moim/upload', array('user' => $user_data,'moim_info'=>$moim_info,'cate_list'=>$cate_list));
+            $this->layout->view('/manage/team/upload', array('user' => $user_data,'team_info'=>$team_info,'cate_list'=>$cate_list));
         }
 
     }
 
-    function _moim_detail($moim_id,$user_data){ //detail - 정보
+    function _team_detail($team_id,$user_data){ //detail - 정보
 
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
@@ -159,29 +158,37 @@ class Manage extends Manage_Controller {
             'username' =>$this->data['username'],
             'level' => $level,
         );
-        $moim_info = $this->moim_model->get_moim_info($moim_id);
+        $team_info = $this->team_model->get_team_info($team_id);
 
-        if($moim_info['user_id']!=$user_id||$level<9){ //관리자이거나 본인만 지울 수 있다.
+        if($team_info['user_id']!=$user_id||$level<9){ //관리자이거나 본인만 지울 수 있다.
 
-            $app_list = $this->application_model->load_moim_application($moim_info['moim_id']);
-            $partner_list = $this->partner_model->load_moim_partner($moim_info['moim_id']);
-            $this->layout->view('manage/moim/detail', array('user'=>$user_data,'moim_info'=>$moim_info,'app_list'=>$app_list,'partner_list'=>$partner_list));
+            $search_query = array( //둘다 동일한 search_query
+                'crt_date' => '',
+                'search'=>null,
+                'user_id'=>null,
+                'status'=>null, //무조건 공개
+                'team_id'=>$team_id,
+            );
+//            $app_list = $this->application_model->load_team_application($team_info['team_id']);
+            $partner_list = $this->partner_model->load_team_member('','','',$search_query);
+            $program_list =  $this->program_model->load_program('','','',$search_query);
+            $this->layout->view('manage/team/detail', array('user'=>$user_data,'team_info'=>$team_info,'partner_list'=>$partner_list,'program_list'=>$program_list));
 
         }else{
             alert('권한이 없습니다. [MD01]');
         }
     }
 
-    function _moim_delete($moim_id,$user_data){ //unique_id!=moin_id
+    function _team_delete($team_id,$user_data){ //unique_id!=moin_id
         $user_id = $this->data['user_id'];
         $level = $this->data['level'];
 
-        $moim_info = $this->moim_model->get_moim_info($moim_id);
+        $team_info = $this->team_model->get_team_info($team_id);
 
         //이 전에 조건을 걸어둬야겠지.. 제출된 게 있으면 절대 못함
-        if($moim_info['user_id']!=$user_id&&$level<9){ //관리자이거나 본인만 지울 수 있다.
+        if($team_info['user_id']!=$user_id&&$level<9){ //관리자이거나 본인만 지울 수 있다.
 
-             $this->moim_model->delete_moim($moim_id);
+             $this->team_model->delete_team($team_id);
              alert('삭제되었습니다.','/manage');
         }else{
             alert('권한이 없습니다. [MD02]');
@@ -282,16 +289,16 @@ class Manage extends Manage_Controller {
 
     function _app_upload($app_id = null,$user_data){
         //업로드 합시다..
-        $cate_list = $this->moim_model->load_category();
+        $cate_list = $this->team_model->load_category();
         if($this->input->post()){
 
             $form_data = $this->input->post();
-            if($form_data['moim_id']){
+            if($form_data['team_id']){
 
-                $moim_info = $this->moim_model->get_moim_info($form_data['moim_id']);
+                $team_info = $this->team_model->get_team_info($form_data['team_id']);
                 $app_data = array(
                     'user_id'=>$user_data['user_id'],
-                    'moim_id'=>$form_data['moim_id'],
+                    'team_id'=>$form_data['team_id'],
                     'title'=>$form_data['title'],
                     'subtitle'=>$form_data['subtitle'],
                     'category_id'=>$form_data['category_id'],
@@ -335,7 +342,7 @@ class Manage extends Manage_Controller {
                 if($app_id){ //수정
 
                     $app_info =   $this->application_model->get_application_info($app_id);
-                    $redirect_url = '/moim/'.$moim_info['url_name'].'/view/'.$app_id;
+                    $redirect_url = '/team/'.$team_info['url_name'].'/view/'.$app_id;
 
                     $this->application_model->update_application($app_id,$app_data);
                     $this->application_model->update_application_date($app_info['app_date_id'],$date_data);
@@ -353,29 +360,29 @@ class Manage extends Manage_Controller {
                     $this->application_model->update_application($app_id,$new_date);
                     $this->application_model->update_application_date($app_date_id,$new_date_data);
 
-                    $redirect_url = '/moim/'.$moim_info['url_name'].'/view/'.$app_id;
+                    $redirect_url = '/team/'.$team_info['url_name'].'/view/'.$app_id;
                     alert('지원서가 생성되었습니다.',$redirect_url);
                 }
-            }else{ // moim_id 없으면 생성 불가능함
-                alert('모임을 꼭 선택하셔야합니다.');
+            }else{ // team_id 없으면 생성 불가능함
+                alert('팀을 꼭 선택하셔야합니다.');
             }
         }else{
 
-            $moim_id = $this->input->get('moim');
-            $moim_info = null; //일단 null로 지정한다..
-            if($moim_id!=null){
-                $moim_info = $this->moim_model->get_moim_info($moim_id);
+            $team_id = $this->input->get('Team');
+            $team_info = null; //일단 null로 지정한다..
+            if($team_id!=null){
+                $team_info = $this->team_model->get_team_info($team_id);
             }
 
-            //내가 만든 모든 모임 불러오기
+            //내가 만든 모든 팀 불러오기
             $search_query = array(
                 'crt_date' => '',
                 'search' => '',
                 'user_id'=>$user_data['user_id']
             );
-            $moim_list = $this->moim_model->load_moim('', '', '', $search_query);
-            if($moim_list==null){
-                alert('지원서를 만들기 위해서는 모임을 먼저 만드셔야 합니다. 모임 생성 페이지로 이동합니다.','/manage/moim/upload');
+            $team_list = $this->team_model->load_team('', '', '', $search_query);
+            if($team_list==null){
+                alert('지원서를 만들기 위해서는 팀을 먼저 만드셔야 합니다. 팀 생성 페이지로 이동합니다.','/manage/team/upload');
             }else{
 
                 $app_info = array(
@@ -389,7 +396,7 @@ class Manage extends Manage_Controller {
                 if($app_id){//이거면 수정
                     $app_info =   $this->application_model->get_application_info($app_id);
                 }
-                $this->layout->view('/manage/application/upload', array('user' => $user_data,'app_info'=>$app_info,'cate_list'=>$cate_list,'moim_info'=>$moim_info,'moim_list'=>$moim_list,'moim_id'=>$moim_id));
+                $this->layout->view('/manage/application/upload', array('user' => $user_data,'app_info'=>$app_info,'cate_list'=>$cate_list,'team_info'=>$team_info,'team_list'=>$team_list,'team_id'=>$team_id));
             }
 
         }
@@ -699,7 +706,7 @@ class Manage extends Manage_Controller {
                     $redirect_url = '/manage/after/detail/'.$after_id;
                     alert('후기가 입력되었습니다.',$redirect_url);
                 }
-            }else{ // moim_id 없으면 생성 불가능함
+            }else{ // team_id 없으면 생성 불가능함
                 alert('제목을 입력하세요.');
             }
         }else{
@@ -774,8 +781,8 @@ class Manage extends Manage_Controller {
 
         switch ($type){
             case 'upload':
-                $moim_id = $this->input->get('moim');
-                $this->_partner_upload($moim_id,$user_data);
+                $team_id = $this->input->get('Team');
+                $this->_partner_upload($team_id,$user_data);
                 break;
             case 'detail':
                 $this->_partner_detail($partner_id,$user_data);
@@ -786,13 +793,13 @@ class Manage extends Manage_Controller {
                 break;
             default:
             case 'lists':
-                //$partner_id == $moim_id임..
+                //$partner_id == $team_id임..
                 $this->_partner_lists($partner_id,$user_data);
                 break;
         }
     }
 
-    function _partner_lists($moim_id, $user_data){
+    function _partner_lists($team_id, $user_data){
 
         $search = $this->uri->segment(5);
 
@@ -844,12 +851,12 @@ class Manage extends Manage_Controller {
         $data['result'] = $this->partner_model->load_partner('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
-        $moim_info =   $this->moim_model->get_moim_info($moim_id);
-        $this->layout->view('manage/partner/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'moim_info'=>$moim_info));
+        $team_info =   $this->team_model->get_team_info($team_id);
+        $this->layout->view('manage/partner/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'team_info'=>$team_info));
 
     }
 
-    function _partner_upload($moim_id = null,$user_data){
+    function _partner_upload($team_id = null,$user_data){
         //업로드 합시다..
 
         if($this->input->post('user_id')!=null){ //여기에는 수정이 있을 수 없음.. 그냥 지우면 됨
@@ -857,7 +864,7 @@ class Manage extends Manage_Controller {
             $form_data = $this->input->post();
             $partner_info = array(
                 'user_id'=>$form_data['user_id'],
-                'moim_id'=>$form_data['moim_id'],
+                'team_id'=>$form_data['team_id'],
                 'crt_date'=>date('Y-m-d H:i:s')
             );
             $this->partner_model->insert_partner($partner_info);
@@ -867,11 +874,11 @@ class Manage extends Manage_Controller {
             );
             $this->user_model->update_users($form_data['user_id'],$level_info);
 
-            alert('파트너가 등록되었습니다.','/manage/partner/lists/'.$form_data['moim_id']);
+            alert('파트너가 등록되었습니다.','/manage/partner/lists/'.$form_data['team_id']);
         }else{
 
-            $moim_info =   $this->moim_model->get_moim_info($moim_id);
-            $this->layout->view('/manage/partner/upload', array('user' => $user_data,'moim_info'=>$moim_info));
+            $team_info =   $this->team_model->get_team_info($team_id);
+            $this->layout->view('/manage/partner/upload', array('user' => $user_data,'team_info'=>$team_info));
         }
 
     }
@@ -888,10 +895,10 @@ class Manage extends Manage_Controller {
             'level' => $level,
         );
         $partner_info = $this->partner_model->get_partner_info($partner_id);
-        $moim_info =   $this->moim_model->get_moim_info($partner_info['moim_id']);
+        $team_info =   $this->team_model->get_team_info($partner_info['team_id']);
 
-        if($moim_info['user_id']!=$user_id||$level<9){ //관리자이거나 본인만 지울 수 있다.
-            $this->layout->view('manage/partner/detail', array('user'=>$user_data,'partner_info'=>$partner_info,'moim_info'=>$moim_info));
+        if($team_info['user_id']!=$user_id||$level<9){ //관리자이거나 본인만 지울 수 있다.
+            $this->layout->view('manage/partner/detail', array('user'=>$user_data,'partner_info'=>$partner_info,'team_info'=>$team_info));
 
         }else{
             alert('권한이 없습니다. [MD01]');
@@ -903,10 +910,10 @@ class Manage extends Manage_Controller {
         $level = $this->data['level'];
 
         $partner_info = $this->partner_model->get_partner_info($partner_id);
-        $moim_info =   $this->moim_model->get_moim_info($partner_info['moim_id']);
+        $team_info =   $this->team_model->get_team_info($partner_info['team_id']);
 
         //이 전에 조건을 걸어둬야겠지.. 제출된 게 있으면 절대 못함
-        if($moim_info['user_id']!=$user_id||$level<9){ //관리자이거나 본인만 지울 수 있다.
+        if($team_info['user_id']!=$user_id||$level<9){ //관리자이거나 본인만 지울 수 있다.
 
             $this->partner_model->delete_partner($partner_id);
             //이 사람의 레벨을 1 로 지정
@@ -915,7 +922,7 @@ class Manage extends Manage_Controller {
             );
             $this->user_model->update_users($partner_info['user_id'],$level_info);
 
-            alert('파트너에서 제외되었습니다.','/manage/partner/lists/'.$moim_info['moim_id']);
+            alert('파트너에서 제외되었습니다.','/manage/partner/lists/'.$team_info['team_id']);
         }else{
             alert('권한이 없습니다. [MD02]');
         }

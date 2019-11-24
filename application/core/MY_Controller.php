@@ -5,13 +5,14 @@ class MY_Controller extends CI_Controller{
     {
         parent::__construct();
         $this->load->library('tank_auth');
-        $this->load->model(array('user_model','moim_model','form_model','application_model','after_model','like_model','deposit_model'));
+        $this->load->model(array('user_model','team_model','form_model','program_model','after_model','like_model','subscribe_model','alarm_model'));
 
         if ($this->tank_auth->is_logged_in()) {									// logged in
             $this->data['user_id'] = $this->tank_auth->get_user_id();
             $this->data['username'] = $this->tank_auth->get_username($this->data['user_id']);
             $this->data['level'] = $this->tank_auth->get_level($this->data['user_id']);
 
+            $this->data['alarm'] =$this->alarm_model->get_alarm_count($this->data['user_id']);
            $this->data['realname']  = $this->tank_auth->get_realname($this->data['user_id']);
             $this->data['status'] = 'yes';
 
@@ -34,12 +35,13 @@ class Admin_Controller extends CI_Controller{
     {
         parent::__construct();
         $this->load->library('tank_auth');
-        $this->load->model(array('user_model','moim_model','form_model','application_model','after_model','like_model','deposit_model','partner_model'));
+        $this->load->model(array('user_model','team_model','form_model','program_model','after_model','like_model','subscribe_model','partner_model','alarm_model'));
         //redirect('/welcome'); //업데이트
         if ($this->tank_auth->is_logged_in()) {									// logged in
             $this->data['user_id'] = $this->tank_auth->get_user_id();
             $this->data['username'] = $this->tank_auth->get_username($this->data['user_id']);
             $this->data['level'] = $this->tank_auth->get_level($this->data['user_id']);
+            $this->data['alarm'] =$this->alarm_model->get_alarm_count($this->data['user_id']);
             $this->data['status'] = 'yes';
 
             if($this->data['level']!=9){
@@ -60,11 +62,12 @@ class Manage_Controller extends CI_Controller{
     {
         parent::__construct();
         $this->load->library('tank_auth');
-        $this->load->model(array('user_model','moim_model','form_model','application_model','after_model','like_model','deposit_model','partner_model'));
+        $this->load->model(array('user_model','team_model','form_model','program_model','after_model','like_model','subscribe_model','partner_model','alarm_model'));
         //redirect('/welcome'); //업데이트
         if ($this->tank_auth->is_logged_in()) {									// logged in
             $this->data['user_id'] = $this->tank_auth->get_user_id();
             $this->data['username'] = $this->tank_auth->get_username($this->data['user_id']);
+            $this->data['alarm'] =$this->alarm_model->get_alarm_count($this->data['user_id']);
             $this->data['level'] = $this->tank_auth->get_level($this->data['user_id']);
             $this->data['status'] = 'yes';
 
@@ -75,16 +78,16 @@ class Manage_Controller extends CI_Controller{
 
             switch ($location){
                 //unique 로 얘만 moim_id를 사용
-                case 'moim':
-                    $basic_info = $this->moim_model->get_moim_info($unique_id);
+                case 'team':
+                    $basic_info = $this->team_model->get_team_info($unique_id);
 
                     break;
                 //unique 로 모두 application_id 을 쓴다
                 default:
-                case 'application':
-                case 'after':
-                case 'deposit':
-                $basic_info = $this->application_model->get_application_info($unique_id);
+//                case 'application':
+//                case 'after':
+//                case 'deposit':
+//                $basic_info = $this->program_model->get_application_info($unique_id);
 
                     break;
             }
