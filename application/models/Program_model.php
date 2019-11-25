@@ -10,32 +10,30 @@ class Program_model extends CI_Model
     //load, get, update, delete
 
     function load_program($type = '', $offset = '', $limit = '', $search_query){
-        $this->db->select('program.*, users.nickname');
+        $this->db->select('program.*, team.name as team_name, team.url as team_url, users.nickname');
+        $this->db->join('team','team.team_id = program.team_id');
         $this->db->join('users','users.id = program.user_id');
 
-        if(!is_null($search_query['status'])){
-            $this->db->order_by('status',$search_query['status']);
+        if(!is_null($search_query['crt_date'])){
+            $this->db->order_by('program.crt_date',$search_query['crt_date']);
         }else{
-            $this->db->order_by('status','on');
+            $this->db->order_by('program.crt_date','desc');
         }
+
+        if(!is_null($search_query['status'])){
+            $this->db->order_by('program.status',$search_query['status']);
+        }
+
         if(!is_null($search_query['team_id'])){
 
             $this->db->where('program.team_id',$search_query['team_id']);
         }
 
         if(!is_null($search_query['search'])){
-
             $name_query = '(program.title like "%'.$search_query['search'].'%" or users.nickname like "%'.$search_query['search'].'%" or program.contents like "%'.$search_query['search'].'%")';
             $this->db->where($name_query);
 
         }
-
-        if(!is_null($search_query['crt_date'])){
-            $this->db->order_by('crt_date',$search_query['crt_date']);
-        }else{
-            $this->db->order_by('crt_date','desc');
-        }
-
         if ($limit != '' || $offset != '') {
             $this->db->limit($limit, $offset);
         }
@@ -52,7 +50,7 @@ class Program_model extends CI_Model
     }
 
     function get_program_info($program_id)
-    {//특정 필드에서 $program_id값이 이것 인것을 찾아라.
+    {
         $this->db->where('program_id' ,$program_id);
 
         $query = $this->db->get('program');
@@ -98,10 +96,10 @@ class Program_model extends CI_Model
     
     /*qualify*/
 
-    function get_program_qualify_info($pqualify_id)
+    function get_program_qualify_info($qualify_id)
     {
 
-        $this->db->where('pqualify_id' ,$pqualify_id);
+        $this->db->where('qualify_id' ,$qualify_id);
 
         $query = $this->db->get('program_qualify');
         $result = $query -> row_array();
@@ -128,19 +126,19 @@ class Program_model extends CI_Model
         return $latest_id;
     }
 
-    function update_program_qualify($pqualify_id,$data){
+    function update_program_qualify($qualify_id,$data){
 
         $this->db->set( $data);
-        $this->db->where('pqualify_id' ,$pqualify_id);
+        $this->db->where('qualify_id' ,$qualify_id);
         $this->db->update('program_qualify');
 
         return 0;
     }
 
-    function delete_program_qualify($pqualify_id){
+    function delete_program_qualify($qualify_id){
 
         //삭제
-        $this->db->where('pqualify_id' ,$pqualify_id);
+        $this->db->where('qualify_id' ,$qualify_id);
         $this->db->delete('program_qualify');
         return 0;
     }

@@ -16,6 +16,10 @@ class After extends MY_Controller
     }
 
     function index(){
+        $this->lists();
+    }
+
+    function lists(){
 
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
@@ -35,21 +39,24 @@ class After extends MY_Controller
             $search_query = array(
                 'crt_date' => '',
                 'search'=>null,
+                'team_id'=>null,
                 'status'=>'on',
             );
 
         }else{
             $sort_date = $this->input->get('crt_date');
             $sort_search = $this->input->get('search');
+            $sort_team_id = $this->input->get('team_id');
 
             $search_query = array(
                 'crt_date' => $sort_date,
                 'search' => $sort_search,
+                'team_id'=>$sort_team_id,
                 'status'=>'on',
             );
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'];
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&team_id='.$search_query['team_id'];
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
@@ -58,7 +65,7 @@ class After extends MY_Controller
 
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 3; // 페이지 번호가 위치한 세그먼트
-        $config['first_url'] = $config['base_url'].'/1'; // 첫페이지에 query string 에러나서..
+        $config['first_url'] = $config['base_url'].'/1'.$config['suffix']; // 첫페이지에 query string 에러나서..
         $config = pagination_config($config);
         // 페이지네이션 초기화
         $this->pagination->initialize($config);
@@ -99,6 +106,7 @@ class After extends MY_Controller
         );
 
         $after_info = $this->after_model->get_after_info($after_id);
+        $this->after_model->update_after_hit($after_id); //후기 hit
         $this->layout->view('after/view', array('user'=>$user_data,'after_info'=>$after_info));
     }
 
@@ -121,7 +129,7 @@ class After extends MY_Controller
 
         if($title){ //입력
 
-            $program_id = $this->input->post('program_id');
+            $team_id = $this->input->post('team_id');
             $contents = $this->input->post('contents');
             $status = $this->input->post('status');
 
@@ -132,7 +140,7 @@ class After extends MY_Controller
             $data = array(
                 'user_id'=>$user_id,
                 'title'=>$title,
-                'program_id'=>$program_id,
+                'team_id'=>$team_id,
                 'contents'=>$contents,
                 'status'=>$status, //공개 여부
             );
@@ -153,9 +161,9 @@ class After extends MY_Controller
 
             $data = array(
                 'title'=>null,
-                'program_id'=>null,
+                'team_id'=>null,
                 'contents'=>null,
-                'program_title'=>null,
+                'team_title'=>null,
                 'after_id'=>null,
                 'status'=>'on',
                 'type'=>'new' //새로 글쓰기

@@ -46,7 +46,7 @@
     <link rel="stylesheet" href="/www/css/bootstrap.css">
     <link rel="stylesheet" href="/www/css/basic.css">
     <link rel="stylesheet" href="/www/css/quill.css"> <!--wzwg--->
-    <?php if($section=='upload'){?>
+    <?php if($section=='upload'||$detail=='upload'){?>
         <link rel="stylesheet" href="/www/css/asDatepicker.css">
     <?php }?>
 
@@ -175,7 +175,7 @@
         integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
 
-<?php if($section=='upload'){?>
+<?php if($section=='upload'||$detail=='upload'){?>
 
     <script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>
     <script type="text/javascript" src="/www/js/moment-with-locales.min.js"></script>
@@ -185,19 +185,17 @@
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script type="text/javascript" src="/www/js/editor.js"></script>
 <?php }?>
+<?php if($section=='blog'||$detail=='upload'){?>
+    <script type="text/javascript" src="/www/js/team_blog.js"></script>
+<?php }?>
 <script type="text/javascript" src="/www/js/overlay.js"></script>
 <script type="text/javascript" src="/www/js/basic.js"></script>
-<script type="text/javascript" src="/www/js/<?= $location ?>.js"></script>
 
-<?php if($location=='team'){?>
-    <script type="text/javascript" src="/www/js/subscribe.js"></script>
-<?php }?>
-<?php if($location=='program'&&$section=='upload'){?>
-
-<!--    <script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>-->
-<!--    <script type="text/javascript" src="/www/js/moment-with-locales.min.js"></script>-->
-<!--    <script type="text/javascript" src="/www/js/jquery-asDatepicker.js"></script>-->
-<!--    <script type="text/javascript" src="/www/js/language.js"></script>-->
+<?php if($section!='program'&&$section!='team '){?>
+    <script type="text/javascript" src="/www/js/<?= $location ?>.js"></script>
+<?php }else{?>
+    <script type="text/javascript" src="/www/js/<?= $section ?>.js"></script>
+    <script type="text/javascript" src="/www/js/subscribe.js"></script> <!--section==team 일 경우에 유용-->
 
 <?php }?>
 <?php if($location=='manage'){?>

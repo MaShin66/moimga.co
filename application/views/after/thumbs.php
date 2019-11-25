@@ -6,7 +6,7 @@
             <img src="" class="item_img" alt="<?=$item['title']?>" >
             <div class="item_info">
                 <span class="item_title"><?=$item['title']?></span>
-                <span class="item_title"><?=$item['program_title']?></span>
+                <span class="item_title"><?=$item['team_name']?></span>
 
                 <span class="item_seller"><?=$item['nickname']?></span> <!--팀 이름-->
 

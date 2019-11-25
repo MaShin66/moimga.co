@@ -62,7 +62,7 @@ class Manage_Controller extends CI_Controller{
     {
         parent::__construct();
         $this->load->library('tank_auth');
-        $this->load->model(array('user_model','team_model','form_model','program_model','after_model','like_model','subscribe_model','partner_model','alarm_model'));
+        $this->load->model(array('user_model','team_model','form_model','program_model','after_model','like_model','subscribe_model','member_model','alarm_model'));
         //redirect('/welcome'); //업데이트
         if ($this->tank_auth->is_logged_in()) {									// logged in
             $this->data['user_id'] = $this->tank_auth->get_user_id();
@@ -76,26 +76,41 @@ class Manage_Controller extends CI_Controller{
             $section = $this->uri->segment(3);
             $unique_id = $this->uri->segment(4);
 
-            switch ($location){
-                //unique 로 얘만 moim_id를 사용
-                case 'team':
-                    $basic_info = $this->team_model->get_team_info($unique_id);
-
-                    break;
-                //unique 로 모두 application_id 을 쓴다
-                default:
-//                case 'application':
+            $basic_info = $this->team_model->get_team_info($unique_id);
+//            switch ($location){
+//                //unique 로 얘만 moim_id를 사용
+//                case 'team':
+//                    $basic_info = $this->team_model->get_team_info($unique_id);
+//                    break;
+//
+//                case 'program':
+//                    $basic_info = $this->team_model->get_team_info($unique_id);
+//                    break;
+//
+//                case 'team_member':
+//                    $basic_info = $this->team_model->get_team_info($unique_id);
+//                    break;
+//                case 'blog':
+//                    $basic_info = $this->team_model->get_team_info($unique_id);
+//                    break;
 //                case 'after':
-//                case 'deposit':
-//                $basic_info = $this->program_model->get_application_info($unique_id);
-
-                    break;
-            }
+//                    $basic_info = $this->team_model->get_team_info($unique_id);
+//                    break;
+//
+//                //unique 로 모두 application_id 을 쓴다
+//                default:
+////                case 'application':
+////                case 'after':
+////                case 'deposit':
+////                $basic_info = $this->program_model->get_application_info($unique_id);
+//
+//                    break;
+//            }
 
             if($location!=null&&$section!='upload'){
                 //redirect 하기
                 if($basic_info['user_id']!=$this->data['user_id']){
-                    redirect('/');
+                   // redirect('/');
                 }
             }
 
