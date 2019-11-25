@@ -8,7 +8,7 @@ class Auth extends MY_Controller
 
 
         $this->lang->load(array('auth', 'tank_auth'));
-        $this->load->model(array('user_model','partner_model'));
+        $this->load->model(array('user_model','member_model'));
 		$this->load->helper(array('form', 'url'));
 		$this->load->library('form_validation');
 		//$this->load->library('security');
@@ -360,15 +360,15 @@ class Auth extends MY_Controller
     }
 
 
-    //파트너 지정시
-    function find_gen_user($moim_id){
+    //팀 멤버 지정시
+    function find_gen_user($team_id){
 
         $email = $this->input->post('email');
         $result = $this-> user_model ->check_gen_email($email); // user table 에서 해당 아이디로 있는지 없는지 확인 + 레벨이 5가 아닌 (모임장이 아닌) 사람들
 
         //이미 지정되어있는지 확인하기 .
         if($result!=0){ //지정할 수 있는 상태인데
-            $dup_result = $this->partner_model->check_dup_partner($result,$moim_id);
+            $dup_result = $this->member_model->check_dup_member($result,$team_id);
             if($dup_result>0){ //이미 있는경우에
                 $result = -1;
             }

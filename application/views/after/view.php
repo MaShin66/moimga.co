@@ -8,7 +8,7 @@
 <h1>후기 보기</h1>
 <h2><?=$after_info['title']?></h2>
 <div class="">
-    프로그램 이름: <?=$after_info['program_title']?>
+    후기 이름: <?=$after_info['team_title']?>
 </div>
 
 <div class="">

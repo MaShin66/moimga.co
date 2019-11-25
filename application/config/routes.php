@@ -52,6 +52,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'main';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
-$route['team/@(:any)'] = 'team/view/$1'; //moim/@url 로 입장
+$route['@(:any)'] = 'team/view/$1'; //moim/@url 로 입장
+$route['@(:any)/blog'] = 'team/blog/list';
+$route['@(:any)/blog/list'] = 'team/blog/list';
+$route['@(:any)/blog/(:num)'] = 'team/blog/view/$1';
+$route['@(:any)/blog/upload'] = 'team/blog/upload'; //새로올리기
+$route['@(:any)/blog/upload/(:num)'] = 'team/blog/upload';
+
+/*team/program*/ // upload를 제외하고 정보 보는건 다 일로 온다..
+
+$route['@(:any)/program'] = 'program/lists';
+$route['@(:any)/program/list'] = 'program/lists';
+$route['@(:any)/program/(:num)'] = 'program/view/$1';
+$route['@(:any)/program/upload'] = 'program/upload';
+
+//일반 program/lists는 상관없음.. 근데 앞에 team url이 붙는 경우에만 search query 에서 team_id찾는다.
+
+
 //$route['team/(:any)'] = 'moim/info/$1';
 //$route['moim/(:any)/view/(:num)'] = 'moim/view/$1/$2';

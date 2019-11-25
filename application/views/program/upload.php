@@ -1,13 +1,13 @@
 <?php
 
 $write_type = $this->input->get('type');
-$action_url = '/program/upload';
+$action_url = '/@'.$team_info['url'].'/program/upload';
 $btn_text = '등록하기';
 $checked = null;
 if(!is_null($write_type)){
-    $program_id = $this->uri->segment(3);
+    $program_id = $this->uri->segment(4);
     $btn_text = '수정하기';
-    $action_url = '/program/upload/'.$program_id.'?type=modify';
+    $action_url = '/@'.$team_info['url'].'/program/upload/'.$program_id.'?type=modify';
 }
 if($result['status']=='on'){
     $checked = 'checked';
@@ -29,7 +29,7 @@ if($result['status']=='on'){
     <div class="">
         참가인원
 
-        <input type="text" name="participant" value="<?=$result['participant']?>" class="form-control" id="participant">
+        <input type="number" min="0" max="999" name="participant" value="<?=$result['participant']?>" class="form-control" id="participant">
     </div>
     <div class="">
        지역
@@ -49,7 +49,7 @@ if($result['status']=='on'){
     <div class="">
         가격
 
-        <input type="text" name="price" value="<?=$result['price']?>" class="form-control" id="price">
+        <input type="number" min="0" max="9999999" name="price" value="<?=$result['price']?>" class="form-control" id="price">
     </div>
     <hr>
     <ul class="prod_upload_guide prod_upload_list">
@@ -59,17 +59,17 @@ if($result['status']=='on'){
     <div class="event_date_wrap" style="clear: both;">
 
         <?php if($write_type=='modify'){
-            foreach ($event_date as $key => $item){?>
-                <div class="form-row event_date_add" id="event_date_<?=$key+1?>" data-event-date-id="<?=$item['event_date_id']?>">
+            foreach ($date_info as $key => $item){?>
+                <div class="form-row event_date_add" id="event_date_<?=$key+1?>" data-event-date-id="<?=$item['pdate_id']?>">
                     <div class="form-group col-md-6">
                         <label for="input_event_date<?=$key+1?>">행사 날짜</label>
-                        <input type="text" class="form-control event_date calendar calendar-input" name="event_date[<?=$item['event_date_id']?>]" id="input_event_date<?=$key+1?>" placeholder="행사 날짜를 선택해주세요." value="<?=$item['date']?>">
+                        <input type="text" class="form-control event_date calendar calendar-input" name="event_date[<?=$item['pdate_id']?>]" id="input_event_date<?=$key+1?>" placeholder="행사 날짜를 선택해주세요." value="<?=$item['date']?>">
                     </div>
                     <div class="form-group col-md-4">
                         <label for="input_event_time<?=$key+1?>">행사 시간</label>
                         <div class="">
 
-                            <select name="event_time[<?=$item['event_date_id']?>]" class="form-control custom-select" id="event_time<?=$key+1?>" <?php if(($form_cnt!=0&&$write_type=='modify')){echo 'disabled';}?> >
+                            <select name="event_time[<?=$item['pdate_id']?>]" class="form-control custom-select" id="input_event_time<?=$key+1?>" >
                                 <?php  for($i=0; $i<24; $i++){ ?>
 
                                     <option value="<?=$i?>" <?php if($write_type=='modify') {if($item['time']==$i) echo 'selected';}?>><?=$i?></option>
@@ -77,14 +77,12 @@ if($result['status']=='on'){
                             </select>시
                         </div>
                     </div>
-                    <?php if($form_cnt==0){?>
-                        <div class="col-md-1 col-sm-6 col-6">
-                            <div class="btn btn-outline-action  btn-adjust" onclick="javascript:copy_event_date(<?=$key+1?>);">+ 복사</div>
-                        </div>
-                        <div class="col-md-1 col-sm-6 col-6">
-                            <div class="btn btn-outline-red  btn-delete btn-adjust" onclick="javascript:delete_event_date(<?=$key+1?>);">- 삭제</div>
-                        </div>
-                    <?php } ?>
+                    <div class="col-md-1 col-sm-6 col-6">
+                        <div class="btn btn-outline-action  btn-adjust" onclick="javascript:copy_event_date(<?=$key+1?>);">+ 복사</div>
+                    </div>
+                    <div class="col-md-1 col-sm-6 col-6">
+                        <div class="btn btn-outline-red  btn-delete btn-adjust" onclick="javascript:delete_event_date(<?=$key+1?>);">- 삭제</div>
+                    </div>
                 </div>
 
             <?php }
@@ -135,20 +133,39 @@ if($result['status']=='on'){
     </div>
     <div class="" id="qualify_wrap">
 
-        <div class="form-row qualify_add" id="qualify_1" data-qualify-option-id="1"> <!--아무것도 하지 않았을 경우-->
-            <div class="form-group col-md-11">
+        <?php if($write_type=='modify') {
+            foreach ($qualify_info as $qu_key => $qu_item) {
+                ?>
+                <div class="form-row qualify_add" id="qualify_<?=$qu_key+1?>" data-qualify-option-id="<?=$qu_item['qualify_id']?>"> <!--아무것도 하지 않았을 경우-->
+                    <div class="form-group col-md-11">
 
-                <label for="input_qualify1">내용</label>
-                <input type="text" name="qualify[]"  class="form-control" id="input_qualify1">
-                <div class="form_guide_gray">이런 분들이 오셨ㅇ면 좋겠는거..</div>
+                        <label for="input_qualify1">내용</label>
+                        <input type="text" name="qualify[<?=$qu_item['qualify_id']?>]"  class="form-control" id="input_qualify<?=$qu_key+1?>" value="<?=$qu_item['contents']?>">
+                        <div class="form_guide_gray">이런 분들이 오셨ㅇ면 좋겠는거..</div>
+                    </div>
+
+                    <div class="col-md-1">
+                        <div class="btn btn-outline-danger  btn-delete" onclick="javascript:delete_qualify(<?=$qu_key+1?>);">- 삭제</div>
+                    </div>
+
+                </div>
+
+            <?php }
+        }else{ //새 글 ?>
+            <div class="form-row qualify_add" id="qualify_1" data-qualify-option-id="1"> <!--아무것도 하지 않았을 경우-->
+                <div class="form-group col-md-11">
+
+                    <label for="input_qualify1">내용</label>
+                    <input type="text" name="input_qualify[]"  class="form-control" id="input_qualify1">
+                    <div class="form_guide_gray">이런 분들이 오셨ㅇ면 좋겠는거..</div>
+                </div>
+
+                <div class="col-md-1">
+                    <div class="btn btn-outline-danger  btn-delete" onclick="javascript:delete_qualify(1);">- 삭제</div>
+                </div>
+
             </div>
-
-            <div class="col-md-1">
-                <div class="btn btn-outline-danger  btn-delete" onclick="javascript:delete_qualify(1);">- 삭제</div>
-            </div>
-            
-        </div>
-
+        <?php }?>
     </div>
     <!--여러개 있는 경우에는foreach-->
     <div class="add_btn_wrap">
@@ -163,25 +180,52 @@ if($result['status']=='on'){
 
     <div class="" id="question_wrap">
 
-        <div class="form-row question_add" id="question_1"> <!--아무것도 하지 않았을 경우-->
-            <div class="form-group col-md-11">
 
-                <label for="input_question1">질문</label>
-                <input type="text" name="question[]"  class="form-control" id="input_question1">
-                <div class="form_guide_gray">질문 내용을 입력해주세요</div>
+        <?php if($write_type=='modify') {
+        foreach ($qna_info as $qna_key => $qna_item) {
+        ?>
+            <div class="form-row question_add" id="question_<?=$qna_key+1?>" data-question-option-id="<?=$qna_item['pqna_id']?>">
+                <div class="form-group col-md-11">
+
+                    <label for="input_question1">질문</label>
+                    <input type="text" name="question[<?=$qna_item['pqna_id']?>]"  class="form-control" id="input_question<?=$qna_key+1?>" value="<?=$qna_item['question']?>">
+                    <div class="form_guide_gray">질문 내용을 입력해주세요</div>
+                </div>
+
+                <div class="col-md-1">
+                    <div class="btn btn-outline-danger  btn-delete" onclick="javascript:delete_question(<?=$qna_key+1?>);">- 삭제</div>
+                </div>
+                <div class="form-group col-md-12">
+
+                    <label for="input_question1">답변</label>
+                    <input type="text" name="answer[<?=$qna_item['pqna_id']?>]"  class="form-control" id="input_answer<?=$qna_key+1?>" value="<?=$qna_item['answer']?>">
+                    <div class="form_guide_gray">질문에 대한 답변을 입력해주세요</div>
+                </div>
+
             </div>
+        <?php }
+        }else{ //새 글 ?>
+            <div class="form-row question_add" id="question_1"> <!--아무것도 하지 않았을 경우-->
+                <div class="form-group col-md-11">
 
-            <div class="col-md-1">
-                <div class="btn btn-outline-danger  btn-delete" onclick="javascript:delete_question(1);">- 삭제</div>
+                    <label for="input_question1">질문</label>
+                    <input type="text" name="input_question[]"  class="form-control" id="input_question1">
+                    <div class="form_guide_gray">질문 내용을 입력해주세요</div>
+                </div>
+
+                <div class="col-md-1">
+                    <div class="btn btn-outline-danger  btn-delete" onclick="javascript:delete_question(1);">- 삭제</div>
+                </div>
+                <div class="form-group col-md-12">
+
+                    <label for="input_question1">답변</label>
+                    <input type="text" name="input_answer[]"  class="form-control" id="input_answer1">
+                    <div class="form_guide_gray">질문에 대한 답변을 입력해주세요</div>
+                </div>
+
             </div>
-            <div class="form-group col-md-12">
+        <?php }?>
 
-                <label for="input_question1">답변</label>
-                <input type="text" name="answer[]"  class="form-control" id="input_answer1">
-                <div class="form_guide_gray">질문에 대한 답변을 입력해주세요</div>
-            </div>
-
-        </div>
     </div>
     <!--여러개 있는 경우에는foreach-->
     <div class="add_btn_wrap">
@@ -228,10 +272,10 @@ if($result['status']=='on'){
     </div>
     <input type="hidden" id="input_mirror" name="contents"/>
     <input type="hidden" name="team_id" value="<?=$result['team_id']?>">
-    <input type="hidden" name="write_type" value="<?=$write_type?>">
+    <input type="hidden" name="write_type" id="write_type" value="<?=$write_type?>">
 
 <?php if(!is_null($write_type)){?>
-    <input type="hidden" name="program_id" value="<?=$result['program_id']?>">
+    <input type="hidden" name="program_id" id="program_id" value="<?=$result['program_id']?>">
     <?php }?>
     <input type="button" class="btn btn-primary" value="<?=$btn_text?>" onclick="submit_program();">
 </form>

@@ -10,13 +10,15 @@ $(document).ready(function() {
 
     //modify, copy, new
     if(window.location.href.indexOf("modify") > -1){
+
+        var program_id = $('#program_id').val();
         //
         // open_date_val = open_date;
         // close_date_val = close_date;
 
-        setInterval(function() {
-            autosave('program'); //interval 두고 autosave
-        }, 20000);
+        // setInterval(function() {
+        //     autosave('program'); //interval 두고 autosave
+        // }, 20000);
         $.ajax({
             type: "POST",
             url: '/program/load_event_date/',
@@ -26,7 +28,7 @@ $(document).ready(function() {
                 for (key in event_list){
 
                     var this_key = Number(key)+1;
-                    $("#event_date_"+this_key).find('.event_date').asDatepicker({
+                    $("#event_date_"+this_key).find('.event_date').asDatepicker({ //initiate 안되는 느낌이네요..
                         namespace: 'calendar',
                         lang: 'ko',
                         position: 'bottom',
@@ -111,89 +113,205 @@ $('#template_common').click(function () {
     }
 });
 
-function add_event_date() {
+function add_event_date() { //copy에도 동일하게 적용해야함
 
+    var write_type = $('#write_type').val(); //write_type이 new가 아닌경우에 바로 db에
     var now_num = $('.event_date_wrap').children().length; // 현재 갯수 -- 이거는 처음일 때..
     var next_num = Number(now_num+1);
-    var time_select ='<div class="">' +
-        '<select name="input_event_time[]" class="custom-select form-control" id="input_event_time'+next_num+'">';
+    var common_buttons =  '<div class="col-md-1 col-sm-6 col-6">' +
+' <div class="btn btn-outline-action " onclick="copy_event_date('+next_num+');">+ 복사</div>' +
+'  </div>'+
+'   <div class="col-md-1 col-sm-6 col-6">' +
+' <div class="btn btn-outline-red " onclick="delete_event_date('+next_num+');">- 삭제</div>' +
+'  </div>';
     var time_option  = null;
     for(var i=0; i<24; i++){
         time_option = time_option + '<option value="'+i+'">'+i+'</option>';
     }
-    time_select = time_select + time_option + '</select>시 </div></div>';
 
-    $('.event_date_wrap').append(
-        '<div class="form-row event_date_add" id="event_date_'+next_num+'">' +
-        '   <div class="form-group col-md-6">' +
-        '       <input type="text" class="form-control input_basic event_date" name="input_event_date[]" id="input_event_date'+next_num+'" placeholder="행사 날짜를 선택해주세요.">' +
-        '    </div>' +
-        '    <div class="form-group col-md-4">' +time_select +
-        '    <div class="col-md-1 col-sm-6 col-6">' +
-        '         <div class="btn btn-outline-action " onclick="copy_event_date('+next_num+');">+ 복사</div>' +
-        '      </div>'+
-        '       <div class="col-md-1 col-sm-6 col-6">' +
-        '         <div class="btn btn-outline-red " onclick="delete_event_date('+next_num+');">- 삭제</div>' +
-        '      </div>'+
-        '</div>'
+    var today = new Date();
+    today.setDate(today.getDate() + 7); //15일 더하여 setting
+    var year = today.getFullYear();
+    var month = today.getMonth() + 1;
+    var day = today.getDate();
 
-    );
-    //캘린더 초기화
-    $("#input_event_date"+next_num).asDatepicker({
-        namespace: 'calendar',
-        lang: 'ko',
-        position: 'bottom',
-        onceClick: true,
-        date: 'today'
-    });
+    var default_date = year+'-'+ month+'-'+ day;
+
+    //input 구분하기
+    if(write_type=='modify'){
+        var program_id = $('#program_id').val();
+
+        $.ajax({
+            type: "POST",
+            url: '/program/add_event_date/',
+            data: { program_id:program_id},
+            success: function (data) {
+                var res = JSON.parse(data);
+                switch (res){
+                    case 'auth':
+                        alert('본인 프로그램에만 추가할 수 있습니다.');
+                        break;
+                    default:
+                        console.log(res);
+                        var pdate_id = res;
+
+                        var time_select ='<div class="">' +
+                            '<select name="event_time['+pdate_id+']" class="custom-select form-control" id="input_event_time'+next_num+'"  data-event-date-id="'+pdate_id+'">';
+
+                        time_select = time_select + time_option + '</select>시 </div></div>';
+
+                        $('.event_date_wrap').append(
+                            '<div class="form-row event_date_add" id="event_date_'+next_num+'">' +
+                            '   <div class="form-group col-md-6">' +
+                            '       <input type="text" class="form-control input_basic event_date" name="event_date['+pdate_id+']" id="input_event_date'+next_num+'" placeholder="행사 날짜를 선택해주세요.">' +
+                            '    </div>' +
+                            '    <div class="form-group col-md-4">' +time_select + common_buttons+
+                            '</div>'
+
+                        );
+
+                        $("#input_event_date"+next_num).asDatepicker({
+                            namespace: 'calendar',
+                            lang: 'ko',
+                            position: 'bottom',
+                            onceClick: true,
+                            date:  default_date
+                        });
+
+                        break;
+                }
+                //
+            },
+            error : function (jqXHR, errorType, error) {
+                console.log(errorType + ": " + error);
+            }
+        });
+
+    }else{
+        var time_select ='<div class="">' +
+            '<select name="input_event_time[]" class="custom-select form-control" id="input_event_time'+next_num+'">';
+
+        time_select = time_select + time_option + '</select>시 </div></div>';
+
+        $('.event_date_wrap').append(
+            '<div class="form-row event_date_add" id="event_date_'+next_num+'">' +
+            '   <div class="form-group col-md-6">' +
+            '       <input type="text" class="form-control input_basic event_date" name="input_event_date[]" id="input_event_date'+next_num+'" placeholder="행사 날짜를 선택해주세요.">' +
+            '    </div>' +
+            '    <div class="form-group col-md-4">' +time_select + common_buttons+
+            '</div>'
+
+        );
+
+        $("#input_event_date"+next_num).asDatepicker({
+            namespace: 'calendar',
+            lang: 'ko',
+            position: 'bottom',
+            onceClick: true,
+            date:  default_date
+        });
+    }
+
+
 }
 
 function copy_event_date(event_date_num) {
 
+    var write_type = $('#write_type').val(); //write_type이 new가 아닌경우에 바로 db에
+
     var now_num = $('.event_date_wrap').children().length; // 현재 갯수 -- 이거는 처음일 때..
     var next_num = Number(now_num+1);
+    var common_buttons =  '<div class="col-md-1 col-sm-6 col-6">' +
+        ' <div class="btn btn-outline-action " onclick="copy_event_date('+next_num+');">+ 복사</div>' +
+        '  </div>'+
+        '   <div class="col-md-1 col-sm-6 col-6">' +
+        ' <div class="btn btn-outline-red " onclick="delete_event_date('+next_num+');">- 삭제</div>' +
+        '  </div>';
     var this_date = $('#input_event_date'+event_date_num).val();
     var this_time = $('#input_event_time'+event_date_num).val();
 
-    console.log(this_time);
-    var time_select ='<div class="">' +
-        '<select name="input_event_time[]" class="custom-select form-control" id="input_event_time'+next_num+'">';
     var time_option  = null;
     for(var i=0; i<24; i++){
         if(this_time==i){
-
-            console.log('dfdf');
             time_option = time_option + '<option value="'+i+'" selected="selected">'+i+'</option>';
         }else{
             time_option = time_option + '<option value="'+i+'">'+i+'</option>';
         }
-
     }
 
-    time_select = time_select + time_option + '</select>시 </div></div>';
-    $('.event_date_wrap').append(
-        '<div class="form-row event_date_add" id="event_date_'+next_num+'">' +
-        '   <div class="form-group col-md-6">' +
-        '       <input type="text" class="form-control input_basic event_date" name="input_event_date[]" id="input_event_date'+next_num+'" placeholder="행사 날짜를 선택해주세요." value="'+this_date+'">' +
-        '    </div>' +
-        '    <div class="form-group col-md-4">' +time_select +
-        '    <div class="col-md-1 col-sm-6 col-6">' +
-        '         <div class="btn btn-outline-action " onclick="copy_event_date('+next_num+');">+ 복사</div>' +
-        '      </div>'+
-        '       <div class="col-md-1 col-sm-6 col-6">' +
-        '         <div class="btn btn-outline-red " onclick="delete_event_date('+next_num+');">- 삭제</div>' +
-        '      </div>'+
-        '</div>'
+    if(write_type=='modify'){
+        var program_id = $('#program_id').val();
 
-    );
-    //캘린더 초기화
-    $("#input_event_date"+next_num).asDatepicker({
-        namespace: 'calendar',
-        lang: 'ko',
-        position: 'bottom',
-        onceClick: true,
-        date: this_date
-    });
+        $.ajax({
+            type: "POST",
+            url: '/program/add_event_date/',
+            data: { program_id:program_id},//copy지만 어차피 modify 시 수정 프로세스 거치기 때문에 일단 add만 한다
+            success: function (data) {
+                var res = JSON.parse(data);
+                switch (res){
+                    case 'auth':
+                        alert('본인 프로그램에만 복사할 수 있습니다.');
+                        break;
+                    default:
+                        console.log(res);
+                        var pdate_id = res;
+
+                        var time_select ='<div class="">' +
+                            '<select name="event_time['+pdate_id+']" class="custom-select form-control" id="input_event_time'+next_num+'">';
+
+                        time_select = time_select + time_option + '</select>시 </div></div>';
+
+                        $('.event_date_wrap').append(
+                            '<div class="form-row event_date_add" id="event_date_'+next_num+'" data-event-date-id="'+pdate_id+'">' +
+                            '   <div class="form-group col-md-6">' +
+                            '       <input type="text" class="form-control input_basic event_date" name="event_date['+pdate_id+']" id="input_event_date'+next_num+'" placeholder="행사 날짜를 선택해주세요." value="'+this_date+'">' +
+                            '    </div>' +
+                            '    <div class="form-group col-md-4">' +time_select + common_buttons+
+                            '</div>'
+
+                        );
+
+                        //캘린더 초기화
+                        $("#input_event_date"+next_num).asDatepicker({
+                            namespace: 'calendar',
+                            lang: 'ko',
+                            position: 'bottom',
+                            onceClick: true,
+                            date: this_date
+                        });
+
+                        break;
+                }
+                //
+            },
+            error : function (jqXHR, errorType, error) {
+                console.log(errorType + ": " + error);
+            }
+        });
+
+    }else{
+        //time select 만 다른거..
+        var time_select ='<div class="">' +
+            '<select name="input_event_time[]" class="custom-select form-control" id="input_event_time'+next_num+'">';
+        time_select = time_select + time_option + '</select>시 </div></div>';
+        $('.event_date_wrap').append(
+            '<div class="form-row event_date_add" id="event_date_'+next_num+'">' +
+            '   <div class="form-group col-md-6">' +
+            '       <input type="text" class="form-control input_basic event_date" name="input_event_date[]" id="input_event_date'+next_num+'" placeholder="행사 날짜를 선택해주세요." value="'+this_date+'">' +
+            '    </div>' +
+            '    <div class="form-group col-md-4">' +time_select +common_buttons+
+            '</div>'
+
+        );
+        //캘린더 초기화
+        $("#input_event_date"+next_num).asDatepicker({
+            namespace: 'calendar',
+            lang: 'ko',
+            position: 'bottom',
+            onceClick: true,
+            date: this_date
+        });
+    }
 }
 
 function delete_event_date(event_date_num) {
@@ -201,18 +319,45 @@ function delete_event_date(event_date_num) {
     var write_type = $('#write_type').val();
     var alert_text = null;
     if(write_type=='modify') alert_text = ' 확인 버튼을 누르시면 데이터베이스에서도 바로 삭제되고 복구가 불가능합니다.';
-    var answer= confirm('이 행사 일정을 삭제하시겠습니까?');
+    var answer= confirm('이 행사 일정을 삭제하시겠습니까?'+alert_text);
     if(answer){
 
-        if(write_type=='modify') {
-            var event_date_id =$('#event_date_'+event_date_num).data('eventDateId');
-        }
-
-        $('#event_date_'+event_date_num).remove();
         //번호 지정 새로하기
         //총 몇개인지 가져오기
         var now_num = $('.prod_detail_wrap').children().length;
+        if(write_type=='modify'){
+
+            var pdate_id =$('#event_date_'+event_date_num).data('eventDateId');
+            var program_id = $('#program_id').val();
+            //db에서 삭제
+            $.ajax({
+                type: "POST",
+                url: '/program/delete_event_date/',
+                data: { program_id:program_id, pdate_id:pdate_id },
+                success: function (data) {
+                    var res = JSON.parse(data);
+                    console.log(res);
+                    switch (res){
+                        case 'auth':
+                            alert('본인 프로그램의 일정만 삭제할 수 있습니다.');
+                            break;
+                        case 'done':
+                            alert('삭제되었습니다.');
+                            break;
+                        default:
+                            alert('에러가 발생했습니다.');
+                            break;
+                    }
+                    //
+                },
+                error : function (jqXHR, errorType, error) {
+                    console.log(errorType + ": " + error);
+                }
+            });
+        }
+
         //product_add를 돌면서.. id, label, name 등의 이름을 바꾼다..
+        $('#event_date_'+event_date_num).remove();
         $(".event_date_add").each(function(key, value) {
             //id 바꾸기
             var set_num = Number(key+1);
@@ -235,22 +380,97 @@ function delete_event_date(event_date_num) {
             $(this).children().eq(3).find('div').attr('onclick','delete_event_date('+set_num+')');
             console.log(key+': '+$(this).attr('id'));
 
-            if(write_type=='modify'){
 
-                //db에서 삭제
+        });
+    }else{
+        return false;
+    }
+}
+
+//ticket_option
+
+
+function add_qualify() {
+    var write_type = $('#write_type').val(); //write_type이 new가 아닌경우에 바로 db에
+    var program_id = $('#program_id').val();
+    var now_num = $('#qualify_wrap').children().length; // 현재 갯수 -- 이거는 처음일 때..
+    var next_num = Number(now_num+1);
+    var common_buttons= '<div class="col-md-1 col-sm-6 col-6">' +
+        '         <div class="btn btn-outline-danger " onclick="delete_qualify('+next_num+');">- 삭제</div>' +
+        '      </div>';
+
+    if(write_type=='modify'){
+
+        $.ajax({
+            type: "POST",
+            url: '/program/add_qualify/',
+            data: { program_id:program_id},
+            success: function (data) {
+                var res = JSON.parse(data);
+                switch (res){
+                    case 'auth':
+                        alert('본인 프로그램에만 추가할 수 있습니다.');
+                        break;
+                    default:
+                        console.log(res);
+                        var qualify_id = res;
+
+                        $('#qualify_wrap').append(
+                            '<div class="form-row qualify_add" id="qualify_'+next_num+'" data-qualify-option-id="'+qualify_id+'">' +
+                            '   <div class="form-group col-md-11">' +
+                            '       <input type="text" class="form-control input_basic" name="qualify['+qualify_id+']" id="input_qualify'+next_num+'" placeholder="내용을 입력해주세요">' +
+                            '    </div>' +common_buttons +
+                            '</div>'
+
+                        );
+
+                        break;
+                }
+                //
+            },
+            error : function (jqXHR, errorType, error) {
+                console.log(errorType + ": " + error);
+            }
+        });
+
+    }else{
+
+        $('#qualify_wrap').append(
+            '<div class="form-row qualify_add" id="qualify_'+next_num+'">' +
+            '   <div class="form-group col-md-11">' +
+            '       <input type="text" class="form-control input_basic" name="input_qualify[]" id="input_qualify'+next_num+'" placeholder="내용을 입력해주세요">' +
+            '    </div>' +common_buttons +
+            '</div>'
+
+        );
+
+    }
+
+}
+
+function delete_qualify(option_num) {
+
+    var write_type = $('#write_type').val();
+    var alert_text = null;
+    if(write_type=='modify'){
+        alert_text = ' 확인 버튼을 누르시면 데이터베이스에서도 바로 삭제되고 복구가 불가능합니다.';
+    }
+    var answer= confirm('이 옵션을 삭제하시겠습니까?'+alert_text);
+    if(answer){
+        if(write_type=='modify'){
+            var qualify_id =$('#qualify_'+option_num).data('qualifyOptionId');
+            var program_id = $('#program_id').val();
+            if(qualify_id){//있으면 db에서 삭제
+
                 $.ajax({
                     type: "POST",
-                    url: '/ticket/delete_event_date/',
-                    data: { event_date_id:event_date_id},
+                    url: '/program/delete_qualify/',
+                    data: { qualify_id:qualify_id, program_id:program_id},
                     success: function (data) {
                         var res = JSON.parse(data);
                         switch (res){
                             case 'auth':
-                                alert('본인 행사의 티켓만 삭제할 수 있습니다.');
-                                break;
-
-                            case 'form':
-                                alert('이 회차로 제출된 폼이 있습니다.');
+                                alert('본인 프로그램의 옵션만 삭제할 수 있습니다.');
                                 break;
 
                             case 'done':
@@ -267,45 +487,8 @@ function delete_event_date(event_date_num) {
                     }
                 });
             }
-        });
-    }else{
-        return false;
-    }
-}
-
-//ticket_option
 
 
-function add_qualify() {
-    var now_num = $('#qualify_wrap').children().length; // 현재 갯수 -- 이거는 처음일 때..
-    var next_num = Number(now_num+1);
-    $('#qualify_wrap').append(
-        '<div class="form-row qualify_add" id="qualify_'+next_num+'">' +
-        '   <div class="form-group col-md-11">' +
-        '       <input type="text" class="form-control input_basic" name="qualify[]" id="input_qualify'+next_num+'" placeholder="내용을 입력해주세요">' +
-        '    </div>' +
-        '       <div class="col-md-1 col-sm-6 col-6">' +
-        '         <div class="btn btn-outline-danger " onclick="delete_qualify('+next_num+');">- 삭제</div>' +
-        '      </div>'+
-        '</div>'
-
-    );
-
-}
-
-function delete_qualify(option_num) {
-
-    var write_type = $('#write_type').val();
-    var alert_text = null;
-    if(write_type=='modify'){
-        alert_text = ' 확인 버튼을 누르시면 데이터베이스에서도 바로 삭제되고 복구가 불가능합니다.';
-        var program_id = $('#program_id').val();
-    }
-    var answer= confirm('이 옵션을 삭제하시겠습니까?'+alert_text);
-    if(answer){
-
-        if(write_type=='modify') {
-            var qualify_id =$('#qualify_'+option_num).data('qualifyOptionId');
         }
         $('#qualify_'+option_num).remove();
 
@@ -327,38 +510,6 @@ function delete_qualify(option_num) {
             $(this).children().eq(1).find('div').attr('onclick','delete_qualify('+set_num+')');
             console.log(key+': '+$(this).attr('id'));
 
-
-            if(write_type=='modify'){
-                if(qualify_id){//있으면 db에서 삭제
-
-                    $.ajax({
-                        type: "POST",
-                        url: '/program/delete_qualify/',
-                        data: { qualify_id:qualify_id, program_id:program_id},
-                        success: function (data) {
-                            var res = JSON.parse(data);
-                            switch (res){
-                                case 'auth':
-                                    alert('본인 프로그램의 옵션만 삭제할 수 있습니다.');
-                                    break;
-
-                                case 'done':
-                                    alert('삭제되었습니다.');
-                                    break;
-                                default:
-                                    alert('에러가 발생했습니다.');
-                                    break;
-                            }
-                            //
-                        },
-                        error : function (jqXHR, errorType, error) {
-                            console.log(errorType + ": " + error);
-                        }
-                    });
-                }
-
-
-            }
         });
     }else{
         return false;
@@ -366,25 +517,72 @@ function delete_qualify(option_num) {
 }
 
 function add_question() {
+    var write_type = $('#write_type').val(); //write_type이 new가 아닌경우에 바로 db에
+    var program_id = $('#program_id').val();
     var now_num = $('#question_wrap').children().length; // 현재 갯수 -- 이거는 처음일 때..
     var next_num = Number(now_num+1);
-    $('#question_wrap').append(
-        '<div class="form-row question_add" id="question_'+next_num+'">' +
-        '<div class="form-group col-md-11">' +
-        '                <label for="input_question'+next_num+'">질문</label>' +
-        '                <input type="text" name="question[]"  class="form-control" id="input_question'+next_num+'">' +
-        '                <div class="form_guide_gray">질문 내용을 입력해주세요</div>' +
-        '            </div>' +
-        '            <div class="col-md-1">' +
-        '                <div class="btn btn-outline-danger  btn-delete" onclick="javascript:delete_question('+next_num+');">- 삭제</div>' +
-        '            </div>' +
-        '            <div class="form-group col-md-12">' +
-        '                <label for="input_question'+next_num+'">답변</label>' +
-        '                <input type="text" name="answer[]"  class="form-control" id="input_answer'+next_num+'">' +
-        '                <div class="form_guide_gray">질문에 대한 답변을 입력해주세요</div>' +
-        '            </div>'+
-        '</div>'
-    );
+
+    if(write_type=='modify'){
+
+        $.ajax({
+            type: "POST",
+            url: '/program/add_qna/',
+            data: { program_id:program_id},
+            success: function (data) {
+                var res = JSON.parse(data);
+                switch (res){
+                    case 'auth':
+                        alert('본인 프로그램에만 추가할 수 있습니다.');
+                        break;
+                    default:
+                        console.log(res);
+                        var qna_id = res;
+                        $('#question_wrap').append(
+                            '<div class="form-row question_add" id="question_'+next_num+'" data-qna-option-id="'+qna_id+'">' +
+                            '<div class="form-group col-md-11">' +
+                            '                <label for="input_question'+next_num+'">질문</label>' +
+                            '                <input type="text" name="question['+qna_id+']"  class="form-control" id="input_question'+next_num+'">' +
+                            '                <div class="form_guide_gray">질문 내용을 입력해주세요</div>' +
+                            '            </div>' +
+                            '            <div class="col-md-1">' +
+                            '                <div class="btn btn-outline-danger  btn-delete" onclick="javascript:delete_question('+next_num+');">- 삭제</div>' +
+                            '            </div>' +
+                            '            <div class="form-group col-md-12">' +
+                            '                <label for="input_question'+next_num+'">답변</label>' +
+                            '                <input type="text" name="answer['+qna_id+']"  class="form-control" id="input_answer'+next_num+'">' +
+                            '                <div class="form_guide_gray">질문에 대한 답변을 입력해주세요</div>' +
+                            '            </div>'+
+                            '</div>'
+                        );
+                        break;
+                }
+                //
+            },
+            error : function (jqXHR, errorType, error) {
+                console.log(errorType + ": " + error);
+            }
+        });
+
+    }else{
+        $('#question_wrap').append(
+            '<div class="form-row question_add" id="question_'+next_num+'">' +
+            '<div class="form-group col-md-11">' +
+            '                <label for="input_question'+next_num+'">질문</label>' +
+            '                <input type="text" name="input_question[]"  class="form-control" id="input_question'+next_num+'">' +
+            '                <div class="form_guide_gray">질문 내용을 입력해주세요</div>' +
+            '            </div>' +
+            '            <div class="col-md-1">' +
+            '                <div class="btn btn-outline-danger  btn-delete" onclick="javascript:delete_question('+next_num+');">- 삭제</div>' +
+            '            </div>' +
+            '            <div class="form-group col-md-12">' +
+            '                <label for="input_question'+next_num+'">답변</label>' +
+            '                <input type="text" name="input_answer[]"  class="form-control" id="input_answer'+next_num+'">' +
+            '                <div class="form_guide_gray">질문에 대한 답변을 입력해주세요</div>' +
+            '            </div>'+
+            '</div>'
+        );
+    }
+
 }
 
 function delete_question(option_num) {
@@ -392,15 +590,41 @@ function delete_question(option_num) {
     var write_type = $('#write_type').val();
     var alert_text = null;
     if(write_type=='modify'){
+        var pqna_id =$('#question_'+option_num).data('questionOptionId');
         alert_text = ' 확인 버튼을 누르시면 데이터베이스에서도 바로 삭제되고 복구가 불가능합니다.';
         var program_id = $('#program_id').val();
     }
     var answer= confirm('이 옵션을 삭제하시겠습니까?'+alert_text);
     if(answer){
 
-        if(write_type=='modify') {
-            var question_id =$('#question_'+option_num).data('questionOptionId');
+        if(write_type=='modify'){
+
+            $.ajax({
+                type: "POST",
+                url: '/program/delete_qna/',
+                data: { pqna_id:pqna_id, program_id:program_id},
+                success: function (data) {
+                    var res = JSON.parse(data);
+                    switch (res){
+                        case 'auth':
+                            alert('본인 프로그램의 질답만 삭제할 수 있습니다.');
+                            break;
+
+                        case 'done':
+                            alert('삭제되었습니다.');
+                            break;
+                        default:
+                            alert('에러가 발생했습니다.');
+                            break;
+                    }
+                    //
+                },
+                error : function (jqXHR, errorType, error) {
+                    console.log(errorType + ": " + error);
+                }
+            });
         }
+
         $('#question_'+option_num).remove();
 
         //번호 지정 새로하기
@@ -429,37 +653,6 @@ function delete_question(option_num) {
             console.log(key+': '+$(this).attr('id'));
 
 
-            if(write_type=='modify'){
-                if(question_id){//있으면 db에서 삭제
-
-                    $.ajax({
-                        type: "POST",
-                        url: '/program/delete_question/',
-                        data: { question_id:question_id, program_id:program_id},
-                        success: function (data) {
-                            var res = JSON.parse(data);
-                            switch (res){
-                                case 'auth':
-                                    alert('본인 프로그램의 질답만 삭제할 수 있습니다.');
-                                    break;
-
-                                case 'done':
-                                    alert('삭제되었습니다.');
-                                    break;
-                                default:
-                                    alert('에러가 발생했습니다.');
-                                    break;
-                            }
-                            //
-                        },
-                        error : function (jqXHR, errorType, error) {
-                            console.log(errorType + ": " + error);
-                        }
-                    });
-                }
-
-
-            }
         });
     }else{
         return false;

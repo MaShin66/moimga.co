@@ -19,11 +19,11 @@ if($result['status']=='on'){
         <input type="text" name="title" value="<?=$result['title']?>">
     </div>
     <div class="">
-프로그램 검색
-        <input type="text" name="program_title" id="program_title" value="<?=$result['program_title']?>">
+팀 검색
+        <input type="text" name="team_title" id="team_title" value="<?=$result['team_title']?>">
 
-        <input type="hidden" name="program_id" id="program_id" value="<?=$result['program_id']?>"><br>
-        <div class="btn btn-outline-secondary" onclick="search_program()">검색하기</div>
+        <input type="hidden" name="team_id" id="team_id" value="<?=$result['team_id']?>"><br>
+        <div class="btn btn-outline-secondary" onclick="search_team()">검색하기</div>
         <div class="" id="search_list">
 
 
