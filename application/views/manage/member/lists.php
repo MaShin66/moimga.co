@@ -24,8 +24,8 @@
                     <div class="fci_title">
                         <a href="/manage/member/detail/<?=$result_list['team_member_id']?>"><?=$result_list['realname']?></a>
 
-                        <span><?=$result['set_date']?></span>
-                        <span><?=$result['email']?></span>
+                        <span><?=$result_list['set_date']?></span>
+                        <span><?=$result_list['email']?></span>
                     </div>
                 </div>
 

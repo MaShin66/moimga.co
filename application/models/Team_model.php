@@ -11,6 +11,7 @@ class Team_model extends CI_Model
 
     function load_team($type = '', $offset = '', $limit = '', $search_query){
         $this->db->select('team.*, users.nickname');
+
         $this->db->join('users','users.id = team.user_id');
 
         if($search_query['crt_date']==null){
@@ -18,10 +19,15 @@ class Team_model extends CI_Model
         }else{
             $this->db->order_by('crt_date',$search_query['crt_date']);
         }
+
+        if(!is_null($search_query['user_id'])){
+            $this->db->where('team.user_id',$search_query['user_id']);
+        }
+
         if(!is_null($search_query['status'])){
-            $this->db->order_by('status',$search_query['status']);
+            $this->db->where('status',$search_query['status']);
         }else{
-            $this->db->order_by('status','on');
+            $this->db->where('status','on');
         }
 
         if($search_query['search']!=null){
@@ -40,8 +46,9 @@ class Team_model extends CI_Model
             $result = $query -> num_rows();
         } else {
             $result = $query -> result_array();
-
         }
+        //내 포지션도 써야하는데..
+
         return $result;
     }
 
@@ -230,6 +237,68 @@ class Team_model extends CI_Model
         $this->db->query($sql);
 
         return $team_blog_id;
+    }
+
+    //내가 멤버로 있는것과 동시에 출력하기..
+    function load_assigned_team($type = '', $offset = '', $limit = '', $search_query){
+        //감동적 ㅠㅠㅠ
+        $this->db->select('team.*, ANY_VALUE(team.team_id),users.nickname, ANY_VALUE(team_member.user_id) as member_user_id');
+        $this->db->join('team','team.team_id = team_member.team_id');
+        $this->db->join('users','users.id = team.user_id');
+
+        if($search_query['crt_date']==null){
+            $this->db->order_by('crt_date','desc');
+        }else{
+            $this->db->order_by('crt_date',$search_query['crt_date']);
+        }
+
+        if(!is_null($search_query['user_id'])){ // 둘다 가져온다
+            $this->db->where('team_member.user_id',$search_query['user_id']);
+            $this->db->or_where('team.user_id',$search_query['user_id']);
+        }
+
+        if(!is_null($search_query['status'])){
+            $this->db->where('status',$search_query['status']);
+        }else{
+            $this->db->where('status','on');
+        }
+
+        if($search_query['search']!=null){
+
+            $name_query = '(team.name like "%'.$search_query['search'].'%" or users.nickname like "%'.$search_query['search'].'%" or team.contents like "%'.$search_query['search'].'%" or team.title like "%'.$search_query['search'].'%")';
+            $this->db->where($name_query);
+
+        }
+        if ($limit != '' || $offset != '') {
+            $this->db->limit($limit, $offset);
+        }
+
+        $this->db->group_by('team_id');
+        $query = $this->db->get('team_member');
+
+        if ($type == 'count') {
+            $result = $query -> num_rows();
+        } else {
+            $result = $query -> result_array();
+            foreach ($result as $key=>$value){
+                if($value['user_id']==$search_query['user_id']){
+                    $result[$key]['position'] = 'representative';
+                }else{
+
+                    $result[$key]['position'] = 'member';
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    function update_team_hit($team_id){ // sql 로만 해야한다니..
+
+        $sql = "UPDATE team SET hit = hit + 1 WHERE team_id = ".$team_id ;
+        $this->db->query($sql);
+
+        return $team_id;
     }
 
 

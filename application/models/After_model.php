@@ -60,6 +60,10 @@ class After_model extends CI_Model
         if(!is_null($search_query['team_id'])){
             $this->db->where('after.team_id', $search_query['team_id']); //아예 고정
         }
+
+        if(!is_null($search_query['user_id'])){
+            $this->db->where('after.user_id', $search_query['user_id']); //아예 고정
+        }
         if(!is_null($search_query['search'])){
             //*팀 이름, 팀 title,  프로그램 title, 후기 쓴 사람, 후기 내용//*/
 

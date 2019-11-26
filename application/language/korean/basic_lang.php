@@ -1,6 +1,15 @@
 <?php
 
 /*basic*/
+
+$lang['on']='공개';
+$lang['off']='비공개';
+$lang['fin']='종료';
+
+$lang['representative']='대표';
+$lang['member']='멤버';
+
+
 $lang['currency']='원';
 $lang['year']='년';
 $lang['month']='월';

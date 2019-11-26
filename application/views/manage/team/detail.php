@@ -5,7 +5,18 @@
 여기에 팀 정보가..
 
 <h3>기본 정보</h3>
-    <a href="/manage/team/delete/<?=$team_info['team_id']?>" class="btn btn-outline-danger btn-delete">팀 삭제</a>
+<?php if($team_info['position']=='representative'||$team_info['position']=='admin'){?>
+
+    <div class="">
+        <form action="/manage/team/delete/" method="post">
+            <input type="hidden" name="team_id" value="<?=$team_info['team_id']?>">
+            <input type="submit"  class="btn btn-outline-danger btn-delete" value="팀 삭제">
+        </form>
+    </div>
+
+<?php }?>
+
+
 <div class="">
     팀을 삭제하시면 ..
     <ul>
@@ -14,6 +25,30 @@
     </ul>
     신중하게 사용해라 어ㅉㅓ구 저쩌구..
 </div>
+
+<div class="">
+    상태: <?=$this->lang->line($team_info['status'])?>
+</div>
+
+<div class="">
+    <form action="/manage/team/status/" method="post">
+        <input type="hidden" name="team_id" value="<?=$team_info['team_id']?>">
+
+        <?php if($team_info['status']=='on'){?>
+
+            <input type="hidden" name="status" value="off">
+            <input type="submit"  class="btn btn-outline-secondary btn-off" value="비공개로 변경">
+
+        <?php }else if($team_info['status']=='off'){?>
+
+            <input type="hidden" name="status" value="on">
+            <input type="submit"  class="btn btn-outline-secondary btn-on" value="공개로 변경">
+
+        <?php }?>
+    </form>
+</div>
+
+
 <h3>프로그램</h3>
 <a href="/@<?=$team_info['url']?>/program/upload" class="btn btn-outline-primary">프로그램 만들기</a>
 
@@ -37,7 +72,7 @@
         </div>
     <?php }else{
         foreach ($member_list as $key=>$item){?>
-            <li><a href="/manage/member/detail/<?=$item['member_id']?>"><?=$item['realname']?></a></li>
+            <li><a href="/manage/member/detail/<?=$item['team_member_id']?>"><?=$item['realname']?></a></li>
 
         <?php }
     }?>

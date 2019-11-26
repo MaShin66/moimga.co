@@ -364,17 +364,21 @@ class Auth extends MY_Controller
     function find_gen_user($team_id){
 
         $email = $this->input->post('email');
-        $result = $this-> user_model ->check_gen_email($email); // user table 에서 해당 아이디로 있는지 없는지 확인 + 레벨이 5가 아닌 (모임장이 아닌) 사람들
+        $user_id = $this-> user_model ->check_gen_email($email); // user table 에서 해당 아이디로 있는지 없는지 확인 + 레벨이 5가 아닌 (모임장이 아닌) 사람들
 
         //이미 지정되어있는지 확인하기 .
-        if($result!=0){ //지정할 수 있는 상태인데
-            $dup_result = $this->member_model->check_dup_member($result,$team_id);
-            if($dup_result>0){ //이미 있는경우에
-                $result = -1;
+        if($user_id>0){ //지정할 수 있는 상태인데
+            $result = $this->member_model->check_dup_member($user_id,$team_id);
+
+            if($result>0){ //이미 있는경우에
+                $user_id = -1;
+            }else if($result==-2){
+                $user_id = -2;
             }
         }
 
-        echo $result;
+
+        echo $user_id; //$user_id
     }
 
     function kakao_login(){

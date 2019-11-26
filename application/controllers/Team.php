@@ -22,7 +22,7 @@ class Team extends MY_Controller {
     }
 
 
-    function lists(){
+    function lists(){ //너는 그냥 이거 써  != manage team_list() (load_assigned_team)
 
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
@@ -42,6 +42,7 @@ class Team extends MY_Controller {
             $search_query = array(
                 'crt_date' => '',
                 'search'=>null,
+                'user_id'=>null,
                 'status'=>'on',
             );
 
@@ -52,6 +53,8 @@ class Team extends MY_Controller {
             $search_query = array(
                 'crt_date' => $sort_date,
                 'search' => $sort_search,
+
+                'user_id'=>null,
                 'status'=>'on', //무조건 공개
             );
 
@@ -139,6 +142,7 @@ class Team extends MY_Controller {
             }else{ //새로 쓰기
                 $data['thumb_url'] = '/www/thumbs/team/basic.jpg'; //새로쓸때는 이렇게..
                 $data['subscribe_count'] = 0;
+                $data['hit'] = 0;
                 $data['crt_date'] = date('Y-m-d H:i:s');
                 $team_id = $this->team_model->insert_team($data);
 
@@ -157,7 +161,7 @@ class Team extends MY_Controller {
 
 
             //다 끝나면 redirect
-            redirect('team/@'.$url);
+            redirect('/@'.$url);
         }else{ //없으면 글쓰기 화면
 
             if($type=='modify'){
@@ -183,28 +187,6 @@ class Team extends MY_Controller {
 
     }
 
-//
-//    function info($url_name){ // moim 인포
-//
-//        $status = $this->data['status'];
-//        $user_id = $this->data['user_id'];
-//        $level = $this->data['level'];
-//        $alarm_cnt = $this->data['alarm'];
-//        $user_data = array(
-//            'status' => $status,
-//            'user_id' => $user_id,
-//            'username' =>$this->data['username'],
-//            'level' => $level,
-//            'alarm' =>$alarm_cnt
-//        );
-//        $team_info = $this->team_model->get_team_info_by_url($url_name); //이것도 중복될 수 없으니까 unique 임
-//        $app_list['open'] = $this->application_model->load_team_application($team_info['team_id'],1);
-//        $app_list['close'] = $this->application_model->load_team_application($team_info['team_id'],0);
-//        //지원서 목록 출력
-//        $this->layout->view('/team/info', array('user'=>$user_data,'team_info'=>$team_info,'app_list'=>$app_list));
-//
-//
-//    }
 
     function view($url){ 
 
@@ -231,6 +213,7 @@ class Team extends MY_Controller {
         $at_url = $this->uri->segment(1); //@가 붙은 url
         $programs = $this->program_model->load_program('','',4,$search_query);
         $team_blog = $this->team_model->load_team_blog('','',4,$search_query);
+        $this->team_model->update_team_hit($team_info['team_id']);
         $this->layout->view('/team/view', array('user'=>$user_data,'team_info'=>$team_info,
             'team_blog'=>$team_blog,'programs'=>$programs,'at_url'=>$at_url));
 

@@ -101,7 +101,7 @@ class User_model extends CI_Model
     }
 
     function check_gen_email($email){
-        $this->db->where('level !=',5); //레벨이 5면 추가 안됨..
+//        $this->db->where('level !=',5); //레벨이 5면 추가 안됨.. //레벨에 상관없이
         $this->db->where('email',$email);
         $query = $this->db->get('users');
         $data = $query->row();

@@ -41,6 +41,7 @@ class After extends MY_Controller
                 'search'=>null,
                 'team_id'=>null,
                 'status'=>'on',
+                'user_id'=>null,
             );
 
         }else{
@@ -53,6 +54,7 @@ class After extends MY_Controller
                 'search' => $sort_search,
                 'team_id'=>$sort_team_id,
                 'status'=>'on',
+                'user_id'=>null,
             );
 
         }

@@ -22,11 +22,13 @@ class Manage extends Manage_Controller {
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
         $level = $this->data['level'];
+        $alarm_cnt = $this->data['alarm'];
         $user_data = array(
             'status' => $status,
             'user_id' => $user_id,
             'username' =>$this->data['username'],
             'level' => $level,
+            'alarm' =>$alarm_cnt
         );
 
         switch ($type){
@@ -35,6 +37,10 @@ class Manage extends Manage_Controller {
                 break;
             case 'detail':
                 $this->_team_detail($team_id,$user_data);
+                break;
+
+            case 'status':
+                $this->_team_status($user_data);
                 break;
 
             case 'delete':
@@ -47,7 +53,7 @@ class Manage extends Manage_Controller {
         }
     }
 
-    function _team_lists($user_data){
+    function _team_lists($user_data){ //manage 의 list는 기본 team_list 와 다르다
 
         $search = $this->uri->segment(6);
         $team_id = $this->uri->segment(4);
@@ -56,7 +62,9 @@ class Manage extends Manage_Controller {
             $search_query = array(
                 'crt_date' => '',
                 'search' => '',
-                'team'=>$team_id
+                'status'=>null,
+//                'team'=>$team_id, 이게 왜있지.?
+                'user_id'=>$user_data['user_id'],
             );
 
         }else{
@@ -66,7 +74,9 @@ class Manage extends Manage_Controller {
             $search_query = array(
                 'crt_date' => $sort_date,
                 'search' => $sort_search,
-                'team'=>$team_id
+                'status'=>null,
+//                'team'=>$team_id,
+                'user_id'=>$user_data['user_id'],
             );
 
         }
@@ -75,12 +85,12 @@ class Manage extends Manage_Controller {
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
         $config['base_url'] = '/manage/team/lists'; // 페이징 주소
-        $config['total_rows'] = $this -> team_model -> load_team('count','','',$search_query); // 게시물 전체 개수
+        $config['total_rows'] = $this -> team_model -> load_assigned_team('count','','',$search_query); // 게시물 전체 개수
 
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 5; // 페이지 번호가 위치한 세그먼트
         $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
-        $config = $this->_pagination_config($config);
+        $config = pagination_config($config);
         // 페이지네이션 초기화
         $this->pagination->initialize($config);
         // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
@@ -97,7 +107,7 @@ class Manage extends Manage_Controller {
 
         $limit = $config['per_page'];
 
-        $data['result'] = $this->team_model->load_team('', $start, $limit, $search_query);
+        $data['result'] = $this->team_model->load_assigned_team('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
         $this->layout->view('manage/team/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
@@ -148,18 +158,10 @@ class Manage extends Manage_Controller {
 
     function _team_detail($team_id,$user_data){ //detail - 정보
 
-        $status = $this->data['status'];
-        $user_id = $this->data['user_id'];
-        $level = $this->data['level'];
-        $user_data = array(
-            'status' => $status,
-            'user_id' => $user_id,
-            'username' =>$this->data['username'],
-            'level' => $level,
-        );
         $team_info = $this->team_model->get_team_info($team_id);
 
-        if($team_info['user_id']!=$user_id||$level<9){ //관리자이거나 본인만 지울 수 있다.
+        $auth = $this->_is_auth('team',$team_id, $user_data['user_id']);
+        if($auth<3){
 
             $search_query = array( //둘다 동일한 search_query
                 'crt_date' => '',
@@ -167,12 +169,14 @@ class Manage extends Manage_Controller {
                 'user_id'=>null,
                 'status'=>null, //무조건 공개
                 'team_id'=>$team_id,
+                'user_id'=>null,//load_after 때문에
             );
 //            $app_list = $this->application_model->load_team_application($team_info['team_id']);
             $member_list = $this->member_model->load_team_member('','','',$search_query);
             $program_list =  $this->program_model->load_program('','','',$search_query);
             $blog_list =  $this->team_model->load_team_blog('','','',$search_query);
             $after_list =  $this->after_model->load_after('','','',$search_query);
+            $team_info['position'] = auth_code_to_text($auth);
             $this->layout->view('manage/team/detail', array('user'=>$user_data,'team_info'=>$team_info,
                 'blog_list'=>$blog_list,'member_list'=>$member_list,'program_list'=>$program_list,'after_list'=>$after_list));
 
@@ -181,21 +185,42 @@ class Manage extends Manage_Controller {
         }
     }
 
+
+    function _team_status($user_data){ //detail - 정보
+
+        $team_id = $this->input->post('team_id');
+        $status = $this->input->post('status');
+        //권한 확인
+        $auth = $this->_is_auth('team',$team_id, $user_data['user_id']); //권한 확인하는 함수
+
+        if($auth<3){ //권한이 있으면 상태 변경
+            $status_data = array(
+                'status'=>$status,
+            );
+            $this->team_model->update_team($team_id,$status_data);
+            alert('이 팀이 '.$this->lang->line($status).'로 변경되었습니다.');
+
+        }else{
+
+            alert('권한이 없습니다. [MD01]');
+        }
+
+    }
+
+
     function _team_delete($team_id,$user_data){ //unique_id!=moin_id
         $user_id = $this->data['user_id'];
         $level = $this->data['level'];
+        //권한 확인
+        $auth = $this->_is_auth('team',$team_id, $user_data['user_id']); //권한 확인하는 함수
 
-        $team_info = $this->team_model->get_team_info($team_id);
+        if($auth<2){
 
-        //이 전에 조건을 걸어둬야겠지.. 제출된 게 있으면 절대 못함
-        if($team_info['user_id']!=$user_id&&$level<9){ //관리자이거나 본인만 지울 수 있다.
-
-             $this->team_model->delete_team($team_id);
-             alert('삭제되었습니다.','/manage');
+            $this->team_model->delete_team($team_id);
+            alert('삭제되었습니다.','/manage');
         }else{
             alert('권한이 없습니다. [MD02]');
-        }
-
+        } //권한이 있으면 상태 변경
 
     }
 
@@ -265,7 +290,7 @@ class Manage extends Manage_Controller {
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
         $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
-        $config = $this->_pagination_config($config);
+        $config = pagination_config($config);
         // 페이지네이션 초기화
         $this->pagination->initialize($config);
         // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
@@ -434,7 +459,7 @@ class Manage extends Manage_Controller {
 
     }
 
-    
+
     function _app_forms($application_id,$user_data){ //forms - 폼 목록
         $app_info = $this->application_model->get_application_info($application_id);
 
@@ -514,7 +539,7 @@ class Manage extends Manage_Controller {
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
         $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
-        $config = $this->_pagination_config($config);
+        $config = pagination_config($config);
         // 페이지네이션 초기화
         $this->pagination->initialize($config);
         // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
@@ -632,6 +657,7 @@ class Manage extends Manage_Controller {
                 'status'=>'on', //after의 status는 'on'인것만 보여줌: 사용자가 after의 권한을 갖고있다.
                 'search' => null,
                 'team_id'=>$team_id, //기본은 team_id임 로 남긴다..
+                'user_id'=>null,
             );
 
         }else{
@@ -643,6 +669,7 @@ class Manage extends Manage_Controller {
                 'status'=>'on',//after의 status는 'on'인것만 보여줌: 사용자가 after의 권한을 갖고있다.
                 'search' => $sort_search,
                 'team_id'=>$team_id,
+                'user_id'=>null,
             );
 
         }
@@ -656,7 +683,7 @@ class Manage extends Manage_Controller {
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 5; // 페이지 번호가 위치한 세그먼트
         $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
-        $config = $this->_pagination_config($config);
+        $config = pagination_config($config);
         // 페이지네이션 초기화
         $this->pagination->initialize($config);
         // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
@@ -793,6 +820,10 @@ class Manage extends Manage_Controller {
                 $this->_program_detail($program_id,$user_data);
                 break;
 
+            case 'status': //view
+                $this->_program_status($user_data);
+                break;
+
             case 'delete':
                 $this->_program_delete($program_id,$user_data);
                 break;
@@ -839,7 +870,7 @@ class Manage extends Manage_Controller {
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 6; // 페이지 번호가 위치한 세그먼트
         $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
-        $config = $this->_pagination_config($config);
+        $config = pagination_config($config);
         // 페이지네이션 초기화
         $this->pagination->initialize($config);
         // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
@@ -921,9 +952,12 @@ class Manage extends Manage_Controller {
 
     function _program_detail($program_id,$user_data){ //detail - 정보
 
-        $program_info = $this->program_model->get_program_info($program_id);
+        $auth = $this->_is_auth('program',$program_id, $user_data['user_id']); //권한 확인하는 함수
 
-        if($program_info['user_id']!=$user_data['user_id']||$user_data['level']<9){ //관리자이거나 본인만 지울 수 있다.
+        if($auth<3) {
+
+            $program_info = $this->program_model->get_program_info($program_id);
+            $program_info['position'] = auth_code_to_text($auth);
 
             if($program_info!=null){
                 $this->layout->view('manage/program/detail', array('user'=>$user_data,'program_info'=>$program_info));
@@ -931,27 +965,45 @@ class Manage extends Manage_Controller {
                 alert('후기가 없습니다.');
             }
 
-
         }else{
             alert('권한이 없습니다. [MD01]');
         }
+    }
+
+    function _program_status($user_data){ //detail - 정보
+
+        $program_id = $this->input->post('program_id');
+        $status = $this->input->post('status');
+        //권한 확인
+        $auth = $this->_is_auth('program',$program_id, $user_data['user_id']); //권한 확인하는 함수
+
+        if($auth<3){ //권한이 있으면 상태 변경
+            $status_data = array(
+                'status'=>$status,
+            );
+            $this->program_model->update_program($program_id,$status_data);
+            alert('이 프로그램이 '.$this->lang->line($status).'로 변경되었습니다.');
+
+        }else{
+
+            alert('권한이 없습니다. [MD01]');
+        }
+
     }
 
     function _program_delete($program_id,$user_data){ //unique_id!=moin_id
 
         $program_info = $this->program_model->get_program_info($program_id);
 
-        //이 전에 조건을 걸어둬야겠지.. 제출된 게 있으면 절대 못함
-        if($program_info['user_id']!=$user_data['user_id']||$user_data['level']<9){ //관리자이거나 본인만 지울 수 있다.
+        $auth = $this->_is_auth('program',$program_id, $user_data['user_id']); //권한 확인하는 함수
 
-            $this->program_model->delete_program($program_id);
-
-            alert('후기가 삭제되었습니다. 지원서 페이지로 이동합니다.','/manage/application/detail/'.$program_info['application_id']);
+        if($auth<2){ //권한이 있으면 삭제 (admin, boss)
+            $this->program_model->delete_program($program_id); //정말 삭제할지 .. 아니면 남겨둘 것인지..이건 진짜 삭제한다.
+            alert('프로그램이 삭제되었습니다. 팀 관리 페이지로 이동합니다.','/manage/team/detail/'.$program_info['team_id']);
 
         }else{
             alert('권한이 없습니다. [MD02]');
         }
-
 
     }
     function blog($type='lists', $blog_id=null){
@@ -1023,7 +1075,7 @@ class Manage extends Manage_Controller {
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 5; // 페이지 번호가 위치한 세그먼트
         $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
-        $config = $this->_pagination_config($config);
+        $config = pagination_config($config);
         // 페이지네이션 초기화
         $this->pagination->initialize($config);
         // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
@@ -1135,13 +1187,14 @@ class Manage extends Manage_Controller {
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
         $level = $this->data['level'];
+        $alarm_cnt = $this->data['alarm'];
         $user_data = array(
             'status' => $status,
             'user_id' => $user_id,
             'username' =>$this->data['username'],
             'level' => $level,
+            'alarm' =>$alarm_cnt
         );
-
         switch ($type){
             case 'upload':
                 $team_id = $this->input->get('team');
@@ -1152,25 +1205,27 @@ class Manage extends Manage_Controller {
                 break;
 
             case 'delete':
-                $this->_member_delete($member_id,$user_data);
+                $this->_member_delete($user_data);
                 break;
             default:
             case 'lists':
                 //$member_id == $team_id임..
-                $this->_member_lists($member_id,$user_data);
+                $this->_member_lists($user_data);
                 break;
         }
     }
 
-    function _member_lists($team_id, $user_data){
+    function _member_lists( $user_data){
 
-        $search = $this->uri->segment(5);
+        $search = $this->uri->segment(6);
+        $team_id = $this->uri->segment(4);
 
         if($search==null){
             $search_query = array(
                 'crt_date' => '',
                 'search' => '',
-                'user_id'=>$user_data['user_id']
+                'user_id' => null,
+                'team_id'=>$team_id
             );
 
         }else{
@@ -1180,7 +1235,8 @@ class Manage extends Manage_Controller {
             $search_query = array(
                 'crt_date' => $sort_date,
                 'search' => $sort_search,
-                'user_id'=>$user_data['user_id']
+                'user_id' => null,
+                'team_id'=>$team_id
             );
 
         }
@@ -1192,16 +1248,16 @@ class Manage extends Manage_Controller {
         $config['total_rows'] = $this -> member_model -> load_team_member('count','','',$search_query); // 게시물 전체 개수
 
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
-        $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
+        $config['uri_segment'] = 5; // 페이지 번호가 위치한 세그먼트
         $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
-        $config = $this->_pagination_config($config);
+        $config = pagination_config($config);
         // 페이지네이션 초기화
         $this->pagination->initialize($config);
         // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
         $data['pagination'] = $this->pagination->create_links();
 
         // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
-        $page = $this->uri->segment(4);
+        $page = $this->uri->segment(5);
         if($page==null){
             $start=0;
         }else{
@@ -1230,7 +1286,7 @@ class Manage extends Manage_Controller {
                 'team_id'=>$form_data['team_id'],
                 'crt_date'=>date('Y-m-d H:i:s')
             );
-            $this->member_model->insert_member($member_info);
+            $this->member_model->insert_team_member($member_info);
             //이 사람의 레벨을 3으로 지정
             $level_info = array(
                 'level'=>3,
@@ -1257,7 +1313,7 @@ class Manage extends Manage_Controller {
             'username' =>$this->data['username'],
             'level' => $level,
         );
-        $member_info = $this->member_model->get_member_info($member_id);
+        $member_info = $this->member_model->get_team_member_info($member_id);
         $team_info =   $this->team_model->get_team_info($member_info['team_id']);
 
         if($team_info['user_id']!=$user_id||$level<9){ //관리자이거나 본인만 지울 수 있다.
@@ -1268,22 +1324,21 @@ class Manage extends Manage_Controller {
         }
     }
 
-    function _member_delete($member_id,$user_data){ //unique_id!=moin_id
-        $user_id = $this->data['user_id'];
-        $level = $this->data['level'];
+    function _member_delete($user_data){ //unique_id!=moin_id
 
-        $member_info = $this->member_model->get_member_info($member_id);
+        $member_id = $this->input->post('member_id');
+        $member_info = $this->member_model->get_team_member_info($member_id);
         $team_info =   $this->team_model->get_team_info($member_info['team_id']);
 
         //이 전에 조건을 걸어둬야겠지.. 제출된 게 있으면 절대 못함
-        if($team_info['user_id']!=$user_id||$level<9){ //관리자이거나 본인만 지울 수 있다.
+        if($team_info['user_id']!=$user_data['user_id']||$user_data['level']<9){ //관리자이거나 본인만 지울 수 있다.
 
-            $this->member_model->delete_member($member_id);
-            //이 사람의 레벨을 1 로 지정
-            $level_info = array(
-                'level'=>1,
-            );
-            $this->user_model->update_users($member_info['user_id'],$level_info);
+            $this->member_model->delete_team_member($member_id);
+//            //이 사람의 레벨을 1 로 지정
+//            $level_info = array(
+//                'level'=>1,
+//            );
+//            $this->user_model->update_users($member_info['user_id'],$level_info);
 
             alert('팀 멤버에서 제외되었습니다.','/manage/member/lists/'.$team_info['team_id']);
         }else{
@@ -1321,5 +1376,49 @@ class Manage extends Manage_Controller {
         return $config;
     }
 
+    function _is_auth($type='team',$unique_id, $user_id){
+
+        /*code
+        0: admin
+        1: boss
+        2: member
+        3: nothing
+        */
+
+        $code = 3;
+        //이 user의 level 가져오기
+        // 이 user가 type 에서 어떤 권한이 있는지 가져오기
+        $level = $this->user_model->get_user_level($user_id);
+
+        if($type=='program'){
+            $program_info =$this->program_model->get_program_info($unique_id);
+            $team_id = $program_info['team_id'];
+        }else{ //team
+            $team_id = $unique_id;
+        }
+        $team_info = $this->team_model->get_team_info($team_id);
+        $team_member = $this->member_model->is_team_member($team_id, $user_id);
+
+        //return if t or f;
+
+        if($team_info['user_id']==$user_id){ //team boss? 1
+
+            $code = 1;
+        }else if($team_member){ // true or false ( //or team member?? 1)
+            $code = 2;
+
+        }else{ //or nothing 0
+            $code = 3;
+
+        }
+
+        if($level==9){ //super users always return true;
+            $code = 0;
+
+        }
+        return $code;
+
+
+    }
 
 }

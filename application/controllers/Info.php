@@ -108,7 +108,7 @@ class Info extends MY_Controller {
         $config['per_page'] = 13; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 3; // 페이지 번호가 위치한 세그먼트
         $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
-        $config = $this->_pagination_config($config);
+        $config = pagination_config($config);
         // 페이지네이션 초기화
         $this->pagination->initialize($config);
         // 페이지 링크를 생성하여 view에서 사용하 변수에 할당

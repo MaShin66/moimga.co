@@ -46,6 +46,7 @@
             <th><?=$this->lang->line('number')?></th>
             <th>팀 이름</th>
             <th>고유 주소</th>
+            <th>권한</th>
             <th>상세</th>
         </tr>
         </thead>
@@ -62,6 +63,7 @@
                 <td><?=$result['team_id']?></td>
                 <td><a href="/manage/team/detail/<?=$result['team_id']?>"><?=$result['title']?></a></td>
                 <td><?=$result['url']?></td>
+                <td><?=$this->lang->line($result['position'])?></td>
                 <td><a href="/manage/team/detail/<?=$result['team_id']?>" class="btn btn-sm btn-outline-action">보기</a></td>
 
             </tr>

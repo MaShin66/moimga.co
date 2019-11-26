@@ -285,7 +285,7 @@ class Program extends MY_Controller {
 
 
                 //다 끝나면 redirect
-               redirect('/@'.$at_url.'/program/'.$program_id);
+               redirect('/'.$at_url.'/program/'.$program_id);
             }else{ //없으면 글쓰기 화면
 
                 if($type=='modify'){

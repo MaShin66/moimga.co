@@ -29,21 +29,27 @@ function check_gen_email(){
         data: {email: email},
         success: function (data) {
             data = Number(data);
-            if(data==-1){
-                //이미 지정 되어있음
+            switch (data){
+                case -1:
 
-                document.getElementById('email_dup_error').innerHTML =  email+'은 이미 팀 멤버로 지정되어있습니다. 다른 이메일을 입력해주세요.';
-                document.getElementById('user_id').value= null;
+                    document.getElementById('email_dup_error').innerHTML =  email+'은 이미 팀 멤버로 지정되어있습니다. 다른 이메일을 입력해주세요.';
+                    document.getElementById('user_id').value= null;
+                    break;
+                case -2:
 
-            }else if(data==0){ //검색 결과 없음
+                    document.getElementById('email_dup_error').innerHTML =  email+'은 팀 대표입니다. 팀 대표는 이미 팀 멤버입니다.';
+                    document.getElementById('user_id').value= null;
+                    break;
+                case 0:
 
-                document.getElementById('email_dup_error').innerHTML =  email+'로 가입된 사용자를 찾을 수 없습니다.';
-                document.getElementById('user_id').value= null;
-            }else{ //지정 가능
-
-                console.log(data);
-                document.getElementById('email_dup_error').innerHTML = email+'을 팀 멤버로 지정합니다.';
-                document.getElementById('user_id').value =data;
+                    document.getElementById('email_dup_error').innerHTML =  email+'로 가입된 사용자를 찾을 수 없습니다.';
+                    document.getElementById('user_id').value= null;
+                    break;
+                default:
+                    console.log(data);
+                    document.getElementById('email_dup_error').innerHTML = email+'을 팀 멤버로 지정합니다.';
+                    document.getElementById('user_id').value =data;
+                    break;
             }
 
         },

@@ -27,6 +27,7 @@ class Search extends MY_Controller { //통합검색
             $search_query = array(
                 'crt_date' => null,
                 'search' => $search,
+                'user_id'=>null, //because of load_after
                 'status'=>'on', //무조건 공개
             );
 
