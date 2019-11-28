@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-    <?php $location = $this->uri->segment(2);?>
+    <?php $location = $this->uri->segment(2);
+    $section = $this->uri->segment(3);?>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
@@ -10,8 +10,7 @@
     
     <link rel="icon" href="../www/img/favicon.ico">
     <title>moimga - admin</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-    
+    <link rel="stylesheet" href="/www/css/bootstrap.css">
     <link rel="stylesheet" href="/www/css/overlay.css">
     <link rel="stylesheet" href="/www/css/admin.css">
     <link rel="stylesheet" href="/www/css/basic.css">
@@ -55,29 +54,34 @@
 
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto" style="font-family: 'Noto Sans KR', sans-serif;">
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link " href="#" role="button" id="dropdownTeam" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        팀
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownTeam">
+                        <a class="dropdown-item <?php if($location=='team'&&($section==null||$section=='list')){echo 'active';}?>" href="/admin/team">목록</a>
+                        <a class="dropdown-item <?php if($location=='deleted'&&($section==null||$section=='list')){echo 'active';}?>" href="/admin/deleted">삭제됨</a>
+                        <a class="dropdown-item <?php if($location=='team_blog'&&($section==null||$section=='list')){echo 'active';}?>" href="/admin/team_blog">블로그</a>
+                        <a class="dropdown-item <?php if($location=='member'&&($section==null||$section=='list')){echo 'active';}?>" href="/admin/member">멤버</a>
+                    </div>
+                </li>
+
                 <li class="nav-item">
-                    <a class="nav-link <?php if($location=='product'){echo 'active';}?>" href="/admin/product">Product</a>
+                    <a class="nav-link <?php if($location=='program'){echo 'active';}?>" href="/admin/program">프로그램</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php if($location=='demand'){echo 'active';}?>" href="/admin/demand">수요조사</a>
+                    <a class="nav-link <?php if($location=='after'){echo 'active';}?>" href="/admin/after">후기</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php if($location=='users'){echo 'active';}?>" href="/admin/users">회원</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php if($location=='comment'){echo 'active';}?>" href="/admin/comment">댓글</a>
+                    <a class="nav-link <?php if($location=='faq'){echo 'active';}?>" href="/admin/faq">FAQ</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php if($location=='payment'){echo 'active';}?>" href="/admin/payment">결제</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?php if($location=='pending'){echo 'active';}?>" href="/admin/pending">미결제</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?php if($location=='refund_find'){echo 'active';}?>" href="/admin/refund_find">계좌 찾기</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/fin_prod">지난 상품 종료</a>
+                    <a class="nav-link <?php if($location=='blog'){echo 'active';}?>" href="/admin/blog">블로그</a>
                 </li>
             </ul>
 
@@ -118,9 +122,12 @@
     </div>
 
 </nav>
-<div class="<?php if($location=='product'){echo 'container-fluid';}else{echo 'container';}?>">
+<div class="container">
 
-    <?= $content_for_layout ?>
+    <div class="cont-padding">
+        <?= $content_for_layout ?>
+    </div>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -130,14 +137,5 @@
 
 <script src="/www/js/overlay.js"></script>
 <script src="/www/js/admin.js"></script>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-110455223-1"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'UA-110455223-1');
-</script>
 </body>
 </html>

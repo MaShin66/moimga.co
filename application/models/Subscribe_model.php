@@ -96,5 +96,10 @@ class Subscribe_model extends CI_Model
 
         return $result;
     }
+    function delete_team_subscribe($team_id){
+
+        $this->db->where('team_id', $team_id);
+        $this->db->delete('subscribe');
+    }
 
 }

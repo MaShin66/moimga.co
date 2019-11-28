@@ -122,12 +122,18 @@ class Member_model extends CI_Model
         $this->db->where('user_id' ,$user_id);
         $this->db->where('team_id' ,$team_id);
         $query = $this->db->get('team_member');
-        $result = $query -> num_rows();
-        if($result>0){
-            return true;
+        $result = $query -> row_array();
+        if($query -> num_rows()>0){
+            return $result['type']; //대표 1, 일반 멤버 2
         }else{
-
-            return false;
+            return 3; //일반
         }
     }
+
+    function delete_team_member_by_team_id($team_id){
+
+        $this->db->where('team_id', $team_id);
+        $this->db->delete('team_member');
+    }
+
 }

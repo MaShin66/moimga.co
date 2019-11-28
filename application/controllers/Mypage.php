@@ -17,11 +17,15 @@ class Mypage extends MY_Controller {
 
     public function index()
     {
+       $this->info();
+    }
+ 
+    function info(){//내 정보
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
         $level = $this->data['level'];
         $alarm_cnt = $this->data['alarm'];
-        
+
         $user_data = array(
             'status' => $status,
             'user_id' => $user_id,
@@ -30,10 +34,6 @@ class Mypage extends MY_Controller {
             'alarm' =>$alarm_cnt,
         );
         $this->layout->view('mypage/main', array('user'=>$user_data));
-    }
- 
-    function info(){//내 정보
-        
     }
     function after($type='lists', $after_id=null){ //내가 쓴 후기
 

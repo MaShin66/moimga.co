@@ -93,6 +93,16 @@ class Program_model extends CI_Model
         $this->db->delete('program');
         return 0;
     }
+
+    function load_program_by_team_id($team_id){
+
+        $this->db->where('team_id' ,$team_id);
+
+        $query = $this->db->get('program');
+        $result = $query -> result_array();
+
+        return $result;
+    }
     
     /*qualify*/
 
@@ -243,4 +253,10 @@ class Program_model extends CI_Model
         return 0;
     }
 
+    function delete_program_option_by_program_id($table='date',$program_id){
+        //이 프로그램 아이디로 작성된 것들 모두 지운다
+        $this->db->where('program_id' ,$program_id);
+        $this->db->delete('program_'.$table);
+        return 0;
+    }
 }

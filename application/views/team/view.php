@@ -19,9 +19,26 @@
 </div>
 
 <h2>프로그램</h2>
-<ol>
-    <?php foreach ($programs as $key=>$item){?>
-        <li>  <a href="/<?=$at_url?>/program/detail/<?=$item['program_id']?>"><?=$item['title']?></a></li>
-    <?php }?>
-</ol>
+
+<?php if(count($programs)==0){?>
+    아직 프로그램이 없습니다.
+<?php }else{?>
+    <ol>
+        <?php foreach ($programs as $key=>$item){?>
+            <li>  <a href="/<?=$at_url?>/program/<?=$item['program_id']?>"><?=$item['title']?></a></li>
+        <?php }?>
+    </ol>
+<?php }?>
+
+
 <h2>블로그</h2>
+
+<?php if(count($team_blog)==0){?>
+    아직 포스트가 없습니다.
+<?php }else{?>
+    <ol>
+        <?php foreach ($team_blog as $b_key=>$b_item){?>
+            <li>  <a href="/<?=$at_url?>/blog/<?=$b_item['team_blog_id']?>"><?=$b_item['title']?></a></li>
+        <?php }?>
+    </ol>
+<?php }?>

@@ -1,6 +1,22 @@
 .cont-padding{
     padding-top: 80px;
 }
+
+.open .dropdown-menu{
+    display: block;
+}
+.dropdown-item.active, .dropdown-item:active {
+    color: #fff;
+    text-decoration: none;
+    background-color: var(--greenblue);
+}
+.dropdown-item:hover, .dropdown-item:focus {
+    color: #fff;
+    text-decoration: none;
+    background-color: var(--greenblue);
+}
+
+
 /* Breakpoint XS */
 @media (max-width: 575px)
 {

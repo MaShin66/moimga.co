@@ -219,6 +219,14 @@ class Team_model extends CI_Model
         $this->db->delete('team_blog');
         return 0;
     }
+    function delete_team_blog_by_team_id($team_id){
+
+        //삭제
+        $this->db->where('team_id' ,$team_id);
+        $this->db->delete('team_blog');
+        return 0;
+    }
+
 
     function is_opened($team_blog_id){
 
@@ -301,5 +309,53 @@ class Team_model extends CI_Model
         return $team_id;
     }
 
+    /*delete 삭제되면 복사돼서 여기로 옮긴다*/
+
+    function get_team_delete_info($team_delete_id)
+    {//특정 필드에서 $team_delete_id값이 이것 인것을 찾아라.
+        $this->db->where('team_delete_id' ,$team_delete_id);
+
+        $query = $this->db->get('team_delete');
+        $result = $query -> row_array();
+
+        return $result;
+    }
+
+
+    function get_team_delete_info_by_url($url)
+    {
+        $this->db->where('url' ,$url);
+
+        $query = $this->db->get('team_delete');
+        $result = $query -> row_array();
+
+        return $result;
+    }
+    function insert_team_delete($data) {
+
+        $result = $this->db->insert('team_delete', $data);
+
+        $latest_id = $this->db->insert_id();
+        return $latest_id;
+    }
+
+    function update_team_delete($team_delete_id,$data){ // 전체 invoice null로 초기화
+
+        $this->db->set( $data);
+        $this->db->where('team_delete_id' ,$team_delete_id);
+        $this->db->update('team_delete');
+
+        return 0;
+    }
+
+    function delete_team_delete($team_delete_id){
+
+        //삭제
+        $this->db->where('team_delete_id' ,$team_delete_id);
+        $this->db->delete('team_delete');
+        return 0;
+    }
+
+    
 
 }

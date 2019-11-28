@@ -57,7 +57,7 @@ $route['@(:any)/blog'] = 'team/blog/list';
 $route['@(:any)/blog/list'] = 'team/blog/list';
 $route['@(:any)/blog/(:num)'] = 'team/blog/view/$1';
 $route['@(:any)/blog/upload'] = 'team/blog/upload'; //새로올리기
-$route['@(:any)/blog/upload/(:num)'] = 'team/blog/upload';
+$route['@(:any)/blog/upload/(:num)'] = 'team/blog/upload'; //수정
 
 /*team/program*/ // upload를 제외하고 정보 보는건 다 일로 온다..
 
@@ -65,6 +65,7 @@ $route['@(:any)/program'] = 'program/lists';
 $route['@(:any)/program/list'] = 'program/lists';
 $route['@(:any)/program/(:num)'] = 'program/view/$1';
 $route['@(:any)/program/upload'] = 'program/upload';
+$route['@(:any)/program/upload/(:num)'] = 'program/upload'; //수정
 
 //일반 program/lists는 상관없음.. 근데 앞에 team url이 붙는 경우에만 search query 에서 team_id찾는다.
 

@@ -98,7 +98,7 @@ class Program extends MY_Controller {
 
 //        print_r($data['result'] );
 
-        $this->layout->view('program/list', array('user'=>$user_data,'data'=>$data));
+        $this->layout->view('program/list', array('user'=>$user_data,'data'=>$data,'search_query'=>$search_query));
     }
 
     function view(){ //route때문에 .. 무조건 3으로 들어와야함
@@ -231,7 +231,7 @@ class Program extends MY_Controller {
                     $time_array = $this->input->post('input_event_time');
 
 
-                    $data['like_count'] = 0;
+                    $data['heart_count'] = 0;
                     $data['crt_date'] = date('Y-m-d H:i:s');
                     $program_id = $this->program_model->insert_program($data);
                     //qualify
@@ -285,11 +285,11 @@ class Program extends MY_Controller {
 
 
                 //다 끝나면 redirect
-               redirect('/'.$at_url.'/program/'.$program_id);
+               redirect($at_url.'/program/'.$program_id);
             }else{ //없으면 글쓰기 화면
 
                 if($type=='modify'){
-                    $program_id = $this->uri->segment(3);
+                    $program_id = $this->uri->segment(4);
                     $data = $this->program_model->get_program_info($program_id); //이것도 중복될 수 없으니까 unique 임
 
                     $team_info = $this->team_model->get_team_info($data['team_id']);
@@ -330,7 +330,6 @@ class Program extends MY_Controller {
 
     }
 
-
     function heart($program_id){ //좋아요
         $user_id = $this->data['user_id'];
         if($user_id==0){
@@ -338,28 +337,28 @@ class Program extends MY_Controller {
         }else{
             //이미 내가 누른지 확인
             $today = date('Y-m-d H:i:s');
-            $like_info = $this->like_model->get_program_like_user($user_id, $program_id);
+            $heart_info = $this->heart_model->get_program_heart_user($user_id, $program_id);
             $program_info = $this->program_model->get_program_info($program_id); //detail_product
 
-            if($like_info==null){ // 안눌렀으면 새로 쓰기
-                $like_data = array(
+            if($heart_info==null){ // 안눌렀으면 새로 쓰기
+                $heart_data = array(
                     'program_id'=>$program_id,
                     'user_id'=>$user_id,
                     'crt_date'=>$today,
                 );
-                $this->like_model->insert_program_like($like_data);
+                $this->heart_model->insert_program_heart($heart_data);
 
-                $detail_data['like'] =$program_info['like']+1;
-                $this->program_model->update_moim($program_info['program_id'], $detail_data);
+                $detail_data['heart_count'] =$program_info['heart_count']+1;
+                $this->program_model->update_program($program_info['program_id'], $detail_data);
 
                 echo 'done';
 
             }else{// 눌렀으면 누른거 취소
                 //이 episode bookmark에 하나 빼기
-                $this->like_model->delete_program_like($like_info['program_like_id']); //취소 - 아예 지운다
+                $this->heart_model->delete_program_heart($heart_info['program_heart_id']); //취소 - 아예 지운다
 
-                $detail_data['like'] =$program_info['like']-1;
-                $this->program_model->update_moim($program_info['program_id'], $detail_data);
+                $detail_data['heart_count'] =$program_info['heart_count']-1;
+                $this->program_model->update_program($program_info['program_id'], $detail_data);
 
                 echo 'cancel';
             }

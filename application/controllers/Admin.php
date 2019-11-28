@@ -18,8 +18,6 @@ class Admin extends Admin_Controller
 
     public function index()
     {
-
-
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
         $level = $this->data['level'];
@@ -28,22 +26,10 @@ class Admin extends Admin_Controller
             'user_id' => $user_id,
             'level' => $level
         );
-        $search_query = array(
-            'crt_date'=>null
-        );
-        $user_cnt = $this->User_model->load_users('count','','',$search_query);
-
-        $all_transaction = $this->Admin_model->get_transaction();
-        $this_week = $this->Admin_model->this_week_trans();
-        $sum = 0;
-        foreach ($this_week as $key=> $item){
-            $sum = $item['result_sum'] + $sum;
-        }
-
-        $this->layout->view('admin/main', array('user' => $user_data,'all_transaction'=>$all_transaction,'this_week'=>$sum,'user_cnt'=>$user_cnt));
+        $this->layout->view('admin/main', array('user' => $user_data));
     }
 
-    function product($type = 'list',$prod_id=null)
+    function faq($type = 'list',$faq_id=null)
     {
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
@@ -65,13 +51,13 @@ class Admin extends Admin_Controller
 
                 switch ($type){
                     case 'list':
-                        $this->_prod_list('list',$user_data);
+                        $this->_faq_list('list',$user_data);
                         break;
                     case 'view':
-                        $this->_prod_view($prod_id);
+                        $this->_faq_view($faq_id);
                         break;
                     default:
-                        $this->_prod_list();
+                        $this->_faq_list();
                         break;
                 }
 
@@ -79,7 +65,8 @@ class Admin extends Admin_Controller
 
         }
     }
-    function demand($type = 'list',$demand_id=null)
+
+    function deleted($type = 'list',$deleted_id=null)
     {
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
@@ -101,13 +88,249 @@ class Admin extends Admin_Controller
 
                 switch ($type){
                     case 'list':
-                        $this->_demand_list('list',$user_data);
+                        $this->_deleted_list($user_data);
                         break;
                     case 'view':
-                        $this->_demand_view($demand_id);
+                        $this->_deleted_view($deleted_id);
+                        break;
+                    case 'recover':
+                        $this->_deleted_recover($deleted_id);
                         break;
                     default:
-                        $this->_demand_list();
+                        $this->_deleted_list($user_data);
+                        break;
+                }
+
+            }
+
+        }
+    }
+    function team($type = 'list',$team_id=null)
+    {
+        $status = $this->data['status'];
+        $user_id = $this->data['user_id'];
+        $level = $this->data['level'];
+        $user_data = array(
+            'status' => $status,
+            'user_id' => $user_id,
+            'level' => $level
+        );
+
+        if (!$this->tank_auth->is_logged_in()) {
+
+            show_error('접근이 불가능합니다.');
+        } else {
+            if ($user_data['level'] != 9) {
+
+                show_error('접근이 불가능합니다.');
+            } else {
+
+                switch ($type){
+                    case 'list':
+                        $this->_team_list($user_data);
+                        break;
+                    case 'detail':
+                        $this->_team_detail($team_id,$user_data);
+                        break;
+                    case 'delete':
+                        $this->_team_delete($user_data);
+                        break;
+                    default:
+                        $this->_team_list($user_data);
+                        break;
+                }
+
+            }
+
+        }
+    }
+
+
+    function _team_list($user_data){
+
+        $search = $this->uri->segment(5);
+
+        if($search==null){
+            $search_query = array(
+                'search' => null,
+                'status' =>null,
+                'crt_date' =>null,
+                'user_id' => null,
+            );
+
+        }else{
+            $sort_date = $this->input->get('crt_date');
+            $sort_search = $this->input->get('search');
+            $sort_status = $this->input->get('status');
+            $sort_user_id = $this->input->get('user_id');
+
+            $search_query = array(
+                'search' => $sort_search,
+                'status' => $sort_status,
+                'crt_date' => $sort_date,
+                'user_id' => $sort_user_id,
+            );
+
+        }
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&user_id='.$search_query['user_id'].'&status='.$search_query['status'];
+
+        $this->load->library('pagination');
+        $config['suffix'] = $q_string;
+        $config['base_url'] = '/admin/team/lists'; // 페이징 주소
+        $config['total_rows'] = $this -> team_model -> load_team('count','','',$search_query); // 게시물 전체 개수
+
+        $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
+        $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
+        $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
+        $config = pagination_config($config);
+        // 페이지네이션 초기화
+        $this->pagination->initialize($config);
+        // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
+        $data['pagination'] = $this->pagination->create_links();
+
+        // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
+        $page = $this->uri->segment(4);
+
+
+        if($page==null){
+            $start=0;
+        }else{
+            $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
+        }
+
+        $limit = $config['per_page'];
+
+        $data['result'] = $this->team_model->load_team('', $start, $limit, $search_query);
+        $data['total']=$config['total_rows'];
+
+        $this->layout->view('admin/team/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+
+    }
+    function _team_detail($team_id, $user_data){
+        $team_info = $this->team_model->get_team_info($team_id);
+
+        $search_query = array( //둘다 동일한 search_query
+            'crt_date' => '',
+            'search'=>null,
+            'user_id'=>null,//load_after 때문에
+            'status'=>null, //무조건 공개
+            'team_id'=>$team_id,
+        );
+        $member_list = $this->member_model->load_team_member('','','',$search_query);
+        $program_list =  $this->program_model->load_program('','','',$search_query);
+        $blog_list =  $this->team_model->load_team_blog('','','',$search_query);
+        $after_list =  $this->after_model->load_after('','','',$search_query);
+        $this->layout->view('admin/team/detail', array('user'=>$user_data,'team_info'=>$team_info,
+            'blog_list'=>$blog_list,'member_list'=>$member_list,'program_list'=>$program_list,'after_list'=>$after_list));
+    }
+
+    function _team_delete(){
+        $team_id = $this->input->post('team_id');
+        //team 복사해서 team_delete에 넣어둔다
+
+        $team_info = $this->team_model->get_team_info($team_id);
+        $delete_info = array(
+            'org_team_id'=>$team_info['team_id'],
+            'user_id'=>$team_info['user_id'],
+            'url'=>$team_info['url'],
+            'name'=>$team_info['name'],
+            'title'=>$team_info['title'],
+            'contents'=>$team_info['contents'],
+            'thumb_url'=>$team_info['thumb_url'],
+            'crt_date'=>$team_info['crt_date'],
+            'delete_date'=>date('Y-m-d H:i:s'),
+
+        );
+        $this->team_model->insert_team_delete($delete_info); //삭제된 팀 여기로 복사
+
+        //구독
+        $this->subscribe_model->delete_team_subscribe($team_id); //구독도 지운다 //team id로 구독된 '모든' 구독 전부 지운다
+
+        //팀멤버 삭제
+        $this->member_model->delete_team_member_by_team_id($team_id);
+
+        //팀 포스트 삭제
+        $this->team_model->delete_team_blog_by_team_id($team_id);
+
+        //하위 프로그램 삭제
+        //프로그램 아이디 가져온다 ..
+
+        $program_list = $this->program_model->load_program_by_team_id($team_id);
+        foreach ($program_list as $key=>$item){
+            $this->_program_delete_unit($item['program_id']);
+        }
+        $this->team_model->delete_team($team_id); //진짜 삭제 (관리자에서 복구 가능)
+
+        alert('팀과 하위 프로그램이 삭제되었습니다.','/admin/team');
+
+    }
+    function blog($type = 'list',$blog_id=null)
+    {
+        $status = $this->data['status'];
+        $user_id = $this->data['user_id'];
+        $level = $this->data['level'];
+        $user_data = array(
+            'status' => $status,
+            'user_id' => $user_id,
+            'level' => $level
+        );
+
+        if (!$this->tank_auth->is_logged_in()) {
+
+            show_error('접근이 불가능합니다.');
+        } else {
+            if ($user_data['level'] != 9) {
+
+                show_error('접근이 불가능합니다.');
+            } else {
+
+                switch ($type){
+                    case 'list':
+                        $this->_blog_list('list',$user_data);
+                        break;
+                    case 'upload':
+                        $this->_blog_upload($blog_id);
+                        break;
+                    case 'view':
+                        $this->_blog_view($blog_id);
+                        break;
+                    default:
+                        $this->_blog_list();
+                        break;
+                }
+
+            }
+
+        }
+    }
+
+
+    function team_blog($type = 'list',$team_blog_id=null)
+    {
+        $status = $this->data['status'];
+        $user_id = $this->data['user_id'];
+        $level = $this->data['level'];
+        $user_data = array(
+            'status' => $status,
+            'user_id' => $user_id,
+            'level' => $level
+        );
+
+        if (!$this->tank_auth->is_logged_in()) {
+
+            show_error('접근이 불가능합니다.');
+        } else {
+            if ($user_data['level'] != 9) {
+
+                show_error('접근이 불가능합니다.');
+            } else {
+
+                switch ($type){
+                    case 'list':
+                        $this->_team_blog_list('list',$user_data);
+                        break;
+                    default:
+                        $this->_team_blog_list();
                         break;
                 }
 
@@ -154,7 +377,7 @@ class Admin extends Admin_Controller
 
         }
     }
-    function payment($payment_type='card',$type = 'list',$payment_id=null)
+    function program($type = 'list',$program_id=null)
     {
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
@@ -176,49 +399,13 @@ class Admin extends Admin_Controller
 
                 switch ($type){
                     case 'list':
-                        $this->_payment_list($payment_type,'list',$user_data);
+                        $this->_program_list('list',$user_data);
                         break;
                     case 'view':
-                        $this->_payment_view($payment_id);
+                        $this->_program_view($program_id);
                         break;
                     default:
-                        $this->_payment_list();
-                        break;
-                }
-
-            }
-
-        }
-    }
-    function comment($type = 'list',$comment_id=null)
-    {
-        $status = $this->data['status'];
-        $user_id = $this->data['user_id'];
-        $level = $this->data['level'];
-        $user_data = array(
-            'status' => $status,
-            'user_id' => $user_id,
-            'level' => $level
-        );
-
-        if (!$this->tank_auth->is_logged_in()) {
-
-            show_error('접근이 불가능합니다.');
-        } else {
-            if ($user_data['level'] != 9) {
-
-                show_error('접근이 불가능합니다.');
-            } else {
-
-                switch ($type){
-                    case 'list':
-                        $this->_comment_list('list',$user_data);
-                        break;
-                    case 'view':
-                        $this->_comment_view($comment_id);
-                        break;
-                    default:
-                        $this->_comment_list();
+                        $this->_program_list();
                         break;
                 }
 
@@ -227,59 +414,14 @@ class Admin extends Admin_Controller
         }
     }
 
-    function pricing()
-    {
-
-        $status = $this->data['status'];
-        $user_id = $this->data['user_id'];
-        $level = $this->data['level'];
-        $user_data = array(
-            'status' => $status,
-            'user_id' => $user_id,
-            'level' => $level
-        );
-        $result = $this->Admin_model->load_pricing();
-        $this->layout->view('admin/pricing', array('user' => $user_data, 'result' => $result));
-
-    }
-
-    function pricing_ok($pricing_id, $user_id)
-    {
-        $this->Admin_model->set_pricing($pricing_id, $user_id); //설정
-
-        $result = $this->Admin_model->get_pricing($pricing_id);
-
-
-        $this->_send_email('pricing_ok', $result['email'], $result, '[moimga] 상품 관리자 안내 메일');
-
-        alert('완료되었습니다.');
-
-    }
-    function refund($prod_id = null)
-    {
-
-        $status = $this->data['status'];
-        $user_id = $this->data['user_id'];
-        $level = $this->data['level'];
-        $user_data = array(
-            'status' => $status,
-            'user_id' => $user_id,
-            'level' => $level
-        );
-        $result = $this->Admin_model->load_refund($prod_id);
-        $form_info = $this->Form_model->load_form($prod_id);
-        $this->layout->view('admin/refund', array('user' => $user_data, 'result' => $result, 'form_info' => $form_info));
-
-    }
-
-    function down_refund($prod_id = null)
+    function down_refund($faq_id = null)
         {
 
-            $prod_info = $this->Prod_model->get_product_info($prod_id);
+            $faq_info = $this->Prod_model->get_faq_info($faq_id);
 
-            $result = $this->Admin_model->load_refund($prod_id);
+            $result = $this->admin_model->load_refund($faq_id);
 
-            $file_name = urldecode($prod_info['title']);
+            $file_name = urldecode($faq_info['title']);
             //[moimga] 상품이름_폼.xls
             header("Content-type: application/vnd.ms-excel; charset=utf-8");
             header("Expires: 0");
@@ -325,14 +467,14 @@ class Admin extends Admin_Controller
 
         }
 
-    function download_xls($prod_id){
+    function download_xls($faq_id){
 
-        $prod_info = $this->Prod_model->get_product_info($prod_id);
-        $products_name = explode(',',$prod_info['product_name']);
+        $faq_info = $this->Prod_model->get_faq_info($faq_id);
+        $faqs_name = explode(',',$faq_info['faq_name']);
 
-        $delivery_name= explode(',',$prod_info['del_name']);
+        $delivery_name= explode(',',$faq_info['del_name']);
 
-        $file_name = urldecode($prod_info['title']);
+        $file_name = urldecode($faq_info['title']);
         //[moimga] 상품이름_폼.xls
         header( "Content-type: application/vnd.ms-excel; charset=euc-kr" );
         header( "Expires: 0" );
@@ -340,7 +482,7 @@ class Admin extends Admin_Controller
         header( "Pragma: no-cache" );
         header( "Content-Disposition: attachment; filename='moimga_".$file_name."_폼.xls" );
 
-        $list = $this->Form_model->load_form($prod_id); //정보
+        $list = $this->Form_model->load_form($faq_id); //정보
 
         echo "
     <table>
@@ -355,7 +497,7 @@ class Admin extends Admin_Controller
         
         <td>주소</td>
         <td>우편번호</td>";
-        foreach ($products_name as $key => $name_item){
+        foreach ($faqs_name as $key => $name_item){
             echo "<td>".$name_item."</td>";
         }
 
@@ -364,7 +506,7 @@ class Admin extends Admin_Controller
         <td>메모</td>
         
         <td>타입</td>";
-        if($prod_info['online']==1){
+        if($faq_info['online']==1){
             echo '<td>배송 방법</td>';
         }
         echo "<td>상태</td>
@@ -459,37 +601,7 @@ class Admin extends Admin_Controller
 
 
     }
-
-    function delete_import_form($import_prod_id)
-    {
-        $this->Form_model->delete_import_form($import_prod_id);
-    }
-
-    function transaction($prod_id=null){
-
-
-        $status = $this->data['status'];
-        $user_id = $this->data['user_id'];
-        $level = $this->data['level'];
-        $user_data = array(
-            'status' => $status,
-            'user_id' => $user_id,
-            'level' => $level
-        );
-        if($prod_id==null){ //null이면 모든 상품
-
-            $result = $this->Admin_model->get_transaction();
-        }else{ //아니면 전체 거래액
-
-            $result = $this->Admin_model->get_transaction($prod_id);
-        }
-
-
-        $this->layout->view('admin/transaction', array('user' => $user_data, 'result' => $result));
-
-    }
-
-function _prod_list($type='list',$user_data){
+function _faq_list($type='list',$user_data){
 
     $search = $this->uri->segment(4);
 
@@ -518,8 +630,8 @@ function _prod_list($type='list',$user_data){
 
     $this->load->library('pagination');
     $config['suffix'] = $q_string;
-    $config['base_url'] = '/admin/product/' . $type; // 페이징 주소
-    $config['total_rows'] = $this -> Admin_model -> load_prod('count','','',$search_query); // 게시물 전체 개수
+    $config['base_url'] = '/admin/faq/' . $type; // 페이징 주소
+    $config['total_rows'] = $this -> admin_model -> load_prod('count','','',$search_query); // 게시물 전체 개수
 
     $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
     $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
@@ -542,71 +654,12 @@ function _prod_list($type='list',$user_data){
 
     $limit = $config['per_page'];
 
-    $data['result'] = $this->Admin_model->load_prod('', $start, $limit, $search_query);
+    $data['result'] = $this->admin_model->load_prod('', $start, $limit, $search_query);
     $data['total']=$config['total_rows'];
 
-    $this->layout->view('admin/product', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+    $this->layout->view('admin/faq', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
 
 }
-
-    function _demand_list($type='list',$user_data){
-
-        $search = $this->uri->segment(4);
-
-        if($search==null){
-            $search_query = array(
-                'crt_date' => '',
-                'type' => 'all',
-                'search' => '',
-            );
-
-        }else{
-            $sort_date = $this->input->get('crt_date');
-            $sort_search = $this->input->get('search');
-            $sort_type = $this->input->get('type');
-
-            $search_query = array(
-                'crt_date' => $sort_date,
-                'search' => $sort_search,
-                'type' => $sort_type,
-            );
-
-        }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&type='.$search_query['type'];
-
-        $this->load->library('pagination');
-        $config['suffix'] = $q_string;
-        $config['base_url'] = '/admin/demand/' . $type; // 페이징 주소
-        $config['total_rows'] = $this -> Admin_model -> load_demand('count','','',$search_query); // 게시물 전체 개수
-
-        $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
-        $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
-        $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
-        $config = pagination_config($config);
-        // 페이지네이션 초기화
-        $this->pagination->initialize($config);
-        // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
-        $data['pagination'] = $this->pagination->create_links();
-
-        // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
-        $page = $this->uri->segment(4);
-
-
-        if($page==null){
-            $start=0;
-        }else{
-
-            $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
-        }
-
-        $limit = $config['per_page'];
-
-        $data['result'] = $this->Admin_model->load_demand('', $start, $limit, $search_query);
-        $data['total']=$config['total_rows'];
-
-        $this->layout->view('admin/demand', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
-
-    }
 
     function _payment_list($payment_type='card',$type='list',$user_data=null){
 
@@ -636,7 +689,7 @@ function _prod_list($type='list',$user_data){
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
         $config['base_url'] = '/admin/payment/' . $type; // 페이징 주소
-        $config['total_rows'] = $this -> Admin_model -> load_payment('count',$payment_type,'','',$search_query); // 게시물 전체 개수
+        $config['total_rows'] = $this -> admin_model -> load_payment('count',$payment_type,'','',$search_query); // 게시물 전체 개수
 
         $config['per_page'] = 13; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
@@ -660,7 +713,7 @@ function _prod_list($type='list',$user_data){
 
         $limit = $config['per_page'];
 
-        $data['result'] = $this->Admin_model->load_payment('',$payment_type, $start, $limit, $search_query);
+        $data['result'] = $this->admin_model->load_payment('',$payment_type, $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
         $this->layout->view('admin/payment', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
@@ -694,7 +747,7 @@ function _prod_list($type='list',$user_data){
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
         $config['base_url'] = '/admin/users/' . $type; // 페이징 주소
-        $config['total_rows'] = $this -> Admin_model -> load_users('count','','',$search_query); // 게시물 전체 개수
+        $config['total_rows'] = $this -> admin_model -> load_users('count','','',$search_query); // 게시물 전체 개수
 
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
@@ -718,7 +771,7 @@ function _prod_list($type='list',$user_data){
 
         $limit = $config['per_page'];
 
-        $data['result'] = $this->Admin_model->load_users('', $start, $limit, $search_query);
+        $data['result'] = $this->admin_model->load_users('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
         $this->layout->view('admin/users/list', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
@@ -726,7 +779,7 @@ function _prod_list($type='list',$user_data){
     }
     function _user_view($user_id,$user_data){
 
-        $result = $this->User_model->get_user_info($user_id);
+        $result = $this->user_model->get_user_info($user_id);
         $this->layout->view('admin/users/view', array('user' => $user_data, 'result' => $result));
     }
 
@@ -736,11 +789,11 @@ function _prod_list($type='list',$user_data){
         if($level==0){
             $level = null;
         }
-        $this->User_model->set_user_level($user_id,$level);
+        $this->user_model->set_user_level($user_id,$level);
 
         alert('선택하신 회원의 레벨이 '.$level.'로 조정되었습니다.');
     }
-    function _comment_list($type='list',$user_data){
+    function _program_list($type='list',$user_data){
 
         $search = $this->uri->segment(4);
 
@@ -767,8 +820,8 @@ function _prod_list($type='list',$user_data){
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
-        $config['base_url'] = '/admin/comment/' . $type; // 페이징 주소
-        $config['total_rows'] = $this -> Admin_model -> load_comment('count','','',$search_query); // 게시물 전체 개수
+        $config['base_url'] = '/admin/program/' . $type; // 페이징 주소
+        $config['total_rows'] = $this -> admin_model -> load_program('count','','',$search_query); // 게시물 전체 개수
 
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
@@ -791,64 +844,15 @@ function _prod_list($type='list',$user_data){
 
         $limit = $config['per_page'];
 
-        $data['result'] = $this->Admin_model->load_comment('', $start, $limit, $search_query);
+        $data['result'] = $this->admin_model->load_program('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
-        $this->layout->view('admin/comment', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+        $this->layout->view('admin/program', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
 
     }
 
-    function _pagination_config($config){
 
-        $config['first_link'] = '≪';
-        $config['first_tag_open'] = '<li class="page-item">';
-        $config['first_tag_close'] = '</li>';
-
-        $config['last_link'] = '≫';
-        $config['last_tag_open'] = '<li class="page-item">';
-        $config['last_tag_close'] = '</li>';
-
-        $config['next_link'] = '＞';
-        $config['next_tag_open'] = '<li class="page-item">';
-        $config['next_tag_close'] = '</li>';
-
-        $config['prev_link'] = '＜';
-        $config['prev_tag_open'] = '<li class="page-item">';
-        $config['prev_tag_close'] = '</li>';
-
-        $config['cur_tag_open'] = '<li class="page-item active"><a href="" class="page-link">';
-        $config['cur_tag_close'] = '</a></li>';
-
-        $config['num_tag_open'] = '<li class="page-item">';
-        $config['num_tag_close'] = '</li>';
-        $config['attributes'] = array('class' => 'page-link');
-        $config['use_page_numbers'] = TRUE;
-
-        return $config;
-    }
-
-    function refund_find(){
-        $form_id = $this->input->get('form_id');
-        $result = array();
-        if($form_id!=null){
-
-            $result = $this -> Admin_model -> get_refund_by_form_id($form_id); // 게시물 전체 개수
-
-        }
-
-        $status = $this->data['status'];
-        $user_id = $this->data['user_id'];
-        $level = $this->data['level'];
-        $user_data = array(
-            'status' => $status,
-            'user_id' => $user_id,
-            'level' => $level
-        );
-        $this->layout->view('admin/refund_find', array('user' => $user_data, 'result' => $result));
-
-    }
-
-    function pending($type = 'list',$prod_id=null)
+    function after($type = 'list',$faq_id=null)
     {
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
@@ -870,13 +874,13 @@ function _prod_list($type='list',$user_data){
 
                 switch ($type){
                     case 'list':
-                        $this->_pending_list('list',$user_data);
+                        $this->_after_list('list',$user_data);
                         break;
                     case 'view':
-                        $this->_pending_view($prod_id);
+                        $this->_after_view($faq_id);
                         break;
                     default:
-                        $this->_pending_list();
+                        $this->_after_list();
                         break;
                 }
 
@@ -885,7 +889,7 @@ function _prod_list($type='list',$user_data){
         }
     }
 
-    function _pending_list($type='list',$user_data){
+    function _after_list($type='list',$user_data){
 
         $search = $this->uri->segment(4);
 
@@ -894,7 +898,7 @@ function _prod_list($type='list',$user_data){
                 'crt_date' => '',
                 'type' => 'all',
                 'search' => '',
-                'status'=>'pending',
+                'status'=>'after',
             );
 
         }else{
@@ -906,16 +910,16 @@ function _prod_list($type='list',$user_data){
                 'crt_date' => $sort_date,
                 'search' => $sort_search,
                 'type' => $sort_type,
-                'status'=>'pending',
+                'status'=>'after',
             );
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&type='.$search_query['type'].'&status=pending';
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&type='.$search_query['type'].'&status=after';
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
-        $config['base_url'] = '/admin/pending/' . $type; // 페이징 주소
-        $config['total_rows'] = $this -> Admin_model -> load_prod('count','','',$search_query); // 게시물 전체 개수
+        $config['base_url'] = '/admin/after/' . $type; // 페이징 주소
+        $config['total_rows'] = $this -> admin_model -> load_prod('count','','',$search_query); // 게시물 전체 개수
 
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
@@ -938,79 +942,50 @@ function _prod_list($type='list',$user_data){
 
         $limit = $config['per_page'];
 
-        $data['result'] = $this->Admin_model->load_prod('', $start, $limit, $search_query);
+        $data['result'] = $this->admin_model->load_prod('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
-        $this->layout->view('admin/pending', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+        $this->layout->view('admin/after', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
 
     }
 
-    /*
-        function update_prod_username($start,$end){
-            //시작, 끝 아이디 지정해서
-            //이 번호부터 끝까지
-            //1. 해당 prod_id 있는지 확인
-            //2. 있으면  prod_username 있는지 확인
-            //3. 없으면 username을 prod_username 으로 사용하도록 함
-            for($i=$start; $i<=$end; $i++){
-                $result = $this->Admin_model->update_prod_username($i);
-                echo $result.'<br>';
-            }
+    function set_status(){
+        $status = $this->input->post('status');
+        $unique_id = $this->input->post('unique_id');
+        $type = $this->input->post('type');
 
-        }*/
-
-    /*function make_user_profile($table,$start, $end){
-        for($i=$start; $i<=$end; $i++){
-            $result = $this->Admin_model->make_user_profile($table,$i);
-            echo $result.'<br>';
+        //선택한 것을 $status로 변경해준다.
+        $status_data = array(
+            'status'=>$status,
+        );
+        switch ($type){
+            case 'program':
+                $this->program_model->update_program($unique_id,$status_data);
+                break;
+            case 'after':
+                $this->after_model->update_after($unique_id,$status_data);
+                break;
+            case 'blog':
+                $this->team_model->update_team_blog($unique_id,$status_data);
+                break;
+            default:
+            case 'team':
+                $this->team_model->update_team($unique_id,$status_data);
+                break;
         }
+
+        alert($this->lang->line($status).'로 변경되었습니다.');
+
     }
 
-    function make_payment(){
+    function _program_delete_unit($program_id){ //실제로 지우는건 여기서 한다..
+        $this->program_model->delete_program($program_id); //진짜 삭제한다.
 
-        $this->Admin_model->make_payment();
-    }*/
-    /*
-    function make_fin_payment(){
-
-        $this->Admin_model->make_fin_payement();
-    }*/
-    /*
-
-    function set_thumbs($start,$end){
-        //thumb없으면 기본 섬네일로 지정해버린다..
-        for($i=$start; $i<=$end; $i++){
-            $result = $this->Admin_model->update_thumbs($i);
-            echo $result.'<br>';
-        }
-    }*/
-
-    function set_prod_detail($start,$end){
-        for($i=$start; $i<=$end; $i++){
-            $result = $this->Admin_model->set_prod_detail($i);
-            echo $result.'<br>';
-        }
+        //options
+        $this->program_model->delete_program_option_by_program_id('date',$program_id);
+        $this->program_model->delete_program_option_by_program_id('heart',$program_id);
+        $this->program_model->delete_program_option_by_program_id('qna',$program_id);
+        $this->program_model->delete_program_option_by_program_id('qualify',$program_id);
     }
-
-    function set_payment_done($prod_id,$type=null){
-
-        $this->Admin_model->set_payment_done($prod_id,$type);
-        alert('결제처리 되었습니다.');
-    //    print_r($result);
-    }
-
-    function fin_prod(){
-        //시간 지난것들 가져와서 걔들만..
-        $this->Admin_model->fin_prod();
-        alert('시간이 지난 상품이 종료되었습니다.');
-    }
-    /*
-    function init_sns_login($start,$end){
-
-        for($i=$start; $i<=$end; $i++){
-            $result = $this->Admin_model->init_sns_login($i);
-            echo $result.'<br>';
-        }
-    }*/
 
 }

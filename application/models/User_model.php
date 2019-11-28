@@ -151,8 +151,8 @@ class User_model extends CI_Model
         $this->db->where('id', $user_id);
 
         $query = $this->db->get('users');
-        $data = $query->row();
-        return $data->level;
+        $data = $query->row_array();
+        return $data['level'];
     }
 
     function check_adult_unique($unique_id){

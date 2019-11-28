@@ -1,0 +1,21 @@
+.admin_sec_title{
+    font-weight: bold;
+    font-size: 1rem;
+}
+.table{
+    font-size: 0.8rem;
+}
+.table td{
+    font-weight: normal;
+    border-top: 1px solid #e9ecef;
+}
+.go_page{
+    color: #a61717;
+}
+
+.admin_bottom{
+    margin: 20px 0;
+}
+.admin_wrap{
+    padding: 20px 0;
+}

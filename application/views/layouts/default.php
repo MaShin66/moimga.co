@@ -126,6 +126,10 @@
                     echo 'active';
                 } ?>" href="/after" style="padding: 0.85rem 1rem;">후기</a>
             </li>
+            <form action="/search" method="get">
+                <input type="text" name="search">
+                <input type="submit" value="검색">
+            </form>
         </ul>
         <ul class="nav">
             <?php if($user['status']=='no'){?>
@@ -161,7 +165,10 @@
 <footer class="footer">
     <div class="container">
         <div class=" main_footer">
-            
+            <a href="/info/terms">이용약관</a> |
+            <a href="/info/privacy">개인정보보호정책</a> |
+            <a href="/info/faq">자주묻는질문</a>  |
+            <a href="/blog">블로그</a>
         </div>
     </div>
 
@@ -183,15 +190,21 @@
     <script type="text/javascript" src="/www/js/postcode.js"></script>
     <script type="text/javascript" src="/www/js/language.js"></script>
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-    <script type="text/javascript" src="/www/js/editor.js"></script>
+    <script type="text/javascript" src="/www/js/upload/editor.js"></script>
+    <?php if($location=='team'){?>
+    <script type="text/javascript" src="/www/js/upload/team.js"></script>
+        <?php }else{?>
+    <script type="text/javascript" src="/www/js/upload/<?= $section ?>.js"></script>
+    <?php }?>
+
 <?php }?>
 <?php if($section=='blog'||$detail=='upload'){?>
-    <script type="text/javascript" src="/www/js/team_blog.js"></script>
+    <script type="text/javascript" src="/www/js/upload/team_blog.js"></script>
 <?php }?>
 <script type="text/javascript" src="/www/js/overlay.js"></script>
 <script type="text/javascript" src="/www/js/basic.js"></script>
 
-<?php if($section!='program'&&$section!='team '){?>
+<?php if($section!='program'&&$section!='team'){?>
     <script type="text/javascript" src="/www/js/<?= $location ?>.js"></script>
 <?php }else{?>
     <script type="text/javascript" src="/www/js/<?= $section ?>.js"></script>

@@ -5,7 +5,7 @@
 여기에 팀 정보가..
 
 <h3>기본 정보</h3>
-<?php if($team_info['position']=='representative'||$team_info['position']=='admin'){?>
+<?php if($team_info['auth_code']=='1'||$team_info['auth_code']=='0'){?>
 
     <div class="">
         <form action="/manage/team/delete/" method="post">
@@ -18,12 +18,7 @@
 
 
 <div class="">
-    팀을 삭제하시면 ..
-    <ul>
-        <li>모든 지원서 삭제</li>
-        <li>사용자가 제출한 지원서 삭제</li>
-    </ul>
-    신중하게 사용해라 어ㅉㅓ구 저쩌구..
+    팀을 삭제하시면 .. 신중하게 사용해라 어ㅉㅓ구 저쩌구..
 </div>
 
 <div class="">

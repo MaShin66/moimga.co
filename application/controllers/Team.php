@@ -91,7 +91,7 @@ class Team extends MY_Controller {
         $data['result'] = $this->team_model->load_team('', $start, $limit,$search_query);
         $data['total']=$config['total_rows'];
 
-        $this->layout->view('team/list', array('user'=>$user_data,'result'=>$data));
+        $this->layout->view('team/list', array('user'=>$user_data,'result'=>$data,'search_query'=>$search_query));
     }
 
     function upload(){
@@ -146,6 +146,14 @@ class Team extends MY_Controller {
                 $data['crt_date'] = date('Y-m-d H:i:s');
                 $team_id = $this->team_model->insert_team($data);
 
+                //team_member에 나도 쓰기
+                $member_info = array(
+                    'user_id'=>$user_id,
+                    'team_id'=>$team_id,
+                    'type'=>1,
+                    'crt_date'=>date('Y-m-d H:i:s')
+                );
+                $this->member_model->insert_team_member($member_info);
             }
 
             //thumbs는 저장이 모두 끝난 후에 한다..
@@ -227,7 +235,7 @@ class Team extends MY_Controller {
         }else{
             //이미 내가 누른지 확인
             $today = date('Y-m-d H:i:s');
-            $like_info = $this->like_model->get_team_like_user($user_id, $team_id);
+            $like_info = $this->heart_model->get_team_like_user($user_id, $team_id);
             $team_info = $this->team_model->get_team_info($team_id); //detail_product
 
             if($like_info==null){ // 안눌렀으면 새로 쓰기
@@ -236,7 +244,7 @@ class Team extends MY_Controller {
                     'user_id'=>$user_id,
                     'crt_date'=>$today,
                 );
-                $this->like_model->insert_team_like($like_data);
+                $this->heart_model->insert_team_like($like_data);
 
                 $detail_data['like'] =$team_info['like']+1;
                 $this->team_model->update_moim($team_info['team_id'], $detail_data);
@@ -245,7 +253,7 @@ class Team extends MY_Controller {
 
             }else{// 눌렀으면 누른거 취소
                 //이 episode bookmark에 하나 빼기
-                $this->like_model->delete_team_like($like_info['team_like_id']); //취소 - 아예 지운다
+                $this->heart_model->delete_team_like($like_info['team_like_id']); //취소 - 아예 지운다
 
                 $detail_data['like'] =$team_info['like']-1;
                 $this->team_model->update_moim($team_info['team_id'], $detail_data);
@@ -437,8 +445,11 @@ class Team extends MY_Controller {
         }else{ //멤버 아님
             alert('해당 팀에 포스팅을 쓸 수 없습니다.','/'.$at_url);
         }
+    }
 
+    /*search*/
 
+    function search(){
 
     }
 

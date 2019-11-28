@@ -90,7 +90,7 @@ class After extends MY_Controller
         $data['result'] = $this->after_model->load_after('', $start, $limit,$search_query);
         $data['total']=$config['total_rows'];
 
-        $this->layout->view('after/list', array('user'=>$user_data,'result'=>$data));
+        $this->layout->view('after/list', array('user'=>$user_data,'result'=>$data,'search_query'=>$search_query));
     }
 
     function view($after_id){

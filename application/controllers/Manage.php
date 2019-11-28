@@ -32,9 +32,6 @@ class Manage extends Manage_Controller {
         );
 
         switch ($type){
-            case 'upload':
-                $this->_team_upload($team_id,$user_data);
-                break;
             case 'detail':
                 $this->_team_detail($team_id,$user_data);
                 break;
@@ -44,7 +41,7 @@ class Manage extends Manage_Controller {
                 break;
 
             case 'delete':
-                $this->_team_delete($team_id,$user_data);
+                $this->_team_delete($user_data);
                 break;
             default:
             case 'lists':
@@ -101,7 +98,6 @@ class Manage extends Manage_Controller {
         if($page==null){
             $start=0;
         }else{
-
             $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
         }
 
@@ -114,69 +110,23 @@ class Manage extends Manage_Controller {
 
     }
 
-    function _team_upload($team_id = null,$user_data){
-        //업로드 합시다..
-
-        $cate_list = $this->team_model->load_category();
-        if($this->input->post()){
-
-            $form_data = $this->input->post();
-            $team_info = array(
-                'user_id'=>$user_data['user_id'],
-                'title'=>$form_data['title'],
-                'url_name'=>$form_data['url_name'],
-                'category_id'=>$form_data['category_id'],
-                'description'=>$form_data['description'],
-                'district'=>$form_data['district'],
-
-            );
-            if($team_id){ //수정
-
-                $this->team_model->update_team($team_id,$team_info);
-                alert('수정되었습니다.','/team/'.$form_data['url_name']);
-            }else{//등록
-                $team_info['crt_date'] = date('Y-m-d H:i:s');
-                $this->team_model->insert_team($team_info);
-                alert('팀이 생성되었습니다.','/team/'.$form_data['url_name']);
-            }
-        }else{
-            $team_info = array(
-                'title'=>null,
-                'url_name'=>null,
-                'category_id'=>null,
-                'description'=>null,
-                'district'=>null,
-
-            );
-            if($team_id){//이거면 수정
-                $team_info =   $this->team_model->get_team_info($team_id);
-            }
-            $this->layout->view('/manage/team/upload', array('user' => $user_data,'team_info'=>$team_info,'cate_list'=>$cate_list));
-        }
-
-    }
-
     function _team_detail($team_id,$user_data){ //detail - 정보
-
         $team_info = $this->team_model->get_team_info($team_id);
 
-        $auth = $this->_is_auth('team',$team_id, $user_data['user_id']);
-        if($auth<3){
+        $team_info['auth_code'] = $this->_get_auth_code('team',$team_id, $user_data['user_id']);
+        if($team_info['auth_code']<3){
 
             $search_query = array( //둘다 동일한 search_query
                 'crt_date' => '',
                 'search'=>null,
-                'user_id'=>null,
+                'user_id'=>null,//load_after 때문에
                 'status'=>null, //무조건 공개
                 'team_id'=>$team_id,
-                'user_id'=>null,//load_after 때문에
             );
-//            $app_list = $this->application_model->load_team_application($team_info['team_id']);
             $member_list = $this->member_model->load_team_member('','','',$search_query);
             $program_list =  $this->program_model->load_program('','','',$search_query);
             $blog_list =  $this->team_model->load_team_blog('','','',$search_query);
             $after_list =  $this->after_model->load_after('','','',$search_query);
-            $team_info['position'] = auth_code_to_text($auth);
             $this->layout->view('manage/team/detail', array('user'=>$user_data,'team_info'=>$team_info,
                 'blog_list'=>$blog_list,'member_list'=>$member_list,'program_list'=>$program_list,'after_list'=>$after_list));
 
@@ -191,7 +141,7 @@ class Manage extends Manage_Controller {
         $team_id = $this->input->post('team_id');
         $status = $this->input->post('status');
         //권한 확인
-        $auth = $this->_is_auth('team',$team_id, $user_data['user_id']); //권한 확인하는 함수
+        $auth = $this->_get_auth_code('team',$team_id, $user_data['user_id']); //권한 확인하는 함수
 
         if($auth<3){ //권한이 있으면 상태 변경
             $status_data = array(
@@ -208,16 +158,52 @@ class Manage extends Manage_Controller {
     }
 
 
-    function _team_delete($team_id,$user_data){ //unique_id!=moin_id
+    function _team_delete($user_data){ //unique_id!=moin_id
+        $team_id = $this->input->post('team_id');
+
         $user_id = $this->data['user_id'];
         $level = $this->data['level'];
         //권한 확인
-        $auth = $this->_is_auth('team',$team_id, $user_data['user_id']); //권한 확인하는 함수
+        $auth = $this->_get_auth_code('team',$team_id, $user_data['user_id']); //권한 확인하는 함수
 
         if($auth<2){
 
-            $this->team_model->delete_team($team_id);
-            alert('삭제되었습니다.','/manage');
+            //team 복사해서 team_delete에 넣어둔다
+
+            $team_info = $this->team_model->get_team_info($team_id);
+            $delete_info = array(
+                'org_team_id'=>$team_info['team_id'],
+                'user_id'=>$team_info['user_id'],
+                'url'=>$team_info['url'],
+                'name'=>$team_info['name'],
+                'title'=>$team_info['title'],
+                'contents'=>$team_info['contents'],
+                'thumb_url'=>$team_info['thumbs_url'],
+                'crt_date'=>$team_info['crt_date'],
+                'delete_date'=>date('Y-m-d H:i:s'),
+
+            );
+            $this->team_model->insert_team_delete($delete_info); //삭제된 팀 여기로 복사
+
+            //구독
+            $this->subscribe_model->delete_team_subscribe($team_id); //구독도 지운다 //team id로 구독된 '모든' 구독 전부 지운다
+
+            //팀멤버 삭제
+            $this->member_model->delete_team_member_by_team_id($team_id);
+
+            //팀 포스트 삭제
+            $this->team_model->delete_team_blog_by_team_id($team_id);
+
+            //하위 프로그램 삭제
+            //프로그램 아이디 가져온다 ..
+
+            $program_list = $this->program_model->load_program_by_team_id($team_id);
+            foreach ($program_list as $key=>$item){
+                $this->_program_delete_unit($item['program_id']);
+            }
+            $this->team_model->delete_team($team_id); //진짜 삭제 (관리자에서 복구 가능)
+
+            alert('팀과 하위 프로그램이 삭제되었습니다.','/manage/team');
         }else{
             alert('권한이 없습니다. [MD02]');
         } //권한이 있으면 상태 변경
@@ -812,10 +798,6 @@ class Manage extends Manage_Controller {
         );
 
         switch ($type){
-            case 'upload':
-                $this->_program_upload($program_id,$user_data); //nl2br
-                break;
-
             case 'detail': //view
                 $this->_program_detail($program_id,$user_data);
                 break;
@@ -825,7 +807,7 @@ class Manage extends Manage_Controller {
                 break;
 
             case 'delete':
-                $this->_program_delete($program_id,$user_data);
+                $this->_program_delete($user_data);
                 break;
             default:
             case 'lists':
@@ -894,70 +876,14 @@ class Manage extends Manage_Controller {
         $this->layout->view('manage/program/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'team_info'=>$team_info));
 
     }
-
-    function _program_upload($program_id = null,$user_data){
-        //업로드 합시다..
-        $application_id = $this->input->get('app_id');
-        if($this->input->post()){
-
-            $form_data = $this->input->post();
-            if($form_data['title']){ //제목 입력하면 됨
-
-                $program_data = array(
-                    'user_id'=>$user_data['user_id'],
-                    'application_id'=>$form_data['application_id'],
-                    'title'=>$form_data['title'],
-                    'contents'=>nl2br($form_data['contents']),
-
-                );
-
-                //날짜 정보...
-
-                if($program_id){ //수정
-
-                    $redirect_url = '/manage/program/detail/'.$program_id;
-
-                    $this->program_model->update_program($program_id,$program_data);
-                    //
-                    alert('후기가 수정되었습니다.',$redirect_url);
-                }else{//등록
-                    $program_data['crt_date'] = date('Y-m-d H:i:s');
-                    $program_id = $this->program_model->insert_program($program_data);
-                    $redirect_url = '/manage/program/detail/'.$program_id;
-                    alert('후기가 입력되었습니다.',$redirect_url);
-                }
-            }else{ // team_id 없으면 생성 불가능함
-                alert('제목을 입력하세요.');
-            }
-        }else{
-
-            $app_info = null; //일단 null로 지정한다..
-            if($application_id!=null){
-                $app_info = $this->application_model->get_application_info($application_id);
-            }
-
-            $program_info = array(
-                'title'=>null,
-                'contents'=>null,
-                'application_id'=>$application_id,
-
-            );
-            if($program_id){//이거면 수정
-                $program_info =   $this->program_model->get_program_info($program_id);
-            }
-            $this->layout->view('/manage/program/upload', array('user' => $user_data,'program_info'=>$program_info,'app_info'=>$app_info));
-        }
-
-    }
-
     function _program_detail($program_id,$user_data){ //detail - 정보
 
-        $auth = $this->_is_auth('program',$program_id, $user_data['user_id']); //권한 확인하는 함수
+        $auth = $this->_get_auth_code('program',$program_id, $user_data['user_id']); //권한 확인하는 함수
 
         if($auth<3) {
 
             $program_info = $this->program_model->get_program_info($program_id);
-            $program_info['position'] = auth_code_to_text($auth);
+            $program_info['auth_code'] = $auth;
 
             if($program_info!=null){
                 $this->layout->view('manage/program/detail', array('user'=>$user_data,'program_info'=>$program_info));
@@ -975,7 +901,7 @@ class Manage extends Manage_Controller {
         $program_id = $this->input->post('program_id');
         $status = $this->input->post('status');
         //권한 확인
-        $auth = $this->_is_auth('program',$program_id, $user_data['user_id']); //권한 확인하는 함수
+        $auth = $this->_get_auth_code('program',$program_id, $user_data['user_id']); //권한 확인하는 함수
 
         if($auth<3){ //권한이 있으면 상태 변경
             $status_data = array(
@@ -991,14 +917,17 @@ class Manage extends Manage_Controller {
 
     }
 
-    function _program_delete($program_id,$user_data){ //unique_id!=moin_id
+    function _program_delete($user_data){ //unique_id!=moin_id
+        $program_id = $this->input->post('program_id');
 
         $program_info = $this->program_model->get_program_info($program_id);
 
-        $auth = $this->_is_auth('program',$program_id, $user_data['user_id']); //권한 확인하는 함수
+        $auth = $this->_get_auth_code('program',$program_id, $user_data['user_id']); //권한 확인하는 함수
 
         if($auth<2){ //권한이 있으면 삭제 (admin, boss)
-            $this->program_model->delete_program($program_id); //정말 삭제할지 .. 아니면 남겨둘 것인지..이건 진짜 삭제한다.
+            //program delete
+            $this->_program_delete_unit($program_id); //batch delete를 위해 함수로 만들었음
+
             alert('프로그램이 삭제되었습니다. 팀 관리 페이지로 이동합니다.','/manage/team/detail/'.$program_info['team_id']);
 
         }else{
@@ -1018,16 +947,15 @@ class Manage extends Manage_Controller {
             'level' => $level,
         );
         switch ($type){
-//            case 'upload': //없어도 된다..
-//                $this->_blog_upload($team_id,$user_data); //nl2br
-//                break;
-
             case 'detail': //view
                 $this->_blog_detail($blog_id,$user_data);
                 break;
 
+            case 'status':
+                $this->_blog_status($user_data);
+                break;
             case 'delete':
-                $this->_blog_delete($blog_id,$user_data);
+                $this->_blog_delete($user_data);
                 break;
             default:
             case 'lists':
@@ -1100,57 +1028,22 @@ class Manage extends Manage_Controller {
 
     }
 
-    function _blog_upload($blog_id = null,$user_data){
-        //업로드 합시다..
-        $application_id = $this->input->get('app_id');
-        if($this->input->post()){
+    function _blog_status($user_data){ //detail - 정보
 
-            $form_data = $this->input->post();
-            if($form_data['title']){ //제목 입력하면 됨
+        $blog_id = $this->input->post('blog_id');
+        $status = $this->input->post('status');
+        $blog_info = $this->team_model->get_team_blog_info($blog_id);
+        $auth = $this->_get_auth_code('team',$blog_info['team_id'], $user_data['user_id']);
 
-                $blog_data = array(
-                    'user_id'=>$user_data['user_id'],
-                    'application_id'=>$form_data['application_id'],
-                    'title'=>$form_data['title'],
-                    'contents'=>nl2br($form_data['contents']),
-
-                );
-
-                //날짜 정보...
-
-                if($blog_id){ //수정
-
-                    $redirect_url = '/manage/blog/detail/'.$blog_id;
-
-                    $this->team_model->update_blog($blog_id,$blog_data);
-                    //
-                    alert('후기가 수정되었습니다.',$redirect_url);
-                }else{//등록
-                    $blog_data['crt_date'] = date('Y-m-d H:i:s');
-                    $blog_id = $this->team_model->insert_blog($blog_data);
-                    $redirect_url = '/manage/blog/detail/'.$blog_id;
-                    alert('후기가 입력되었습니다.',$redirect_url);
-                }
-            }else{ // team_id 없으면 생성 불가능함
-                alert('제목을 입력하세요.');
-            }
-        }else{
-
-            $app_info = null; //일단 null로 지정한다..
-            if($application_id!=null){
-                $app_info = $this->application_model->get_application_info($application_id);
-            }
-
-            $blog_info = array(
-                'title'=>null,
-                'contents'=>null,
-                'application_id'=>$application_id,
-
+        if($auth<3){ //권한이 있으면 상태 변경
+            $status_data = array(
+                'status'=>$status,
             );
-            if($blog_id){//이거면 수정
-                $blog_info =   $this->team_model->get_blog_info($blog_id);
-            }
-            $this->layout->view('/manage/blog/upload', array('user' => $user_data,'blog_info'=>$blog_info,'app_info'=>$app_info));
+            $this->team_model->update_team_blog($blog_id,$status_data);
+            alert('이 포스트가 '.$this->lang->line($status).'로 변경되었습니다.');
+
+        }else{
+            alert('권한이 없습니다. [MD01]');
         }
 
     }
@@ -1158,29 +1051,28 @@ class Manage extends Manage_Controller {
     function _blog_detail($blog_id,$user_data){ //detail - 정보
 
         $blog_info = $this->team_model->get_team_blog_info($blog_id);
-        $this->layout->view('manage/blog/detail', array('user'=>$user_data,'blog_info'=>$blog_info));
-
+        $blog_info['auth_code'] = $this->_get_auth_code('team',$blog_info['team_id'], $user_data['user_id']);
+        if($blog_info['auth_code']<3){
+            $this->layout->view('manage/blog/detail', array('user'=>$user_data,'blog_info'=>$blog_info));
+        }else{
+            alert('권한이 없습니다. [MD02]');
+        }
     }
 
-    function _blog_delete($blog_id,$user_data){ //unique_id!=moin_id
+    function _blog_delete($user_data){ //unique_id!=moin_id
 
-        $blog_info = $this->team_model->get_blog_info($blog_id);
+        $blog_id = $this->input->post('blog_id');
+        $blog_info = $this->team_model->get_team_blog_info($blog_id);
+        $auth = $this->_get_auth_code('team',$blog_info['team_id'], $user_data['user_id']);
 
-        //이 전에 조건을 걸어둬야겠지.. 제출된 게 있으면 절대 못함
-        if($blog_info['user_id']!=$user_data['user_id']||$user_data['level']<9){ //관리자이거나 본인만 지울 수 있다.
-
-            $this->team_model->delete_blog($blog_id);
-
-            alert('후기가 삭제되었습니다. 지원서 페이지로 이동합니다.','/manage/application/detail/'.$blog_info['application_id']);
+        if($auth<3){
+            $this->team_model->delete_team_blog($blog_id);
+            alert('포스트가 삭제되었습니다. 블로그 목록으로 이동합니다.','/manage/blog/lists/'.$blog_info['team_id']);
 
         }else{
             alert('권한이 없습니다. [MD02]');
         }
-
-
     }
-
-
 
     function member($type='lists', $member_id=null){
 
@@ -1284,6 +1176,7 @@ class Manage extends Manage_Controller {
             $member_info = array(
                 'user_id'=>$form_data['user_id'],
                 'team_id'=>$form_data['team_id'],
+                'type'=>2, //일반 멤버는 type:2, 대표는 1
                 'crt_date'=>date('Y-m-d H:i:s')
             );
             $this->member_model->insert_team_member($member_info);
@@ -1304,21 +1197,13 @@ class Manage extends Manage_Controller {
 
     function _member_detail($member_id,$user_data){ //detail - 정보
 
-        $status = $this->data['status'];
-        $user_id = $this->data['user_id'];
-        $level = $this->data['level'];
-        $user_data = array(
-            'status' => $status,
-            'user_id' => $user_id,
-            'username' =>$this->data['username'],
-            'level' => $level,
-        );
         $member_info = $this->member_model->get_team_member_info($member_id);
         $team_info =   $this->team_model->get_team_info($member_info['team_id']);
 
-        if($team_info['user_id']!=$user_id||$level<9){ //관리자이거나 본인만 지울 수 있다.
-            $this->layout->view('manage/member/detail', array('user'=>$user_data,'member_info'=>$member_info,'team_info'=>$team_info));
+        $auth = $this->_get_auth_code('team',$member_info['team_id'], $user_data['user_id']);
 
+        if($auth<3) { //권한이 있으면 삭제 (admin, boss)
+            $this->layout->view('manage/member/detail', array('user'=>$user_data,'member_info'=>$member_info,'team_info'=>$team_info));
         }else{
             alert('권한이 없습니다. [MD01]');
         }
@@ -1330,8 +1215,9 @@ class Manage extends Manage_Controller {
         $member_info = $this->member_model->get_team_member_info($member_id);
         $team_info =   $this->team_model->get_team_info($member_info['team_id']);
 
-        //이 전에 조건을 걸어둬야겠지.. 제출된 게 있으면 절대 못함
-        if($team_info['user_id']!=$user_data['user_id']||$user_data['level']<9){ //관리자이거나 본인만 지울 수 있다.
+        $auth = $this->_get_auth_code('team',$member_info['team_id'], $user_data['user_id']);
+
+        if($auth<2){ //권한이 있으면 삭제 (admin, boss)
 
             $this->member_model->delete_team_member($member_id);
 //            //이 사람의 레벨을 1 로 지정
@@ -1345,49 +1231,9 @@ class Manage extends Manage_Controller {
             alert('권한이 없습니다. [MD02]');
         }
 
-
     }
-    function _pagination_config($config){
-
-        $config['first_link'] = '≪';
-        $config['first_tag_open'] = '<li class="page-item">';
-        $config['first_tag_close'] = '</li>';
-
-        $config['last_link'] = '≫';
-        $config['last_tag_open'] = '<li class="page-item">';
-        $config['last_tag_close'] = '</li>';
-
-        $config['next_link'] = '＞';
-        $config['next_tag_open'] = '<li class="page-item">';
-        $config['next_tag_close'] = '</li>';
-
-        $config['prev_link'] = '＜';
-        $config['prev_tag_open'] = '<li class="page-item">';
-        $config['prev_tag_close'] = '</li>';
-
-        $config['cur_tag_open'] = '<li class="page-item active"><a href="" class="page-link">';
-        $config['cur_tag_close'] = '</a></li>';
-
-        $config['num_tag_open'] = '<li class="page-item">';
-        $config['num_tag_close'] = '</li>';
-        $config['attributes'] = array('class' => 'page-link');
-        $config['use_page_numbers'] = TRUE;
-
-        return $config;
-    }
-
-    function _is_auth($type='team',$unique_id, $user_id){
-
-        /*code
-        0: admin
-        1: boss
-        2: member
-        3: nothing
-        */
-
-        $code = 3;
-        //이 user의 level 가져오기
-        // 이 user가 type 에서 어떤 권한이 있는지 가져오기
+    function _get_auth_code($type='team',$unique_id, $user_id){
+        /*code: 0: admin /   1: boss /2: member /  3: nothing */
         $level = $this->user_model->get_user_level($user_id);
 
         if($type=='program'){
@@ -1396,29 +1242,22 @@ class Manage extends Manage_Controller {
         }else{ //team
             $team_id = $unique_id;
         }
-        $team_info = $this->team_model->get_team_info($team_id);
-        $team_member = $this->member_model->is_team_member($team_id, $user_id);
-
-        //return if t or f;
-
-        if($team_info['user_id']==$user_id){ //team boss? 1
-
-            $code = 1;
-        }else if($team_member){ // true or false ( //or team member?? 1)
-            $code = 2;
-
-        }else{ //or nothing 0
-            $code = 3;
-
-        }
+        $code = $this->member_model->is_team_member($team_id, $user_id);
 
         if($level==9){ //super users always return true;
             $code = 0;
-
         }
         return $code;
+    }
 
+    function _program_delete_unit($program_id){ //실제로 지우는건 여기서 한다..
+        $this->program_model->delete_program($program_id); //진짜 삭제한다.
 
+        //options
+        $this->program_model->delete_program_option_by_program_id('date',$program_id);
+        $this->program_model->delete_program_option_by_program_id('heart',$program_id);
+        $this->program_model->delete_program_option_by_program_id('qna',$program_id);
+        $this->program_model->delete_program_option_by_program_id('qualify',$program_id);
     }
 
 }

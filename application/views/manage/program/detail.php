@@ -6,16 +6,13 @@
 
 <h3>기본 정보</h3>
 
-<?php if($program_info['position']=='representative'||$program_info['position']=='admin'){?>
-
+<?php if($program_info['auth_code']=='1'||$program_info['auth_code']=='0'){?>
     <div class="">
         <form action="/manage/program/delete/" method="post">
             <input type="hidden" name="program_id" value="<?=$program_info['program_id']?>">
             <input type="submit"  class="btn btn-outline-danger btn-delete" value="삭제">
         </form>
     </div>
-
-
 <?php }?>
 
 
