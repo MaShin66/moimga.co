@@ -133,7 +133,7 @@
     </tr>
     <?php if(count($after_list)==0){?>
         <tr>
-            <td colspan="5">포스트가 없습니다.</td>
+            <td colspan="5">후기가 없습니다.</td>
         </tr>
     <?php }else{
         foreach ($after_list as $a_key=>$a_item){?>

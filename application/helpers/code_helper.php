@@ -24,3 +24,13 @@ function auth_code_to_text($code){
 
     return $text;
 }
+
+function generate_random_code($length=6){
+    $list = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $list_count = strlen($list);
+    $return = '';
+    for ($i = 0; $i < $length; $i++) {
+        $return .= $list[rand(0, $list_count - 1)];
+    }
+    return $return;
+}

@@ -282,8 +282,6 @@ class User_model extends CI_Model
         if ($this->db->affected_rows() > 0) {
             $this->delete_user_info('user_profiles',$user_id);
             $this->delete_user_info('user_autologin',$user_id);
-            $this->delete_user_info('refund',$user_id);
-            $this->delete_user_info('adult_try',$user_id);
 
             $reset_data = array(
                 'user_id'=>0
@@ -299,13 +297,6 @@ class User_model extends CI_Model
             $this->set_user_id_reset('danal_card',$user_id,$reset_data);
             $this->set_user_id_reset('danal_bank',$user_id,$reset_data);
             $this->set_user_id_reset('demand_form',$user_id,$reset_data);
-           // $this->set_user_id_reset('file',$user_id,$reset_data); // 여긴 user_id 없음 .
-            //$this->set_user_id_reset('import_file',$user_id,$reset_data);
-            //$this->set_user_id_reset('thumbs',$user_id,$reset_data);
-
-            //comment..user_id==0,으로 만들고 내용은 탈퇴한 회원입니다로 적기..
-            $reset_data['contents'] = '해당 회원이 탈퇴하여 댓글이 삭제되었습니다.';
-            $this->set_user_id_reset('comment',$user_id,$reset_data);
 
             if($is_sns!=null){
                 $this->delete_user_info('sns_login',$user_id);

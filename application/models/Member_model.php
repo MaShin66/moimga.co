@@ -10,12 +10,16 @@ class Member_model extends CI_Model
     //load, get, update, delete
 
     function load_team_member($type = '', $offset = '', $limit = '', $search_query){
-        $this->db->select('team_member.*, users.nickname, users.realname, users.email, team_member.crt_date as set_date');
+        $this->db->select('team_member.*, users.nickname, users.realname, users.email, team_member.crt_date as set_date,, team.name as team_name');
         $this->db->join('users','users.id = team_member.user_id');
         $this->db->join('team','team.team_id = team_member.team_id');
 
         if(!is_null($search_query['user_id'])) {
             $this->db->where('team_member.user_id',$search_query['user_id']);
+        }
+
+        if(!is_null($search_query['team_id'])) {
+            $this->db->where('team_member.team_id',$search_query['team_id']);
         }
         if(!is_null($search_query['search'])){
 

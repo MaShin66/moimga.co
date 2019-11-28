@@ -178,9 +178,10 @@ class Manage extends Manage_Controller {
                 'name'=>$team_info['name'],
                 'title'=>$team_info['title'],
                 'contents'=>$team_info['contents'],
-                'thumb_url'=>$team_info['thumbs_url'],
+                'thumb_url'=>$team_info['thumb_url'],
                 'crt_date'=>$team_info['crt_date'],
                 'delete_date'=>date('Y-m-d H:i:s'),
+                'is_recovered'=>0,  //1이면 복구됨, 0이면 아님
 
             );
             $this->team_model->insert_team_delete($delete_info); //삭제된 팀 여기로 복사

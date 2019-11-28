@@ -10,7 +10,7 @@ class Program_model extends CI_Model
     //load, get, update, delete
 
     function load_program($type = '', $offset = '', $limit = '', $search_query){
-        $this->db->select('program.*, team.name as team_name, team.url as team_url, users.nickname');
+        $this->db->select('program.*, team.name as team_name, team.url as team_url, users.realname as realname, users.nickname as nickname');
         $this->db->join('team','team.team_id = program.team_id');
         $this->db->join('users','users.id = program.user_id');
 
@@ -30,7 +30,7 @@ class Program_model extends CI_Model
         }
 
         if(!is_null($search_query['search'])){
-            $name_query = '(program.title like "%'.$search_query['search'].'%" or users.nickname like "%'.$search_query['search'].'%" or program.contents like "%'.$search_query['search'].'%")';
+            $name_query = '(program.title like "%'.$search_query['search'].'%" or program.contents like "%'.$search_query['search'].'%" or team.name like "%'.$search_query['search'].'%")';
             $this->db->where($name_query);
 
         }
@@ -51,6 +51,11 @@ class Program_model extends CI_Model
 
     function get_program_info($program_id)
     {
+
+        $this->db->select('program.*, users.realname as realname, users.nickname as nickname, team_member.type as member_type');
+        $this->db->join('users','users.id = program.user_id');
+        $this->db->join('team_member','team_member.user_id = program.user_id');
+
         $this->db->where('program_id' ,$program_id);
 
         $query = $this->db->get('program');
@@ -259,4 +264,13 @@ class Program_model extends CI_Model
         $this->db->delete('program_'.$table);
         return 0;
     }
+
+    function update_program_hit($program_id){ // sql 로만 해야한다니..
+
+        $sql = "UPDATE program SET hit = hit + 1 WHERE program_id = ".$program_id ;
+        $this->db->query($sql);
+
+        return $program_id;
+    }
+
 }

@@ -50,7 +50,7 @@ class After_model extends CI_Model
 
 
     function load_after($type = '', $offset = '', $limit = '', $search_query){
-        $this->db->select('after.*, users.nickname, team.name as team_name');
+        $this->db->select('after.*, users.nickname,users.realname, team.name as team_name');
         $this->db->join('team','team.team_id = after.team_id');
         $this->db->join('users','users.id = after.user_id');
 

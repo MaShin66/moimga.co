@@ -305,7 +305,7 @@ class Admin_model extends CI_Model
                 $this->db->where('id',$search_query['search']);
             }else{
 
-                $name_query = '(username like "%'.$search_query['search'].'%" or email like "%'.$search_query['search'].'%")';
+                $name_query = '(username like "%'.$search_query['search'].'%" or email like "%'.$search_query['search'].'%" or realname like "%'.$search_query['search'].'%" or nickname like "%'.$search_query['search'].'%")';
                 $this->db->where($name_query);
             }
         }

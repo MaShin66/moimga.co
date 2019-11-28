@@ -123,7 +123,7 @@ class Program extends MY_Controller {
         $qna_info = $this->program_model->load_program_qna_info_by_p_id($program_id);
         $qualify_info = $this->program_model->load_program_qualify_info_by_p_id($program_id); //이것도 중복될 수 없으니까 unique 임
 
-
+        $this->program_model->update_program_hit($program_id); // 조회수
         $this->layout->view('/program/view', array('user'=>$user_data,'program_info'=>$program_info,'team_info'=>$team_info,
         'date_info'=>$date_info,'qna_info'=>$qna_info,'qualify_info'=>$qualify_info));
 
@@ -232,6 +232,7 @@ class Program extends MY_Controller {
 
 
                     $data['heart_count'] = 0;
+                    $data['hit'] = 0;
                     $data['crt_date'] = date('Y-m-d H:i:s');
                     $program_id = $this->program_model->insert_program($data);
                     //qualify

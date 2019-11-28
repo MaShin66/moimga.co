@@ -153,16 +153,21 @@ class Team_model extends CI_Model
 
     function load_team_blog($type = '', $offset = '', $limit = '', $search_query){
 
-        $this->db->where('team_id',$search_query['team_id']); //무조건 이 팀에만 걸린것으로 가져온다.
+        $this->db->select('team_blog.*, team.name as team_name');
+        $this->db->join('team','team.team_id = team_blog.team_id');
+        if(!is_null($search_query['team_id'])){
+            $this->db->where('team_blog.team_id',$search_query['team_id']); //무조건 이 팀에만 걸린것으로 가져온다.
+        }
+
         if($search_query['crt_date']==null){
-            $this->db->order_by('crt_date','desc');
+            $this->db->order_by('team_blog.crt_date','desc');
         }else{
-            $this->db->order_by('crt_date',$search_query['crt_date']);
+            $this->db->order_by('team_blog.crt_date',$search_query['crt_date']);
         }
         if(!is_null($search_query['status'])){
-            $this->db->order_by('status',$search_query['status']);
+            $this->db->order_by('team_blog.status',$search_query['status']);
         }else{
-            $this->db->order_by('status','on');
+            $this->db->order_by('team_blog.status','on');
         }
 
         if($search_query['search']!=null){
@@ -310,6 +315,36 @@ class Team_model extends CI_Model
     }
 
     /*delete 삭제되면 복사돼서 여기로 옮긴다*/
+    function load_team_delete($type = '', $offset = '', $limit = '', $search_query){
+
+        if($search_query['crt_date']==null){
+            $this->db->order_by('crt_date','desc');
+        }else{
+            $this->db->order_by('crt_date',$search_query['crt_date']);
+        }
+
+        if($search_query['search']!=null){
+
+            $name_query = '(team_delete.name title "%'.$search_query['search'].'%" or team_delete.contents like "%'.$search_query['search'].'%" or team_delete.title like "%'.$search_query['search'].'%")';
+            $this->db->where($name_query);
+
+        }
+        if ($limit != '' || $offset != '') {
+            $this->db->limit($limit, $offset);
+        }
+
+        $query = $this->db->get('team_delete');
+
+        if ($type == 'count') {
+            $result = $query -> num_rows();
+        } else {
+            $result = $query -> result_array();
+
+        }
+        return $result;
+    }
+
+    
 
     function get_team_delete_info($team_delete_id)
     {//특정 필드에서 $team_delete_id값이 이것 인것을 찾아라.
