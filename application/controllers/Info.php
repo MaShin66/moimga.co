@@ -18,6 +18,7 @@ class Info extends MY_Controller {
 
     public function index()
     {
+        $this->terms();
 
     }
 
@@ -26,11 +27,13 @@ class Info extends MY_Controller {
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
         $level = $this->data['level'];
+        $alarm_cnt = $this->data['alarm'];
         $user_data = array(
             'status' => $status,
             'user_id' => $user_id,
-            'username' =>$this->data['username'],
             'level' => $level,
+            'alarm' =>$alarm_cnt,
+            'username' =>$this->data['username'],
         );
         $this->layout->view('info/terms', array('user'=>$user_data));
 
@@ -38,94 +41,84 @@ class Info extends MY_Controller {
 
     function privacy()
     {
-
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
         $level = $this->data['level'];
+        $alarm_cnt = $this->data['alarm'];
         $user_data = array(
             'status' => $status,
             'user_id' => $user_id,
-            'username' =>$this->data['username'],
             'level' => $level,
+            'alarm' =>$alarm_cnt,
+            'username' =>$this->data['username'],
         );
         $this->layout->view('info/privacy', array('user'=>$user_data));
 
     }
 
-    function pricing()
+
+    function faq($category='tmm', $type='list', $faq_order= 1)
     {
 
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
         $level = $this->data['level'];
+        $alarm_cnt = $this->data['alarm'];
         $user_data = array(
             'status' => $status,
             'user_id' => $user_id,
             'username' =>$this->data['username'],
-            'level' => $level,
+            'level' =>$level,
+            'alarm' =>$alarm_cnt
         );
-        $this->layout->view('info/pricing', array('user'=>$user_data));
 
+        $search = null;
+
+        if($category=='search'&&$type=='q'){
+            $category_id = 1;
+            $search = $this->input->get('search');
+            $search_query = array(
+                'search' => $search,
+            );
+
+            $cate_cont =  $this->faq_model->load_faq('', '', '', $search_query);
+            $cate_info['title']='검색 결과';
+            $file = 'search';
+        }else{
+
+            $file = 'view';
+            switch ($type){
+                case 'view':
+
+                    $category_id = $this->faq_model->get_category_id($category);
+                    //get_faq_id 해야한다..
+                    break;
+                case 'list':
+                    $category_id = $this->faq_model->get_category_id($category);
+                    $faq_order = 1;
+                    break;
+                default:
+                    $category_id = 1;
+                    $faq_order = 1;
+                    break;
+            }
+
+            $cate_info = $this->faq_model->get_faq_category_info($category_id);
+            $cate_cont = $this->faq_model->load_category_contents($category_id);
+
+        }
+        $cate_list = $this->faq_model->load_faq_category_plain();
+
+        $result = $this->faq_model->get_faq_info_by_order($category_id, $faq_order);
+        if(!is_null($result)){ // (view) 내용 있으면.. list인 경우에는 result가 null임 -- 조회수 설정
+            $this->faq_model->update_faq_hit($result['faq_id']);
+        }
+
+        $this->layout->view('info/faq/'.$file, array('user'=>$user_data,'cate_list'=>$cate_list,'result'=>$result,'cate_cont'=>$cate_cont,'category'=>$category,
+            'search'=>$search,'cate_info'=>$cate_info,'faq_order'=>$faq_order));
     }
 
 
 
-    function faq()
-    {
-        $status = $this->data['status'];
-        $user_id = $this->data['user_id'];
-        $level = $this->data['level'];
-        $user_data = array(
-            'status' => $status,
-            'user_id' => $user_id,
-            'username' =>$this->data['username'],
-            'level' => $level,
-        );
-        $search = $this->uri->segment(5);
 
-        if($search==null){
-            $search_query = array(
-                'search' => '',
-                'crt_date'=>null,
-            );
-
-        }else{
-            $sort_search = $this->input->get('search');
-
-            $search_query = array(
-                'search' => $sort_search,
-                'crt_date'=>null,
-            );
-
-        }
-        $q_string = '/q?search='.$search_query['search'];
-
-        $this->load->library('pagination');
-        $config['suffix'] = $q_string;
-        $config['base_url'] = '/info/faq/lists' ; // 페이징 주소
-        $config['total_rows'] = $this -> faq_model -> load_faq('count','','',$search_query); // 게시물 전체 개수
-
-        $config['per_page'] = 13; // 한 페이지에 표시할 게시물 수
-        $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
-        $config['first_url'] = $config['base_url'].'/1'.$config['suffix']; // 첫페이지에 query string 에러나서..
-        $config = pagination_config($config);
-        // 페이지네이션 초기화
-        $this->pagination->initialize($config);
-        // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
-        $data['pagination'] = $this->pagination->create_links();
-
-        // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
-        $page = $this->uri->segment(4);
-        if($page==null){
-            $start=0;
-        }else{
-            $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
-        }
-        $limit = $config['per_page'];
-
-        $data['result'] = $this->faq_model->load_faq('', $start, $limit, $search_query);
-        $data['total']=$config['total_rows'];
-
-        $this->layout->view('info/faq', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
-    }
 }

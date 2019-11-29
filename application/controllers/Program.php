@@ -153,179 +153,187 @@ class Program extends MY_Controller {
         if(!$has_team){ //없으면 (return false)
             alert('팀을 먼저 등록해주세요.','/manage/team');
         }else{
-            if($title){ //입력
+            //$team_id가 내 팀인지 확인
+            $as_member = $this->team_model-> as_member($team_id, $user_data['user_id']);
+            if(!$as_member){
+                alert('팀 멤버로 등록되어있지 않습니다. 팀장에게 문의하세요.','/manage/program');
+            }else{
+                if($title){ //입력
 
-                $contents = $this->input->post('contents');
-                $participant = $this->input->post('participant');
-                $title = $this->input->post('title');
-                $district= $this->input->post('district');
-                $venue= $this->input->post('venue');
-                $price = $this->input->post('price');
-                $address = $this->input->post('address');
-                $status = $this->input->post('status');
+                    $contents = $this->input->post('contents');
+                    $participant = $this->input->post('participant');
+                    $title = $this->input->post('title');
+                    $district= $this->input->post('district');
+                    $venue= $this->input->post('venue');
+                    $price = $this->input->post('price');
+                    $address = $this->input->post('address');
+                    $status = $this->input->post('status');
 
-                //array
+                    //array
 
-                $team_id = $this->input->post('team_id'); //여기서 가져온다
+                    $team_id = $this->input->post('team_id'); //여기서 가져온다
 
-                if($status!='on'){
-                    $status = 'off';
-                }
-
-                $data = array(
-                    'user_id'=>$user_id,
-                    'team_id'=>$team_id,
-                    'title'=>$title,
-                    'participant'=>$participant,
-                    'district'=>$district,
-                    'venue'=>$venue,
-                    'price'=>$price,
-                    'address'=>$address,
-                    'contents'=>$contents,
-                    'status'=>$status,
-                );
-                if($type=='modify'){
-
-                    $program_id = $this->input->post('program_id');
-                    $this->program_model->update_program($program_id,$data);
-
-                    //ajax로 이미 데이터 추가했고, 대괄호 안에 고유 id보관해서 가져옴
-
-                    $qualify_array = $this->input->post('qualify');
-                    $question_array = $this->input->post('question');
-                    $answer_array = $this->input->post('answer');
-                    $date_array = $this->input->post('event_date');
-                    $time_array = $this->input->post('event_time');
-
-                    //id있는것: 덮어 씌움, 없는것: 새로 입력
-
-                    //날짜와.. 시간 입력한다..
-                    foreach ($date_array as $pdate_id=> $pdt_value){
-                        $pdate_data['date']=$pdt_value;
-                        $pdate_data['time']=$time_array[$pdate_id];
-                        $this->program_model->update_program_date($pdate_id, $pdate_data); //집어넣기
+                    if($status!='on'){
+                        $status = 'off';
                     }
 
-
-                    //qualify
-                    foreach ($qualify_array as $qualify_id=> $que_value){
-                        $qualify_data['contents']=$que_value;
-                        $this->program_model->update_program_qualify($qualify_id, $qualify_data); //집어넣기
-                    }
-
-                    //qna
-                    foreach ($question_array as $pqna_id=> $qna_value){
-                        $qna_data['question']=$qna_value;
-                        $qna_data['answer']=$answer_array[$pqna_id];
-                        $this->program_model->update_program_qna($pqna_id, $qna_data); //집어넣기
-                    }
-
-
-                }else{ //새로 쓰기
-
-                    //ajax로 데이터 추가하는것
-                    $qualify_array = $this->input->post('input_qualify');
-                    $question_array = $this->input->post('input_question');
-                    $answer_array = $this->input->post('input_answer');
-                    $date_array = $this->input->post('input_event_date');
-                    $time_array = $this->input->post('input_event_time');
-
-
-                    $data['heart_count'] = 0;
-                    $data['hit'] = 0;
-                    $data['crt_date'] = date('Y-m-d H:i:s');
-                    $program_id = $this->program_model->insert_program($data);
-                    //qualify
-
-                    $array_basic = array( //이거 3개 고정
-                        'user_id'=>$user_id,
-                        'program_id' => $program_id,
-                        'crt_date'=> $data['crt_date'],
-                    );
-
-                    $pdate_data = $array_basic;
-                    $pqualify_data = $array_basic; // 복사
-                    $pqna_data = $array_basic;
-
-
-                    //날짜와.. 시간 입력한다..
-                    foreach ($date_array as $pdt_key=> $pdt_value){
-                        $pdate_data['date']=$pdt_value;
-                        $pdate_data['time']=$time_array[$pdt_key];
-//                        print_r($pdate_data);
-                        $this->program_model->insert_program_date($pdate_data); //집어넣기
-                    }
-
-                    foreach ($qualify_array as $pqa_key=> $pqa_value){
-                        $pqualify_data['contents']=$pqa_value;
-//                        print_r($pqualify_data);
-                        $this->program_model->insert_program_qualify($pqualify_data); //집어넣기
-                    }
-
-                    //qna
-                    foreach ($question_array as $pqs_key=> $pqs_value){
-                        $pqna_data['question']=$pqs_value;
-                        $pqna_data['answer']=$answer_array[$pqs_key];
-//                        print_r($pqna_data);
-                        $this->program_model->insert_program_qna($pqna_data); //집어넣기
-                    }
-
-
-                }
-
-                //thumbs는 저장이 모두 끝난 후에 한다..
-                //thumbs 지정 안했을 경우에는 그냥 안한다..
-                //null일 경우에 아무것도 안함
-
-                //thumb 지정.. thumbs_helper 이용한다..
-
-                $thumbs['thumb_url'] = thumbs_upload('program', $program_id); // 바로 업데이트
-                if(!is_null($thumbs['thumb_url'] )){
-                    $this->program_model->update_program($program_id,$thumbs);
-                }
-
-
-                //다 끝나면 redirect
-               redirect($at_url.'/program/'.$program_id);
-            }else{ //없으면 글쓰기 화면
-
-                if($type=='modify'){
-                    $program_id = $this->uri->segment(4);
-                    $data = $this->program_model->get_program_info($program_id); //이것도 중복될 수 없으니까 unique 임
-
-                    $team_info = $this->team_model->get_team_info($data['team_id']);
-                    $date_info = $this->program_model->load_program_date_info_by_p_id($program_id);
-                    $qna_info = $this->program_model->load_program_qna_info_by_p_id($program_id);
-                    $qualify_info = $this->program_model->load_program_qualify_info_by_p_id($program_id); //이것도 중복될 수 없으니까 unique 임
-
-                }else{
-
-                    if(is_null($team_id)) alert('프로그램을 올릴 팀을 선택해주세요.'.$team_id);
                     $data = array(
-                        'team_id'=>$team_id, //무조건 고정
-                        'title'=>null,
-                        'contents'=>null,
-                        'participant'=>null,
-
-                        'district'=>null,
-                        'venue'=>null,
-                        'price'=>null,
-
-                        'address'=>null,
-
-                        'status'=>'on',
-                        'thumbs_url'=>null,//기본 섬네일 지정,
-                        'type'=>'new' //새로 글쓰기
+                        'user_id'=>$user_id,
+                        'team_id'=>$team_id,
+                        'title'=>$title,
+                        'participant'=>$participant,
+                        'district'=>$district,
+                        'venue'=>$venue,
+                        'price'=>$price,
+                        'address'=>$address,
+                        'contents'=>$contents,
+                        'status'=>$status,
                     );
-                    $team_info = $this->team_model-> get_team_info($team_id);
-                    $date_info = array();
-                    $qna_info = array();
-                    $qualify_info = array();
-                }
+                    if($type=='modify'){
 
-                $this->layout->view('program/upload', array('user'=>$user_data,'result'=>$data, 'team_info'=>$team_info,
-                    'date_info'=>$date_info,'qna_info'=>$qna_info,'qualify_info'=>$qualify_info));
+                        $program_id = $this->input->post('program_id');
+                        $this->program_model->update_program($program_id,$data);
+
+                        //ajax로 이미 데이터 추가했고, 대괄호 안에 고유 id보관해서 가져옴
+
+                        $qualify_array = $this->input->post('qualify');
+                        $question_array = $this->input->post('question');
+                        $answer_array = $this->input->post('answer');
+                        $date_array = $this->input->post('event_date');
+                        $time_array = $this->input->post('event_time');
+
+                        //id있는것: 덮어 씌움, 없는것: 새로 입력
+
+                        //날짜와.. 시간 입력한다..
+                        foreach ($date_array as $pdate_id=> $pdt_value){
+                            $pdate_data['date']=$pdt_value;
+                            $pdate_data['time']=$time_array[$pdate_id];
+                            $this->program_model->update_program_date($pdate_id, $pdate_data); //집어넣기
+                        }
+
+
+                        //qualify
+                        foreach ($qualify_array as $qualify_id=> $que_value){
+                            $qualify_data['contents']=$que_value;
+                            $this->program_model->update_program_qualify($qualify_id, $qualify_data); //집어넣기
+                        }
+
+                        //qna
+                        foreach ($question_array as $pqna_id=> $qna_value){
+                            $qna_data['question']=$qna_value;
+                            $qna_data['answer']=$answer_array[$pqna_id];
+                            $this->program_model->update_program_qna($pqna_id, $qna_data); //집어넣기
+                        }
+
+
+                    }else{ //새로 쓰기
+
+                        //ajax로 데이터 추가하는것
+                        $qualify_array = $this->input->post('input_qualify');
+                        $question_array = $this->input->post('input_question');
+                        $answer_array = $this->input->post('input_answer');
+                        $date_array = $this->input->post('input_event_date');
+                        $time_array = $this->input->post('input_event_time');
+
+
+                        $data['heart_count'] = 0;
+                        $data['hit'] = 0;
+                        $data['crt_date'] = date('Y-m-d H:i:s');
+                        $program_id = $this->program_model->insert_program($data);
+                        //qualify
+
+                        $array_basic = array( //이거 3개 고정
+                            'user_id'=>$user_id,
+                            'program_id' => $program_id,
+                            'crt_date'=> $data['crt_date'],
+                        );
+
+                        $pdate_data = $array_basic;
+                        $pqualify_data = $array_basic; // 복사
+                        $pqna_data = $array_basic;
+
+
+                        //날짜와.. 시간 입력한다..
+                        foreach ($date_array as $pdt_key=> $pdt_value){
+                            $pdate_data['date']=$pdt_value;
+                            $pdate_data['time']=$time_array[$pdt_key];
+//                        print_r($pdate_data);
+                            $this->program_model->insert_program_date($pdate_data); //집어넣기
+                        }
+
+                        foreach ($qualify_array as $pqa_key=> $pqa_value){
+                            $pqualify_data['contents']=$pqa_value;
+//                        print_r($pqualify_data);
+                            $this->program_model->insert_program_qualify($pqualify_data); //집어넣기
+                        }
+
+                        //qna
+                        foreach ($question_array as $pqs_key=> $pqs_value){
+                            $pqna_data['question']=$pqs_value;
+                            $pqna_data['answer']=$answer_array[$pqs_key];
+//                        print_r($pqna_data);
+                            $this->program_model->insert_program_qna($pqna_data); //집어넣기
+                        }
+
+
+                    }
+
+                    //thumbs는 저장이 모두 끝난 후에 한다..
+                    //thumbs 지정 안했을 경우에는 그냥 안한다..
+                    //null일 경우에 아무것도 안함
+
+                    //thumb 지정.. thumbs_helper 이용한다..
+
+                    $thumbs['thumb_url'] = thumbs_upload('program', $program_id); // 바로 업데이트
+                    if(!is_null($thumbs['thumb_url'] )){
+                        $this->program_model->update_program($program_id,$thumbs);
+                    }
+
+
+                    //다 끝나면 redirect
+                    redirect($at_url.'/program/'.$program_id);
+                }else{ //없으면 글쓰기 화면
+
+                    if($type=='modify'){
+                        $program_id = $this->uri->segment(4);
+                        $data = $this->program_model->get_program_info($program_id); //이것도 중복될 수 없으니까 unique 임
+
+                        $team_info = $this->team_model->get_team_info($data['team_id']);
+                        $date_info = $this->program_model->load_program_date_info_by_p_id($program_id);
+                        $qna_info = $this->program_model->load_program_qna_info_by_p_id($program_id);
+                        $qualify_info = $this->program_model->load_program_qualify_info_by_p_id($program_id); //이것도 중복될 수 없으니까 unique 임
+
+                    }else{
+
+                        if(is_null($team_id)) alert('프로그램을 올릴 팀을 선택해주세요.'.$team_id);
+                        $data = array(
+                            'team_id'=>$team_id, //무조건 고정
+                            'title'=>null,
+                            'contents'=>null,
+                            'participant'=>null,
+
+                            'district'=>null,
+                            'venue'=>null,
+                            'price'=>null,
+
+                            'address'=>null,
+
+                            'status'=>'on',
+                            'thumbs_url'=>null,//기본 섬네일 지정,
+                            'type'=>'new' //새로 글쓰기
+                        );
+                        $team_info = $this->team_model-> get_team_info($team_id);
+                        $date_info = array();
+                        $qna_info = array();
+                        $qualify_info = array();
+                    }
+
+                    $this->layout->view('program/upload', array('user'=>$user_data,'result'=>$data, 'team_info'=>$team_info,
+                        'date_info'=>$date_info,'qna_info'=>$qna_info,'qualify_info'=>$qualify_info));
+                }
             }
+
+
         }
 
 

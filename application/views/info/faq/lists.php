@@ -13,11 +13,12 @@
     <div class="row">
         <div class="col-lg-9 col-md-6 col-sm-12"></div>
         <div class="col-lg-3 col-md-6 col-sm-12">
-            <form class="" name="search" method="get" action="/info/faq/1/q">
+            <form class="" name="search" method="get" action="/info/faq/lists/1/q">
                 <div class="input-group">
 
                     <input type="text" class="form-control" name="search" placeholder="검색어 입력">
-                    <input type="hidden" value="<?=$this->input->get('crt_date')?>" name="crt_date">
+                    <input type="hidden" value="<?=$search_query['crt_date']?>" name="crt_date">
+                    <input type="hidden" value="<?=$search_query['category']?>" name="category">
                     <button type="submit" class="btn btn-outline-action">검색</button>
                 </div>
             </form>
@@ -30,8 +31,9 @@
           foreach ($data['result'] as $result_list):?>
 
     <div class="faq_item" id="faq_<?=$result_list['faq_id']?>">
-        <div class="faq_title" ><?=$result_list['title']?></div>
-        <div class="faq_contents" ><?=$result_list['contents']?></div>
+        <div class="faq_title" >
+            <a href="/info/faq/view/"
+            <?=$result_list['title']?></div>
 
     </div>
     <?php endforeach;

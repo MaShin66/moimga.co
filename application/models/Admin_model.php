@@ -498,23 +498,25 @@ class Admin_model extends CI_Model
 	}
     function load_verify($type = '', $offset = '', $limit = '', $search_query) {
 
-        $this->db->select('*');
-        $this->db->from('users');
         $this->db->join('verify', 'verify.user_id = users.id');
         if($search_query['search']!=null){
             $name_query = '(users.username like "%'.$search_query['search'].'%" or users.email like "%'.$search_query['search'].'%" or users.realname like "%'.$search_query['search'].'%" or verify.phone like "%'.$search_query['search'].'%")';
             $this->db->where($name_query);
         }
-        if($search_query['crt_date']==null){
-            $this->db->order_by('verify.crt_date','desc');
-        }else{
+        if(!is_null($search_query['crt_date'])){
             $this->db->order_by('verify.crt_date',$search_query['crt_date']);
+        }else{
+            $this->db->order_by('verify.crt_date','desc');
         }
+        if(!is_null($search_query['success'])){
+            $this->db->where('verify.success',$search_query['success']);
+        }
+
         if ($limit != '' || $offset != '') {
             $this->db->limit($limit, $offset);
         }
 
-        $query = $this->db->get();
+        $query = $this->db->get('users');
 
         if ($type == 'count') {
             $result = $query -> num_rows();

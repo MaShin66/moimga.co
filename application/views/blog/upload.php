@@ -21,7 +21,7 @@ $write_type=$this->input->get('write');
 			<h2 class="form_p_title">내용</h2>
 			<div class="prod_upload_guide"><i class="fas fa-info-circle"></i> 이미지 추가는 툴바 오른쪽 끝의 '이미지 <i class="far fa-image"></i>' 아이콘을 누르신 후, 이미지 주소를 붙여넣으시면 됩니다. <a href="#" data-toggle="modal" data-target="#GuideModal">이미지 업로드 가이드</a></div>
 
-			<div name="" id="editor" style="min-height: 150px;">
+			<div id="editor" style="min-height: 150px;">
 				<?php if($write_type=='modify'){ echo $result['contents'];}?>
 			</div>
 
@@ -45,6 +45,6 @@ $write_type=$this->input->get('write');
 		<?php } ?>
 
 		<input type="hidden" value="<?=$user['user_id']?>" name="user_id">
-		<input type="submit" value="등록하기" class="btn btn-lg btn-full btn-action upload_ok">
+		<input type="submit" value="등록하기" class="btn  btn-lg btn-full btn-primary upload_ok">
 	</form>
 </div>

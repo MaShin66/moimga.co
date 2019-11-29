@@ -446,11 +446,4 @@ class Team extends MY_Controller {
             alert('해당 팀에 포스팅을 쓸 수 없습니다.','/'.$at_url);
         }
     }
-
-    /*search*/
-
-    function search(){
-
-    }
-
 }

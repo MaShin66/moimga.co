@@ -14,10 +14,6 @@ class Member_model extends CI_Model
         $this->db->join('users','users.id = team_member.user_id');
         $this->db->join('team','team.team_id = team_member.team_id');
 
-        if(!is_null($search_query['user_id'])) {
-            $this->db->where('team_member.user_id',$search_query['user_id']);
-        }
-
         if(!is_null($search_query['team_id'])) {
             $this->db->where('team_member.team_id',$search_query['team_id']);
         }
@@ -31,6 +27,9 @@ class Member_model extends CI_Model
             $this->db->order_by('team_member.crt_date',$search_query['crt_date']);
         }else{
             $this->db->order_by('team_member.crt_date','desc');
+        }
+        if(!is_null($search_query['type'])){
+            $this->db->where('team_member.type',$search_query['type']);
         }
 
         if ($limit != '' || $offset != '') {

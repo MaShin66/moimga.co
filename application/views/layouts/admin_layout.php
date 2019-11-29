@@ -74,11 +74,28 @@
                 <li class="nav-item">
                     <a class="nav-link <?php if($location=='after'){echo 'active';}?>" href="/admin/after">후기</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <?php if($location=='users'){echo 'active';}?>" href="/admin/users">회원</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link " href="#" role="button" id="dropdownTeam" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        회원
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownTeam">
+                        <a class="dropdown-item <?php if($location=='users'){echo 'active';}?>" href="/admin/users">회원</a>
+                        <a class="dropdown-item <?php if($location=='verify'){echo 'active';}?>" href="/admin/verify">본인인증</a>
+
+                    </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <?php if($location=='faq'){echo 'active';}?>" href="/admin/faq">FAQ</a>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link " href="#" role="button" id="dropdownTeam" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        FAQ
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownTeam">
+                        <a class="dropdown-item <?php if($location=='faq'){echo 'active';}?>" href="/admin/faq">목록</a>
+                        <a class="dropdown-item <?php if($location=='faq_category'){echo 'active';}?>" href="/admin/faq_category">카테고리</a>
+
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php if($location=='blog'){echo 'active';}?>" href="/admin/blog">블로그</a>

@@ -41,30 +41,53 @@ class Blog_model extends CI_Model
 		return $blog_id;
 	}
 
+    
+    function load_blog($type = '', $offset = '', $limit = '', $search_query){
+        $this->db->select('blog.*');
 
+        $this->db->join('users','users.id = blog.user_id');
 
+        if($search_query['crt_date']==null){
+            $this->db->order_by('crt_date','desc');
+        }else{
+            $this->db->order_by('crt_date',$search_query['crt_date']);
+        }
 
-	function load_blog($offset='',$limit='',$type=''){
+        if(!is_null($search_query['status'])){
+            $this->db->where('status',$search_query['status']);
+        }
 
-        $this->db->order_by('crt_date','desc');
-        $this->db->where('status','on');
-		if ($limit != '' || $offset != '') {
-			$this->db->limit($limit, $offset);
-		}
-		$query = $this->db->get('blog');
+        if($search_query['search']!=null){
 
-		if($type=='count'){
+            $name_query = '(blog.title like "%'.$search_query['search'].'%" or blog.user_id ='.$search_query['search'].' or blog.contents like "%'.$search_query['search'].'%"")';
+            $this->db->where($name_query);
 
-			$result = $query -> num_rows();
-		}else {
-			$result = $query -> result_array();
+        }
+        if ($limit != '' || $offset != '') {
+            $this->db->limit($limit, $offset);
+        }
 
-		}
-		return $result;
-	}
+        $query = $this->db->get('blog');
 
+        if ($type == 'count') {
+            $result = $query -> num_rows();
+        } else {
+            $result = $query -> result_array();
+        }
+        //내 포지션도 써야하는데..
 
+        return $result;
+    }
 
+    
+
+    function update_blog_hit($blog_id){ // sql 로만 해야한다니..
+
+        $sql = "UPDATE blog SET hit = hit + 1 WHERE blog_id = ".$blog_id ;
+        $this->db->query($sql);
+
+        return $blog_id;
+    }
 
 
 }

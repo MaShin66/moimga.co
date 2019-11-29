@@ -14,25 +14,31 @@ class Team_model extends CI_Model
 
         $this->db->join('users','users.id = team.user_id');
 
-        if($search_query['crt_date']==null){
-            $this->db->order_by('crt_date','desc');
-        }else{
-            $this->db->order_by('crt_date',$search_query['crt_date']);
-        }
 
         if(!is_null($search_query['user_id'])){
             $this->db->where('team.user_id',$search_query['user_id']);
         }
 
+
+        if(!is_null($search_query['crt_date'])){
+
+            $this->db->order_by('crt_date',$search_query['crt_date']);
+        }else{
+            $this->db->order_by('crt_date','desc');
+
+        }
+
         if(!is_null($search_query['status'])){
             $this->db->where('status',$search_query['status']);
-        }else{
-            $this->db->where('status','on');
         }
+        ///whwywywhwyww status sorting 안 됨!?!?!
+        /// 
 
         if($search_query['search']!=null){
 
-            $name_query = '(team.name like "%'.$search_query['search'].'%" or users.nickname like "%'.$search_query['search'].'%" or team.contents like "%'.$search_query['search'].'%" or team.title like "%'.$search_query['search'].'%")';
+            $name_query = '(team.name like "%'.$search_query['search'].'%" or users.nickname like "%'.$search_query['search'].'%"
+             or team.contents like "%'.$search_query['search'].'%" or team.title like "%'.$search_query['search'].'%" 
+             or team.url like "%'.$search_query['search'].'%")';
             $this->db->where($name_query);
 
         }
@@ -125,26 +131,16 @@ class Team_model extends CI_Model
     }
 
     function as_member($team_id, $user_id){
-        //team에서 찾기
+        //team에서 찾기 .. team 장이나 멤버나 둘 다 여기에 들어가있다
         $this->db->where('user_id',$user_id);
         $this->db->where('team_id',$team_id);
-        $query = $this->db->get('team');
+        $query= $this->db->get('team_member');
         $result = $query -> num_rows();
+
         if($result>0){
             return true;
-        }else{ //team member에서 찾기
-            $this->db->flush_cache();
-
-            $this->db->where('user_id',$user_id);
-            $this->db->where('team_id',$team_id);
-            $query_m = $this->db->get('team_member');
-            $result_m = $query_m -> num_rows();
-
-            if($result_m>0){
-                return true;
-            }else{
-                return false;
-            }
+        }else{
+            return false;
         }
 
     }
@@ -159,17 +155,17 @@ class Team_model extends CI_Model
             $this->db->where('team_blog.team_id',$search_query['team_id']); //무조건 이 팀에만 걸린것으로 가져온다.
         }
 
-        if($search_query['crt_date']==null){
-            $this->db->order_by('team_blog.crt_date','desc');
-        }else{
+        if(!is_null($search_query['crt_date'])){
+
             $this->db->order_by('team_blog.crt_date',$search_query['crt_date']);
-        }
-        if(!is_null($search_query['status'])){
-            $this->db->order_by('team_blog.status',$search_query['status']);
         }else{
-            $this->db->order_by('team_blog.status','on');
+            $this->db->order_by('team_blog.crt_date','desc');
+
         }
 
+        if(!is_null($search_query['status'])){
+            $this->db->order_by('team_blog.status',$search_query['status']);
+        }
         if($search_query['search']!=null){
 
             $name_query = '(team_blog.name title "%'.$search_query['search'].'%" or team_blog.contents like "%'.$search_query['search'].'%")';
@@ -390,6 +386,7 @@ class Team_model extends CI_Model
         $this->db->delete('team_delete');
         return 0;
     }
+
 
     
 

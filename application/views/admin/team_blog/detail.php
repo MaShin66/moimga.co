@@ -36,7 +36,7 @@
             <div class="">
                 <form action="/admin/set_status/" method="post">
                     <input type="hidden" name="unique_id" value="<?=$data['team_blog_id']?>">
-                    <input type="hidden" name="type" value="blog">
+                    <input type="hidden" name="type" value="team_blog">
 
                     <?php if($data['status']=='on'){?>
 

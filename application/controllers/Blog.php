@@ -44,7 +44,7 @@ class Blog extends MY_Controller {
         $config['per_page'] = 8; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 3; // 페이지 번호가 위치한 세그먼트
 
-        $config = $this->pagination_config($config);
+        $config = pagination_config($config);
 
 		$config['attributes'] = array('class' => 'page-link');
         $config['use_page_numbers'] = TRUE;
@@ -86,7 +86,13 @@ class Blog extends MY_Controller {
         );
 
 		$result = $this->blog_model->get_blog_info($blog_id);
-        $this->layout->view('blog/view', array('user'=>$user_data,'result'=>$result));
+		if($result['status']!='on'&&$level!=9){
+		    alert('공개되어있지 않습니다.','/blog');
+        }else{
+		    $this->blog_model->update_blog_hit($blog_id);
+            $this->layout->view('blog/view', array('user'=>$user_data,'result'=>$result));
+        }
+
 
     }
     
@@ -116,6 +122,9 @@ class Blog extends MY_Controller {
 			$contents = $this->input->post('contents');
 			$status = $this->input->post('status');
 
+            if($status!='on'){
+                $status = 'off';
+            }
 
             $data=array(
                 'title'=>$title,
@@ -128,7 +137,7 @@ class Blog extends MY_Controller {
 			if($write_type=='modify') {
 
 				$blog_id = $this->input->post('blog_id');
-				$result = $this->blog_model->update_blog($blog_id, $data);
+				$this->blog_model->update_blog($blog_id, $data);
 				alert('수정되었습니다.','/blog/view/'.$blog_id);
 
 			}else{
@@ -149,13 +158,10 @@ class Blog extends MY_Controller {
 					redirect('/');
 				}
 
-
 			}else{
-
 				$result = array();
 
 			}
-
 
 			$this->layout->view('blog/upload', array('user'=>$user_data,'result'=>$result));
 		}
@@ -163,35 +169,5 @@ class Blog extends MY_Controller {
 
 	}
 
-
-
-    function pagination_config($config){
-
-        $config['first_link'] = '≪';
-        $config['first_tag_open'] = '<li class="page-item">';
-        $config['first_tag_close'] = '</li>';
-
-        $config['last_link'] = '≫';
-        $config['last_tag_open'] = '<li class="page-item">';
-        $config['last_tag_close'] = '</li>';
-
-        $config['next_link'] = '＞';
-        $config['next_tag_open'] = '<li class="page-item">';
-        $config['next_tag_close'] = '</li>';
-
-        $config['prev_link'] = '＜';
-        $config['prev_tag_open'] = '<li class="page-item">';
-        $config['prev_tag_close'] = '</li>';
-
-        $config['cur_tag_open'] = '<li class="page-item active"><a href="" class="page-link">';
-        $config['cur_tag_close'] = '</a></li>';
-
-        $config['num_tag_open'] = '<li class="page-item">';
-        $config['num_tag_close'] = '</li>';
-        $config['attributes'] = array('class' => 'page-link');
-        $config['use_page_numbers'] = TRUE;
-
-        return $config;
-    }
 
 }

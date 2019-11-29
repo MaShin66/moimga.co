@@ -55,7 +55,6 @@
         <th>이름</th>
         <th>권한</th>
         <th>지정날짜</th>
-        <th>보기</th>
     </tr>
     <?php if(count($member_list)==0){?>
         <tr>
@@ -65,7 +64,7 @@
         foreach ($member_list as $key=>$item){?>
 
             <tr>
-                <td><a href="/admin/member/detail/<?=$item['team_member_id']?>"><?=$item['realname']?></a></td>
+                <td><?=$item['realname']?></td>
                 <td>
                     <?php if($item['type']==2){
                         echo '멤버';
@@ -75,7 +74,6 @@
 
                 </td>
                 <td><?=$item['set_date']?></td>
-                <td><a href="/admin/member/detail/<?=$item['team_member_id']?>" class="btn btn-sm btn-outline-secondary">보기</a></td>
             </tr>
 
         <?php }

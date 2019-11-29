@@ -5,20 +5,40 @@
  * Date: 2019-11-27
  * Time: 오후 4:06
  */?>
-<h1>팀 목록</h1>
+<h1><a href="/admin/team/">팀 목록</a></h1>
 
-<form action="/admin/team/lists/1/q" method="get">
-    <input type="text" name="search">
-    <input type="submit" value="검색">
-</form>
+<div class="btn-toolbar justify-content-between" role="toolbar">
+    <div class="btn-group-sm" role="group" aria-label="sort group">
+        <a href="/admin/team/lists/1/q?search=<?=$search_query['search']?>&status=on" class="btn btn-outline-secondary">공개</a>
+        <a href="/admin/team/lists/1/q?search=<?=$search_query['search']?>&status=off" class="btn btn-outline-secondary">비공개</a>
+        <a href="/admin/team/lists/1/q?search=<?=$search_query['search']?>&status=" class="btn btn-outline-secondary">전체</a>
 
-<div class="mp_form_list hidden-md-down">
+    </div>
+    <form action="/admin/team/lists/1/q" method="get">
+
+
+        <div class="input-group">
+
+            <input type="text" name="search" class="form-control" placeholder="검색어를 입력해주세요"  value="<?=$search_query['search']?>">
+            <input type="hidden" name="status" value="<?=$search_query['status']?>">
+
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit">검색</button>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+
+<div class="admin_list">
     <table class="table table-hover table-responsive-sm">
         <thead>
         <tr>
             <th>번호</th>
             <th>팀 이름</th>
             <th>고유 주소</th>
+            <th>상태</th>
             <th>상세</th>
         </tr>
         </thead>
@@ -35,6 +55,22 @@
                 <td><?=$result['team_id']?></td>
                 <td><a href="/admin/team/detail/<?=$result['team_id']?>"><?=$result['title']?></a></td>
                 <td><?=$result['url']?></td>
+                <td><?=$this->lang->line($result['status'])?>
+                    <form action="/admin/set_status/" method="post">
+                        <input type="hidden" name="unique_id" value="<?=$result['team_id']?>">
+                        <input type="hidden" name="type" value="team">
+
+                        <?php if($result['status']=='on'){ ?>
+                            <input type="hidden" name="status" value="off">
+                            <input type="submit"  class="btn btn-outline-secondary btn-sm" value="비공개로 변경">
+                        <?php }else{ ?>
+
+                            <input type="hidden" name="status" value="on">
+                            <input type="submit"  class="btn btn-outline-primary btn-sm" value="공개로 변경">
+
+                        <?php }?>
+                    </form>
+                </td>
                 <td><a href="/admin/team/detail/<?=$result['team_id']?>" class="btn btn-sm btn-outline-action">보기</a></td>
 
             </tr>

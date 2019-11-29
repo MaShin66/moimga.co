@@ -48,7 +48,6 @@ class After_model extends CI_Model
 
     //team 후기만 올리기로함
 
-
     function load_after($type = '', $offset = '', $limit = '', $search_query){
         $this->db->select('after.*, users.nickname,users.realname, team.name as team_name');
         $this->db->join('team','team.team_id = after.team_id');

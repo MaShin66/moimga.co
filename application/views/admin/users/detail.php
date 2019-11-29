@@ -97,6 +97,42 @@
 </form>
 
 <hr>
+<div class="admin_wrap">
+    <h3>인증</h3>
+    <?php if($data['verify']==0 || $data['verify']==null){?>
+
+        <form class="" method="post" action="/admin/users/verify/<?=$data['id']?>">
+            <div class="row">
+                <div class="col-2">실명</div>
+                <div class="col-10">
+                    <input type="text" name="realname" class="form-control">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">성별</div>
+                <div class="col-10">
+                    <input type="number" name="sex" class="form-control" value="2">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">생년월일</div>
+                <div class="col-10">
+                    <input type="number" name="dob" class="form-control" maxlength="8" placeholder="19990527">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">전화번호</div>
+                <div class="col-10">
+                    <input type="number" name="phone" class="form-control" value="0">
+                </div>
+            </div>
+            <input type="submit" class="btn btn-outline-secondary" value="인증">
+        </form>
+    <?php }else{?>
+        인증 됨  <a href="/admin/users/disprove/<?=$data['id']?>" class="btn btn-sm btn-outline-secondary">인증 대기로 변경</a>
+    <?php }?>
+</div>
+<hr>
 
 <h3>탈퇴</h3>
 

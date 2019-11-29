@@ -24,6 +24,9 @@
 		<?php }?>
 
 	</div>
+    <?php if($user['level']==9){?>
+        <a href="/blog/upload" class="btn btn-outline-primary">등록</a>
+    <?php }?>
 
 	<nav class="page-navigation">
 		<ul class="pagination justify-content-center">

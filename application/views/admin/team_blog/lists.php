@@ -42,7 +42,7 @@
                 <td><?=$this->lang->line($result['status'])?>
                     <form action="/admin/set_status/" method="post">
                         <input type="hidden" name="unique_id" value="<?=$result['team_blog_id']?>">
-                        <input type="hidden" name="type" value="blog">
+                        <input type="hidden" name="type" value="team_blog">
 
                     <?php if($result['status']=='on'){ ?>
                         <input type="hidden" name="status" value="off">

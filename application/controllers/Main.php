@@ -17,15 +17,19 @@ class Main extends MY_Controller {
 
     public function index()
     {
+
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
         $level = $this->data['level'];
+        $alarm_cnt = $this->data['alarm'];
         $user_data = array(
+            'username' => $this->data['username'],
             'status' => $status,
             'user_id' => $user_id,
-            'username' =>$this->data['username'],
             'level' => $level,
+            'alarm' => $alarm_cnt
         );
+
         $this->layout->view('main', array('user'=>$user_data));
     }
 
