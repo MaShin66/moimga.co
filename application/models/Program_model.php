@@ -21,11 +21,10 @@ class Program_model extends CI_Model
         }
 
         if(!is_null($search_query['status'])){
-            $this->db->order_by('program.status',$search_query['status']);
+            $this->db->where('program.status',$search_query['status']);
         }
 
-        if(!is_null($search_query['team_id'])){
-
+        if($search_query['team_id']!=null){
             $this->db->where('program.team_id',$search_query['team_id']);
         }
 

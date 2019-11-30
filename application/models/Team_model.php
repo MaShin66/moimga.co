@@ -11,9 +11,7 @@ class Team_model extends CI_Model
 
     function load_team($type = '', $offset = '', $limit = '', $search_query){
         $this->db->select('team.*, users.nickname');
-
         $this->db->join('users','users.id = team.user_id');
-
 
         if(!is_null($search_query['user_id'])){
             $this->db->where('team.user_id',$search_query['user_id']);
@@ -21,7 +19,6 @@ class Team_model extends CI_Model
 
 
         if(!is_null($search_query['crt_date'])){
-
             $this->db->order_by('crt_date',$search_query['crt_date']);
         }else{
             $this->db->order_by('crt_date','desc');
@@ -31,7 +28,7 @@ class Team_model extends CI_Model
         if(!is_null($search_query['status'])){
             $this->db->where('status',$search_query['status']);
         }
-        ///whwywywhwyww status sorting 안 됨!?!?!
+        ///whwywywhwyww status sorting 안 됨!?!?! !
         /// 
 
         if($search_query['search']!=null){
@@ -321,7 +318,7 @@ class Team_model extends CI_Model
 
         if($search_query['search']!=null){
 
-            $name_query = '(team_delete.name title "%'.$search_query['search'].'%" or team_delete.contents like "%'.$search_query['search'].'%" or team_delete.title like "%'.$search_query['search'].'%")';
+            $name_query = '(team_delete.name like "%'.$search_query['search'].'%" or team_delete.contents like "%'.$search_query['search'].'%" or team_delete.title like "%'.$search_query['search'].'%")';
             $this->db->where($name_query);
 
         }

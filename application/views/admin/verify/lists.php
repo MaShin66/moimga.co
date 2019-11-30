@@ -2,27 +2,30 @@
 ?>
 <div class="container" style="margin-top: 60px;">
 
-    <div class="admin_sec_title"><a href="/admin/verify"> 본인인증</a> (총 <?=$data['total']?> 개) </div>
+    <h1 class="admin_sec_title"><a href="/admin/team/">본인인증 (총 <?=$data['total']?> 개)</a></h1>
     <div class="admin_sort">
-        <div class="row">
-            <div class="col-lg-9 col-sm-12">
 
+        <div class="btn-toolbar justify-content-between" role="toolbar">
+            <div class="btn-group btn-group-sm" role="group" aria-label="sort group">
+                <a href="/admin/verify/lists/1/q?search=<?=$search_query['search']?>" class="btn <?php echo (is_null($search_query['success'])) ? 'btn-secondary' : 'btn-outline-secondary';?>">전체</a>
+                <a href="/admin/verify/lists/1/q?search=<?=$search_query['search']?>&success=1" class="btn <?php echo ($search_query['success']=='1') ? 'btn-secondary' : 'btn-outline-secondary';?>">성공</a>
+                <a href="/admin/verify/lists/1/q?search=<?=$search_query['search']?>&success=0" class="btn <?php echo ($search_query['success']=='0') ? 'btn-secondary' : 'btn-outline-secondary';?>">실패</a>
             </div>
+            <form action="/admin/verify/lists/1/q" method="get">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="search" class="form-control" placeholder="검색어를 입력해주세요"  value="<?=$search_query['search']?>">
+                    <input type="hidden" name="success" value="<?=$search_query['success']?>">
 
-            <div class="col-lg-3 col-sm-12">
-                <form class="" method="get" action="/admin/verify/list/1/q">
-                    <div class="input-group" style="height: 34px;">
-                        <input type="text" class="form-control" placeholder="검색" aria-label="검색" name="search" value="<?=$search_query['search']?>">
-                        <span class="input-group-btn">
-                        <button class="btn btn-secondary btn-sm" type="submit">검색</button>
-                    </span>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit">검색</button>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
+
         </div>
 
     </div>
-    <table class="table table-hover table-sm table-responsive-sm  table-nowrap">
+    <table class="table table-hover table-sm table-nowrap">
         <thead>
         <tr>
             <th scope="col">번호</th>

@@ -56,11 +56,11 @@ class After_model extends CI_Model
         if(!is_null($search_query['status'])){
             $this->db->where('after.status',$search_query['status']);
         }
-        if(!is_null($search_query['team_id'])){
+        if($search_query['team_id']!=null){
             $this->db->where('after.team_id', $search_query['team_id']); //아예 고정
         }
 
-        if(!is_null($search_query['user_id'])){
+        if($search_query['user_id']!=null){
             $this->db->where('after.user_id', $search_query['user_id']); //아예 고정
         }
         if(!is_null($search_query['search'])){

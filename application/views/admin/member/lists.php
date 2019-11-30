@@ -5,15 +5,36 @@
  * Date: 2019-11-27
  * Time: 오후 4:06
  */?>
-<h1>팀 멤버 목록</h1>
 
-<form action="/admin/member/lists/1/q" method="get">
-    <input type="text" name="search">
-    <input type="submit" value="검색">
-</form>
+<h1 class="admin_sec_title"><a href="/admin/member/">팀 멤버 (총 <?=$data['total']?> 개)</a></h1>
+<div class="admin_sort">
 
-<div class="mp_form_list hidden-md-down">
-    <table class="table table-hover table-responsive-sm">
+    <div class="btn-toolbar justify-content-between" role="toolbar">
+        <div class="btn-group btn-group-sm" role="group" aria-label="sort group">
+            <a href="/admin/member/lists/1/q?search=<?=$search_query['search']?>" class="btn  <?php echo (is_null($search_query['type'])) ? 'btn-secondary' : 'btn-outline-secondary';?>">전체</a>
+            <a href="/admin/member/lists/1/q?search=<?=$search_query['search']?>&type=1" class="btn <?php echo ($search_query['type']=='1') ? 'btn-secondary' : 'btn-outline-secondary';?>">팀장</a>
+            <a href="/admin/member/lists/1/q?search=<?=$search_query['search']?>&type=2" class="btn  <?php echo ($search_query['type']=='2') ? 'btn-secondary' : 'btn-outline-secondary';?>">멤버</a>
+
+        </div>
+        <form action="/admin/member/lists/1/q" method="get">
+            <div class="input-group input-group-sm">
+                <input type="text" name="search" class="form-control" placeholder="검색어를 입력해주세요"  value="<?=$search_query['search']?>">
+                <input type="hidden" name="type" value="<?=$search_query['type']?>">
+                <input type="hidden" name="team_id" value="<?=$search_query['team_id']?>">
+
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">검색</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+
+<div class="admin_list">
+    <table class="table table-hover">
         <thead>
         <tr>
             <th>고유 번호</th>
@@ -30,7 +51,7 @@
 
         <?php if($data['total']==0){?>
             <tr>
-                <td colspan="7" class="form_empty">아직 만든 팀이 없습니다.</td>
+                <td colspan="8" class="form_empty">아직 만든 팀이 없습니다.</td>
             </tr>
 
         <?php }?>

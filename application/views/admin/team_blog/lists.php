@@ -5,15 +5,29 @@
  * Date: 2019-11-27
  * Time: 오후 4:06
  */?>
-<h1>팀 포스트 목록</h1>
+<h1 class="admin_sec_title"><a href="/admin/team_blog/">팀 포스트  (총 <?=$data['total']?> 개)</a></h1>
+<div class="admin_sort">
 
-<form action="/admin/team_blog/lists/1/q" method="get">
-    <input type="text" name="search">
-    <input type="submit" value="검색">
-</form>
+    <div class="btn-toolbar justify-content-between" role="toolbar">
+        <div class="btn-group btn-group-sm" role="group" aria-label="sort group">
 
-<div class="mp_form_list hidden-md-down">
-    <table class="table table-hover table-responsive-sm">
+        </div>
+        <form action="/admin/team_blog/lists/1/q" method="get">
+            <div class="input-group input-group-sm">
+                <input type="text" name="search" class="form-control" placeholder="검색어를 입력해주세요"  value="<?=$search_query['search']?>">
+                <input type="hidden" name="status" value="<?=$search_query['status']?>">
+
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">검색</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+<div class="admin_list">
+    <table class="table table-hover">
         <thead>
         <tr>
             <th>번호</th>

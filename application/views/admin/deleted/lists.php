@@ -5,15 +5,25 @@
  * Date: 2019-11-27
  * Time: 오후 4:06
  */?>
-<h1>삭제 목록</h1>
+<h1 class="admin_sec_title"><a href="/admin/deleted/">삭제</a></h1>
 
-<form action="/admin/deleted/lists/1/q" method="get">
-    <input type="text" name="search">
-    <input type="submit" value="검색">
-</form>
+<div class="admin_sort">
+    <div class="btn-toolbar justify-content-between" role="toolbar">
+        <div class=""></div>
+        <form action="/admin/deleted/lists/1/q" method="get">
+            <div class="input-group input-group-sm">
+                <input type="text" name="search" class="form-control" placeholder="검색어를 입력해주세요"  value="<?=$search_query['search']?>">
 
-<div class="mp_form_list hidden-md-down">
-    <table class="table table-hover table-responsive-sm">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">검색</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+<div class="admin_list">
+    <table class="table table-hover">
         <thead>
         <tr>
             <th>번호</th>
@@ -43,14 +53,14 @@
                     }else{ ?>
                         <form action="/admin/deleted/recover/" method="post">
                             <input type="hidden" name="team_delete_id" value="<?=$result['team_delete_id']?>">
-                            <input type="submit"  class="btn btn-outline-primary" value="복구">
+                            <input type="submit"  class="btn btn-outline-primary btn-sm" value="복구">
                         </form>
                     <?php }?>
                 </td>
                 <td>
                     <form action="/admin/deleted/terminate/" method="post">
                         <input type="hidden" name="team_delete_id" value="<?=$result['team_delete_id']?>">
-                        <input type="submit"  class="btn btn-outline-danger btn-delete" value="완전 삭제">
+                        <input type="submit"  class="btn btn-outline-danger btn-delete btn-sm" value="완전 삭제">
                     </form>
                 </td>
 

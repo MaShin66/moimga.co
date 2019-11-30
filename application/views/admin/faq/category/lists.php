@@ -5,12 +5,24 @@
  * Date: 2019-11-27
  * Time: 오후 4:06
  */?>
-<h1>FAQ 카테고리 목록</h1>
 
-<form action="/admin/faq_category/lists/1/q" method="get">
-    <input type="text" name="search">
-    <input type="submit" value="검색">
-</form>
+<h1 class="admin_sec_title"><a href="/admin/faq_category/">FAQ 카테고리 (총 <?=$data['total']?> 개)</a></h1>
+<div class="admin_sort">
+
+    <div class="btn-toolbar justify-content-between" role="toolbar">
+        <form action="/admin/faq_category/lists/1/q" method="get">
+            <div class="input-group input-group-sm">
+                <input type="text" name="search" class="form-control" placeholder="검색어를 입력해주세요"  value="<?=$search_query['search']?>">
+
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">검색</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+</div>
 
 <div class="mp_form_list hidden-md-down">
     <table class="table table-hover table-responsive-sm">
@@ -28,7 +40,7 @@
 
         <?php if($data['total']==0){?>
             <tr>
-                <td colspan="8" class="form_empty">아직 FAQ 카테고리가 없습니다.</td>
+                <td colspan="6" class="form_empty">아직 FAQ 카테고리가 없습니다.</td>
             </tr>
 
         <?php }?>

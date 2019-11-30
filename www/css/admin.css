@@ -1,6 +1,9 @@
 .admin_sec_title{
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 1.25rem;
+}
+.admin_sort{
+    padding: 10px 0;
 }
 .table{
     font-size: 0.8rem;

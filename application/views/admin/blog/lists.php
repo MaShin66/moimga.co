@@ -1,12 +1,28 @@
-<h1>블로그 목록</h1>
+<h1 class="admin_sec_title"><a href="/admin/blog/">블로그  (총 <?=$data['total']?> 개)</a></h1>
+<div class="admin_sort">
 
-<form action="/admin/blog/lists/1/q" method="get">
-    <input type="text" name="search">
-    <input type="submit" value="검색">
-</form>
+    <div class="btn-toolbar justify-content-between" role="toolbar">
+        <div class="btn-group btn-group-sm" role="group" aria-label="sort group">
+            <a href="/admin/blog/lists/1/q?search=<?=$search_query['search']?>" class="btn <?php echo (is_null($search_query['status'])) ? 'btn-secondary' : 'btn-outline-secondary';?>">전체</a>
+            <a href="/admin/blog/lists/1/q?search=<?=$search_query['search']?>&status=on" class="btn <?php echo ($search_query['status']=='on') ? 'btn-secondary' : 'btn-outline-secondary';?>">공개</a>
+            <a href="/admin/blog/lists/1/q?search=<?=$search_query['search']?>&status=off" class="btn <?php echo ($search_query['status']=='off') ? 'btn-secondary' : 'btn-outline-secondary';?>">비공개</a>
+        </div>
+        <form action="/admin/blog/lists/1/q" method="get">
+            <div class="input-group input-group-sm">
+                <input type="text" name="search" class="form-control" placeholder="검색어를 입력해주세요"  value="<?=$search_query['search']?>">
+                <input type="hidden" name="status" value="<?=$search_query['status']?>">
 
-<div class="mp_form_list hidden-md-down">
-    <table class="table table-hover table-responsive-sm">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">검색</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+<div class="admin_list">
+    <table class="table table-hover">
         <thead>
         <tr>
             <th>번호</th>

@@ -305,11 +305,27 @@ class Admin_model extends CI_Model
                 $this->db->where('id',$search_query['search']);
             }else{
 
-                $name_query = '(username like "%'.$search_query['search'].'%" or email like "%'.$search_query['search'].'%" or realname like "%'.$search_query['search'].'%" or nickname like "%'.$search_query['search'].'%")';
+                $name_query = '(username like "%'.$search_query['search'].'%" or email like "%'.$search_query['search'].'%" 
+                or realname like "%'.$search_query['search'].'%" or nickname like "%'.$search_query['search'].'%")';
                 $this->db->where($name_query);
             }
         }
 
+        //level
+        if($search_query['level']!=null){
+            $this->db->where('level',$search_query['level']);
+        }
+        // sns_type
+        if($search_query['sns_type']!=null){
+            if($search_query['sns_type']=='email'){
+
+                $this->db->where('sns_type',null);
+                $this->db->or_where('sns_type','');
+            }else{
+
+                $this->db->where('sns_type',$search_query['sns_type']);
+            }
+        }
 
         if($search_query['crt_date']==null){
             $this->db->order_by('created','desc');

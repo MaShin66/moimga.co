@@ -123,7 +123,6 @@ class Admin extends Admin_Controller
         // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
         $page = $this->uri->segment(4);
 
-
         if($page==null){
             $start=0;
         }else{
@@ -134,8 +133,9 @@ class Admin extends Admin_Controller
 
         $data['result'] = $this->faq_model->load_faq('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
+        $cate_list =  $this->faq_model->load_faq_category_plain();
 
-        $this->layout->view('admin/faq/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+        $this->layout->view('admin/faq/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'cate_list'=>$cate_list));
 
     }
     function _faq_detail($faq_id, $user_data){
@@ -438,7 +438,7 @@ class Admin extends Admin_Controller
             );
 
         }
-        print_r($search_query);
+//        print_r($search_query);
         $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&user_id='.$search_query['user_id'].'&status='.$search_query['status'];
 
         $this->load->library('pagination');
@@ -1292,25 +1292,30 @@ class Admin extends Admin_Controller
 
     function _user_list($user_data){
 
-        $search = $this->uri->segment(4);
-
+        $search = $this->uri->segment(5);
         if($search==null){
             $search_query = array(
                 'crt_date' => null,
                 'search' => null,
+                'sns_type' => null,
+                'level' => null,
             );
 
         }else{
             $sort_date = $this->input->get('crt_date');
             $sort_search = $this->input->get('search');
+            $sort_sns_type = $this->input->get('sns_type');
+            $sort_level = $this->input->get('level');
 
             $search_query = array(
                 'crt_date' => $sort_date,
                 'search' => $sort_search,
+                'sns_type' => $sort_sns_type,
+                'level' => $sort_level,
             );
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'];
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&sns_type='.$search_query['sns_type'].'&level='.$search_query['level'];
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
@@ -1497,8 +1502,8 @@ class Admin extends Admin_Controller
 
             $search_query = array(
                 'crt_date' => $sort_date,
-                'search' => $sort_search,
                 'success' => $sort_success,
+                'search' => $sort_search,
             );
 
         }

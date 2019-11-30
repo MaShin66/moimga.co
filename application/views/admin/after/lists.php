@@ -5,15 +5,35 @@
  * Date: 2019-11-27
  * Time: 오후 4:06
  */?>
-<h1>후기 목록</h1>
 
-<form action="/admin/after/lists/1/q" method="get">
-    <input type="text" name="search">
-    <input type="submit" value="검색">
-</form>
+<h1 class="admin_sec_title"><a href="/admin/program/">후기</a></h1>
+<div class="admin_sort">
 
-<div class="mp_form_list hidden-md-down">
-    <table class="table table-hover table-responsive-sm">
+    <div class="btn-toolbar justify-content-between" role="toolbar">
+        <div class="btn-group btn-group-sm" role="group" aria-label="sort group">
+            <a href="/admin/after/lists/1/q?search=<?=$search_query['search']?>&team_id=<?=$search_query['team_id']?>&user_id=<?=$search_query['user_id']?>" class="btn <?php echo (is_null($search_query['status'])) ? 'btn-secondary' : 'btn-outline-secondary';?>">전체</a>
+            <a href="/admin/after/lists/1/q?search=<?=$search_query['search']?>&team_id=<?=$search_query['team_id']?>&user_id=<?=$search_query['user_id']?>&status=on" class="btn <?php echo ($search_query['status']=='on') ? 'btn-secondary' : 'btn-outline-secondary';?>">공개</a>
+            <a href="/admin/after/lists/1/q?search=<?=$search_query['search']?>&team_id=<?=$search_query['team_id']?>&user_id=<?=$search_query['user_id']?>&status=off" class="btn <?php echo ($search_query['status']=='off') ? 'btn-secondary' : 'btn-outline-secondary';?>">비공개</a>
+        </div>
+        <form action="/admin/after/lists/1/q" method="get">
+            <div class="input-group input-group-sm">
+                <input type="text" name="search" class="form-control" placeholder="검색어를 입력해주세요"  value="<?=$search_query['search']?>">
+                <input type="hidden" name="status" value="<?=$search_query['status']?>">
+                <input type="hidden" name="user_id" value="<?=$search_query['user_id']?>">
+                <input type="hidden" name="team_id" value="<?=$search_query['team_id']?>">
+
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">검색</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+<div class="admin_list">
+    <table class="table table-hover">
         <thead>
         <tr>
             <th>고유 번호</th>
