@@ -22,6 +22,7 @@ class Mypage extends MY_Controller {
     }
  
     function info(){//내 정보
+        $this->load->model('verify_model');
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
         $level = $this->data['level'];
@@ -34,7 +35,9 @@ class Mypage extends MY_Controller {
             'level' => $level,
             'alarm' =>$alarm_cnt,
         );
-        $this->layout->view('mypage/main', array('user'=>$user_data));
+        $my_info = $this->user_model->get_user_basic_info($user_id);
+        $verify = $this->verify_model->get_verify_by_user_id($user_id);
+        $this->layout->view('mypage/main', array('user'=>$user_data,'my_info'=>$my_info,'verify'=>$verify));
     }
     function after($type='lists', $after_id=null){ //내가 쓴 후기
 
@@ -407,5 +410,24 @@ class Mypage extends MY_Controller {
 
         $this->layout->view('mypage/verify/back', array('user'=>$user_data));
     }
+    function change_name(){
 
+        $type = $this->input->post('type');
+        $user_id = $this->input->post('user_id');
+        $name = $this->input->post('name');
+        if(is_null($name) || $name==''){
+            alert('이름은 비워둘 수 없습니다.');
+        }else if($name=='admin'||$name=='관리자'||$name=='TMM'){
+            alert('입력하신 이름을 사용할 수 없습니다.');
+        }
+
+        $data = array(
+            $type=>$name
+        );
+        $result = $this->user_model->update_users($user_id, $data);
+
+        alert('수정되었습니다.');
+
+
+    }
 }

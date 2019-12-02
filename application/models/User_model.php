@@ -46,6 +46,14 @@ class User_model extends CI_Model
         $data = $query->row_array();
         return $data;
     }
+    function get_user_basic_info($user_id){
+        $this->db->select('id, username, realname, nickname, email, level, sns_type, adult, verify');
+        $this->db->where('id', $user_id);
+
+        $query = $this->db->get('users');
+        $data = $query->row_array();
+        return $data;
+    }
     function get_user_info_by_email($email){
         $this->db->where('email', $email);
         $this->db->limit(1); //하나만 가져온다..
@@ -54,22 +62,19 @@ class User_model extends CI_Model
         $data = $query->row_array();
         return $data;
     }
-    function check_sns_user($sns_email,$sns_type,$type=''){ //%username은 바뀔 수 있읔으
-        //$this->db->where('username',$sns_id);
-        $this->db->where('email',$sns_email);
-        $this->db->where('sns_type',$sns_type);
-        $query = $this->db->get('users');
+    function check_sns_user($sns_type,$unique_id){ //%username은 바뀔 수 있읔으
 
-        if($query->num_rows()<1){
+        //type, unique_id로 sns_login에서 찾는다..
+
+        $this->db->where('unique_id',$unique_id);
+        $this->db->where('sns_type',$sns_type);
+        $query = $this->db->get('sns_login');
+
+        if($query->num_rows()<1){ //없음
             $result = 0;
         }else{
-            if($type=='get'){
-
-                $data = $query->row_array();
-                $result = $data['id']; //사용자 id
-            }else{
-                $result = 1;
-            }
+            $data = $query->row_array();
+            $result = $data['user_id']; //사용자 id
         }
 
         return $result;

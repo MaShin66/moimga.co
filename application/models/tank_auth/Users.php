@@ -137,8 +137,51 @@ class Users extends CI_Model
 		}
 		return NULL;
 	}
+    function create_sns_user($data, $activated = TRUE,$sns_type,$unique_id)
+    {
+        //redirect('../auth/'.'sdfsdf');
+        $data['created'] = date('Y-m-d H:i:s');
+        $data['activated'] = $activated ? 1 : 0;
 
-	/**
+        $this->db->insert('users', $data);
+        $user_id = $this->db->insert_id();
+
+        if ($activated)	$this->create_profile($user_id);
+        $this->create_sns_login($user_id,$sns_type,$unique_id);
+
+        //return array('user_id' => $user_id);
+        return NULL;
+    }
+
+    function create_sns_login($user_id,$sns_type,$unique_id){
+        $this->db->set('user_id', $user_id);
+        $this->db->set('sns_type', $sns_type);
+        $this->db->set('unique_id', $unique_id);
+        $this->db->set('crt_date', date('Y-m-d H:i:s'));
+        return $this->db->insert('sns_login');
+    }
+
+
+    function get_user_sns($sns_type,$unique_id){
+
+        $this->db->where('unique_id', $unique_id);
+        $this->db->where('sns_type', $sns_type);
+
+        $query = $this->db->get('sns_login');
+        if ($query->num_rows() > 0) {
+            $result = $query->row_array();
+
+            $this->db->flush_cache(); //캐시 비우고 // 이렇게 되면 email 이 필요없어짐...
+
+            $this->db->where('id', $result['user_id']);
+            $query_users = $this->db->get($this->table_name);
+
+            if ($query_users->num_rows() == 1) return $query_users->row();
+            return NULL;
+        }
+    }
+
+    /**
 	 * Activate user if activation key is valid.
 	 * Can be called for not activated users only.
 	 *

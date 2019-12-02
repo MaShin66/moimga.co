@@ -98,7 +98,7 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php if($location=='blog'){echo 'active';}?>" href="/admin/blog">블로그</a>
+                    <a class="nav-link <?php if($location=='magazine'){echo 'active';}?>" href="/admin/magazine">매거진</a>
                 </li>
             </ul>
 

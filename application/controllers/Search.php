@@ -59,7 +59,7 @@ class Search extends MY_Controller { //통합검색
     function title($type){
         //제목만 검색함 type에 따라서
         //제목, id 등 검색 기준에 맞춰서 검색에 걸리도록 함
-        $search = $this->input->post('get');
+        $search = $this->input->post('search');
         if(!is_null($search)){
 
             $search_query = array(

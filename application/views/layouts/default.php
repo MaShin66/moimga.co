@@ -34,7 +34,6 @@
 
     <link rel="canonical" href="<?= current_url() ?>">
 
-
     <meta name="image" content="http://moimga.co/www/img/og_logo.jpg">
     <meta property="og:image" content="http://moimga.co/www/img/og_logo.jpg">
     <meta name="twitter:image" content="http://moimga.co/www/img/og_logo.jpg">
@@ -49,6 +48,7 @@
     <?php if($section=='upload'||$detail=='upload'){?>
         <link rel="stylesheet" href="/www/css/asDatepicker.css">
     <?php }?>
+    <link rel="stylesheet" href="/www/css/<?=$location?>.css">
 
 </head>
 <body>
@@ -168,11 +168,13 @@
             <a href="/info/terms">이용약관</a> |
             <a href="/info/privacy">개인정보보호정책</a> |
             <a href="/info/faq">자주묻는질문</a>  |
-            <a href="/blog">블로그</a>
+            <a href="/magazine">매거진</a>
         </div>
     </div>
 
 </footer>
+
+<script src="https://kit.fontawesome.com/663b869fc7.js" crossorigin="anonymous"></script>
 <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.4.1.js"
         integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
@@ -191,8 +193,8 @@
     <script type="text/javascript" src="/www/js/language.js"></script>
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script type="text/javascript" src="/www/js/upload/editor.js"></script>
-    <?php if($location=='team'){?>
-    <script type="text/javascript" src="/www/js/upload/team.js"></script>
+    <?php if($location=='team'||$location=='after'){?>
+    <script type="text/javascript" src="/www/js/upload/<?=$location?>.js"></script>
         <?php }else{?>
     <script type="text/javascript" src="/www/js/upload/<?= $section ?>.js"></script>
     <?php }?>

@@ -44,12 +44,12 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:400,700" rel="stylesheet">
 
-    <link rel="stylesheet" href="/www/css/auth.css?ver=1.1">
-    <link rel="stylesheet" href="/www/css/overlay.css?ver=1.1">
-    <link rel="stylesheet" href="/www/css/bootstrap.css?ver=1.1">
-    <link rel="stylesheet" href="/www/css/basic.css?ver=1.1">
-    <link rel="stylesheet" href="/www/css/quill.css?ver=1.1">
-    <link rel="stylesheet" href="/www/css/spinner.css?ver=1.1">
+    <link rel="stylesheet" href="/www/css/auth.css">
+    <link rel="stylesheet" href="/www/css/overlay.css">
+    <link rel="stylesheet" href="/www/css/bootstrap.css">
+    <link rel="stylesheet" href="/www/css/basic.css">
+    <link rel="stylesheet" href="/www/css/quill.css">
+    <link rel="stylesheet" href="/www/css/spinner.css">
 </head>
 <body>
 
@@ -217,9 +217,9 @@
     </script>
 <?php } ?>
 
-<script type="text/javascript" src="/www/js/basic.js?ver=1.1"></script>
-<script type="text/javascript" src="/www/js/overlay.js?ver=1.1"></script>
-<script type="text/javascript" src="/www/js/login.js?ver=1.1"></script>
+<script type="text/javascript" src="/www/js/basic.js"></script>
+<script type="text/javascript" src="/www/js/overlay.js"></script>
+<script type="text/javascript" src="/www/js/login.js"></script>
 
 
 </body>

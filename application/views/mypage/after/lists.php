@@ -55,7 +55,7 @@
     </table>
 </div>
 
-<a href="/after/write" class="btn btn-outline-secondary">후기 등록</a>
+<a href="/after/upload" class="btn btn-outline-secondary">후기 등록</a>
 <nav class="page-navigation">
     <ul class="pagination justify-content-center">
         <?php echo $data['pagination'];?>

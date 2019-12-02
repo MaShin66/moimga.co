@@ -532,7 +532,7 @@ class Admin extends Admin_Controller
         alert('팀과 하위 프로그램이 삭제되었습니다.','/admin/team');
 
     }
-    function blog($type = 'list')
+    function magazine($type = 'list')
     {
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
@@ -554,14 +554,14 @@ class Admin extends Admin_Controller
 
                 switch ($type){
                     case 'list':
-                        $this->_blog_list($user_data);
+                        $this->_magazine_list($user_data);
                         break;
                     case 'delete':
-                        $blog_id = $this->input->post('blog_id');
-                        $this->_blog_delete($blog_id);
+                        $magazine_id = $this->input->post('magazine_id');
+                        $this->_magazine_delete($magazine_id);
                         break;
                     default:
-                        $this->_blog_list($user_data);
+                        $this->_magazine_list($user_data);
                         break;
                 }
 
@@ -571,7 +571,7 @@ class Admin extends Admin_Controller
     }
 
 
-    function _blog_list($user_data){
+    function _magazine_list($user_data){
 
         $search = $this->uri->segment(5);
 
@@ -598,8 +598,8 @@ class Admin extends Admin_Controller
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
-        $config['base_url'] = '/admin/blog/lists'; // 페이징 주소
-        $config['total_rows'] = $this -> blog_model -> load_blog('count','','',$search_query); // 게시물 전체 개수
+        $config['base_url'] = '/admin/magazine/lists'; // 페이징 주소
+        $config['total_rows'] = $this -> magazine_model -> load_magazine('count','','',$search_query); // 게시물 전체 개수
 
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
@@ -622,17 +622,17 @@ class Admin extends Admin_Controller
 
         $limit = $config['per_page'];
 
-        $data['result'] = $this->blog_model->load_blog('', $start, $limit, $search_query);
+        $data['result'] = $this->magazine_model->load_magazine('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
-        $this->layout->view('admin/blog/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+        $this->layout->view('admin/magazine/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
 
     }
 
-    function _blog_delete($blog_id){
-        $this->blog_model->delete_blog($blog_id); //진짜 삭제
+    function _magazine_delete($magazine_id){
+        $this->magazine_model->delete_magazine($magazine_id); //진짜 삭제
 
-        alert('포스트가 삭제되었습니다.','/admin/blog');
+        alert('포스트가 삭제되었습니다.','/admin/magazine');
 
     }
     function team_blog($type = 'list',$team_blog_id=null)

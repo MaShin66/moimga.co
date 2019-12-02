@@ -14,12 +14,15 @@
 
 </div>
 
-    <div class="">
-        <a href="<?=$this->uri->segment(1)?>/write" class="btn btn-primary">쓰기 </a>
-    </div>
     <nav class="page-navigation">
         <ul class="pagination justify-content-center">
             <?php echo $result['pagination'];?>
         </ul>
     </nav>
 </div>
+<?php if($user['status']==='yes'){?>
+    <div class="">
+        <a href="<?=$this->uri->segment(1)?>/upload" class="btn btn-primary">쓰기 </a>
+    </div>
+
+<?php } ?>

@@ -21,7 +21,7 @@ function search_team() {
                     var append_array = null;
                     result.forEach(function (element) {
                         list_div.append(
-                            '<div class=""  onclick="set_team_id('+element.team_id+')">'+element.title+'</div>'
+                            '<div class=""  onclick="set_team_id('+element.team_id+')">'+element.name+'</div>'
                         );
                     });
 
@@ -35,11 +35,18 @@ function search_team() {
 
 }
 
+
+$("#team_title").keyup(function(e) {
+    search_team($(this).val());
+});
+
+
 function set_team_id(team_id) {
     $('#team_id').val(team_id);
     alert('후기를 쓸 팀이 설정되었습니다.');
 }
 
 function submit_after() {
+    $('#input_mirror').val($('.ql-editor').html());
     $('#after_form').submit();
 }

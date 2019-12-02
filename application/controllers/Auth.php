@@ -312,11 +312,12 @@ class Auth extends MY_Controller
 
     function sns_login_check(){
 
-        $sns_id = $this->input->post('sns_id');
+        $sns_nickname = $this->input->post('sns_id'); //닉네임임.. 여기서부터는 이걸 닉네임으로 쓴다
         $sns_email = $this->input->post('sns_email');
         $sns_type = $this->input->post('sns_type');
         $remember = $this->input->post('remember');
         $unique_id = $this->input->post('unique_id');
+
         $result = $this-> user_model ->check_sns_user($sns_email,$sns_type); // user table 에서 해당 아이디로 있는지 없는지 확인
 
         //$result==1이면 가입 된건데, sns_profile에도 있는지 확인..
@@ -329,23 +330,25 @@ class Auth extends MY_Controller
         }else{ //가입 안돼있으면
             //해당 아이디, 비밀번호로 가입시키기
             // users 에 추가하기
-            $email_activation=1;
-            //create_sns_user($username, $email, $email_activation, $sns_type)
+            $user_code = 'user_'.generate_random_code(7);
+            if(is_null($sns_email) || $sns_email==''){// 아무것도 없으면 자동으로 이메일 부여
+                $sns_email = $user_code.'@moimga.co';
+            }
+//            //create_sns_user($username, $email, $email_activation, $sns_type)
             $this->tank_auth->create_sns_user(
-                $sns_id,
+                $user_code, //username
                 $sns_email,
-                $email_activation,
                 $sns_type,
-                $unique_id);
+                $unique_id,
+                $sns_nickname);
 
             //sns_login table에 만들기
             //회원가입 완료 페이지로 이동 -> 하기위해 json 으로 보내기..
             //로그인하기
 
             $remember = 0;
-            $this->tank_auth->sns_login($sns_email, $remember, $sns_type,$unique_id);
+            $this->tank_auth->sns_login($user_code, $remember, $sns_type,$unique_id);
             $type = 'regi';
-
         }
         echo $type;
 
@@ -556,6 +559,17 @@ class Auth extends MY_Controller
 			redirect('/auth/login');
 
 		} else {
+            $status = $this->data['status'];
+            $user_id = $this->data['user_id'];
+            $level = $this->data['level'];
+            $alarm_cnt = $this->data['alarm'];
+            $user_data = array(
+                'status' => $status,
+                'user_id' => $user_id,
+                'username' =>$this->data['username'],
+                'level' =>$level,
+                'alarm' =>$alarm_cnt
+            );
 			$this->form_validation->set_rules('password', $this->lang->line('password'), 'trim|required|xss_clean');
 			$this->form_validation->set_rules('email', '새 이메일', 'trim|required|xss_clean|valid_email');
 
@@ -578,7 +592,8 @@ class Auth extends MY_Controller
 					foreach ($errors as $k => $v)	$data['errors'][$k] = $this->lang->line($v);
 				}
 			}
-			$this->load->view('auth/change_email_form', $data);
+            $this->layout->setLayout("layouts/default");
+            $this->layout->view('auth/change_email_form', array('data'=>$data, 'user'=>$user_data));
 		}
 	}
 

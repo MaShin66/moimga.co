@@ -2,14 +2,8 @@
   font-size: 10px;
 }
 
-.change_name,
-.change_major,
-.change_school,
-.change_birth,
-.sch_empty,
-.school_search_form,
-.now_searching,
-.major_search_form
+.change_realname,
+.change_nickname
 {
     margin-top: 10px;
  display: none;

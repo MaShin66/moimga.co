@@ -4,14 +4,10 @@ class Like_model extends CI_Model
 
 {
 
-
-
     function __construct()
 
     {
-
         parent::__construct();
-
     }
 
 
@@ -65,9 +61,6 @@ class Like_model extends CI_Model
         $this->db->update('moim_like', $data);
         return $moim_like_id;
     }
-
-
-
 
     function load_moim_like($offset='',$limit='',$type=''){
 

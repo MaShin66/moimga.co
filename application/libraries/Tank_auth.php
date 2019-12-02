@@ -238,9 +238,8 @@ class Tank_auth
 		return NULL;
 	}
 
-    function create_sns_user($username, $email, $email_activation, $sns_type,$unique_id)
+    function create_sns_user($username, $email, $sns_type,$unique_id,$sns_nickname)
     {
-        $email_activation = 1;
         if($username=='관리자'||$username=='admin'||$username=='jobslearn'||$username=='jobslearnplace'){
             $username = '회원';
         }
@@ -252,22 +251,19 @@ class Tank_auth
             alert('이미 이메일로 가입한 적이 있습니다. 이메일로 로그인 해주세요.','/auth/login');
             $this->error = array('login' => 'auth_sns_login_exist');
         }else{
-            if($email==null||$email==''){
-
-                //임시 이메일
-                $email = 'temp_'.$sns_type.'_'.time().'@'.$sns_type;
-            }
 
             $data = array(
                 'username'	=> $username,
+                'nickname'=>$sns_nickname,
                 'email'		=> $email,
+                'level'=>1,//가입하자마자 레벨 1
                 'last_ip'	=> $this->ci->input->ip_address(),
-                'activated' => $email_activation,
+                'activated' => 1,
                 'sns_type' => $sns_type,
                 'sns_crt_date' =>date('Y-m-d H:i:s')
             );
 
-            if (!is_null($res = $this->ci->users->create_sns_user($data, $email_activation,$sns_type,$unique_id))) {
+            if (!is_null($res = $this->ci->users->create_sns_user($data, 1,$sns_type,$unique_id))) {
                 $data['user_id'] = $res['user_id'];
                 unset($data['last_ip']);
                 return $data;
@@ -335,40 +331,50 @@ class Tank_auth
 		}
 		return NULL;
 	}
-
-    function sns_login($remember, $sns_type,$unique_id)
+    function sns_login($username, $remember, $sns_type,$unique_id)
     {
+        if ((strlen($username) > 0)) {
+            $login_by_username = false;
+            $login_by_email= true;
+            // Which function to use to login (based on config)
+//            if ($login_by_username AND $login_by_email) {
+//                $get_user_func = 'get_user_by_login_sns';
+//            } else if ($login_by_username) {
+//                $get_user_func = 'get_user_by_username_sns';
+//            } else {
+//                $get_user_func = 'get_user_by_email_sns';
+//            }//get_user_by_email_sns 이걸로 로그인함
+            if (!is_null($user = $this->ci->users->get_user_sns($sns_type,$unique_id))) {	// login ok
 
-        if (!is_null($user = $this->ci->users->get_user_sns($sns_type,$unique_id))) {	// login ok
+                $this->ci->session->set_userdata(array(
+                    'user_id'	=> $user->id,
+                    'username'	=> $username,
+                    'status'	=> ($user->activated == 1) ? STATUS_ACTIVATED : STATUS_NOT_ACTIVATED,
+                ));
 
-            $this->ci->session->set_userdata(array(
-                'user_id'	=> $user->id,
-                'username'	=> $user->username,
-                'status'	=> ($user->activated == 1) ? STATUS_ACTIVATED : STATUS_NOT_ACTIVATED,
-            ));
+                if ($user->activated == 0) {							// fail - not activated
+                    $this->error = array('not_activated' => '');
 
-            if ($user->activated == 0) {							// fail - not activated
-                $this->error = array('not_activated' => '');
+                } else {
+                    if ($remember==1) {
+                        $this->create_autologin($user->id);
+                    }
 
-            } else {
-                if ($remember==1) {
-                    $this->create_autologin($user->id);
+                    $this->clear_login_attempts($username);
+
+                    $this->ci->users->update_login_info(
+                        $user->id,
+                        $this->ci->config->item('login_record_ip', 'tank_auth'),
+                        $this->ci->config->item('login_record_time', 'tank_auth'));
+                    return TRUE;
                 }
 
-//                $this->clear_login_attempts($user->email);
+            }else{
 
-                $this->ci->users->update_login_info(
-                    $user->id,
-                    $this->ci->config->item('login_record_ip', 'tank_auth'),
-                    $this->ci->config->item('login_record_time', 'tank_auth'));
-                return TRUE;
+                return FALSE;
             }
-
-        }else{
-
-            return FALSE;
         }
-
+        return FALSE;
     }
 
 

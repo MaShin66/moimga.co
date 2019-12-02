@@ -112,7 +112,7 @@ class After extends MY_Controller
         $this->layout->view('after/view', array('user'=>$user_data,'after_info'=>$after_info));
     }
 
-    function write(){
+    function upload(){
 
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
@@ -153,6 +153,7 @@ class After extends MY_Controller
                 $this->after_model->update_after($after_id,$data);
 
             }else{ //새로 쓰기
+                $data['hit']=0;
                 $data['crt_date'] = date('Y-m-d H:i:s');
                 $after_id = $this->after_model->insert_after($data);
 
@@ -170,7 +171,7 @@ class After extends MY_Controller
                 'status'=>'on',
                 'type'=>'new' //새로 글쓰기
             );
-            $this->layout->view('after/write', array('user'=>$user_data,'result'=>$data));
+            $this->layout->view('after/upload', array('user'=>$user_data,'result'=>$data));
         }
 
     }
