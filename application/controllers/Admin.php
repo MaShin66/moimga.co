@@ -1615,7 +1615,7 @@ class Admin extends Admin_Controller
             $sort_search = $this->input->get('search');
             $sort_status = $this->input->get('status');
             $sort_user_id = $this->input->get('user_id');
-            $sort_team_id = $this->input->get('status');
+            $sort_team_id = $this->input->get('team_id');
 
             $search_query = array(
                 'crt_date' => $sort_date,
