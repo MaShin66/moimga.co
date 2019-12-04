@@ -23,6 +23,9 @@ class Faq_model extends CI_Model
             $this->db->where($name_query);
 
         }
+        if($search_query['category']!=null){
+            $this->db->where('faq.faq_category_id',$search_query['category']);
+        }
         $this->db->order_by('faq.order','asc');
         if($search_query['crt_date']==null){
             $this->db->order_by('faq.crt_date','desc');
