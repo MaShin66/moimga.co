@@ -499,10 +499,11 @@ class Manage extends Manage_Controller {
         if($auth<3) {
 
             $program_info = $this->program_model->get_program_info($program_id);
+            $team_info = $this->team_model->get_team_info($program_info['team_id']); //이것도 중복될 수 없으니까 unique 임
             $program_info['auth_code'] = $auth;
 
             if($program_info!=null){
-                $this->layout->view('manage/program/detail', array('user'=>$user_data,'program_info'=>$program_info));
+                $this->layout->view('manage/program/detail', array('user'=>$user_data,'program_info'=>$program_info,'team_info'=>$team_info));
             }else{
                 alert('후기가 없습니다.');
             }

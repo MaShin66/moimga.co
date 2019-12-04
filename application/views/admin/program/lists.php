@@ -1,4 +1,8 @@
 <?php
+$event_toggle = 'on';
+if($search_query['event']=='on'){
+    $event_toggle = null;
+}
 /**
  * Created by PhpStorm.
  * User: USER
@@ -15,6 +19,14 @@
             <a href="/admin/program/lists/1/q?search=<?=$search_query['search']?>&team_id=<?=$search_query['team_id']?>&status=on" class="btn <?php echo ($search_query['status']=='on') ? 'btn-secondary' : 'btn-outline-secondary';?>">공개</a>
             <a href="/admin/program/lists/1/q?search=<?=$search_query['search']?>&team_id=<?=$search_query['team_id']?>&status=off" class="btn <?php echo ($search_query['status']=='off') ? 'btn-secondary' : 'btn-outline-secondary';?>">비공개</a>
         </div>
+
+        <div class="btn-group btn-group-sm" role="group" aria-label="sort group">
+            <a href="/admin/program/lists/1/q?search=<?=$search_query['search']?>&team_id=<?=$search_query['team_id']?>&status=<?=$search_query['status']?>&crt_date=<?=$search_query['crt_date']?>&price=desc&event=<?=$search_query['event']?>" class="btn <?php echo ($search_query['price']=='desc') ? 'btn-secondary' : 'btn-outline-secondary';?>">높은 가격 순</a>
+            <a href="/admin/program/lists/1/q?search=<?=$search_query['search']?>&team_id=<?=$search_query['team_id']?>&status=<?=$search_query['status']?>&crt_date=<?=$search_query['crt_date']?>&price=asc&event=<?=$search_query['event']?>" class="btn <?php echo ($search_query['price']=='asc') ? 'btn-secondary' : 'btn-outline-secondary';?>">낮은 가격 순</a>
+        </div>
+        <a href="/admin/program/lists/1/q?search=<?=$search_query['search']?>&team_id=<?=$search_query['team_id']?>&status=<?=$search_query['status']?>&crt_date=<?=$search_query['crt_date']?>&price=<?=$search_query['price']?>&event=<?=$event_toggle?>" class="btn <?php echo ($search_query['event']=='on') ? 'btn-secondary' : 'btn-outline-secondary';?>">가까운 이벤트</a>
+
+
         <form action="/admin/program/lists/1/q" method="get">
             <div class="input-group input-group-sm">
                 <input type="text" name="search" class="form-control" placeholder="검색어를 입력해주세요"  value="<?=$search_query['search']?>">

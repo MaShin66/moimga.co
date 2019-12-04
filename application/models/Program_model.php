@@ -10,17 +10,26 @@ class Program_model extends CI_Model
     //load, get, update, delete
 
     function load_program($type = '', $offset = '', $limit = '', $search_query){
-        $this->db->select('program.*, team.name as team_name, team.url as team_url, users.realname as realname, users.nickname as nickname');
+        $this->db->select('program.*, team.name as team_name, team.url as team_url,
+         users.realname as realname, users.nickname as nickname, MIN(program_date.date) as event_date'); //제일 가까운 날짜 보여주기 위해 MIN임(any value 아님 )
         $this->db->join('team','team.team_id = program.team_id');
+        $this->db->join('program_date','program_date.program_id = program.program_id');
         $this->db->join('users','users.id = program.user_id');
 
-        if(!is_null($search_query['crt_date'])){
+        if($search_query['event']=='on') { // 가까운 날짜
+            $this->db->where('program_date.date > NOW()');
+            $this->db->order_by('event_date','asc');
+        }
+        if($search_query['price']!=null){
+            $this->db->order_by('program.price',$search_query['price']);
+        }
+        if($search_query['crt_date']!=null){
             $this->db->order_by('program.crt_date',$search_query['crt_date']);
         }else{
             $this->db->order_by('program.crt_date','desc');
         }
 
-        if(!is_null($search_query['status'])){
+        if($search_query['status']!=null){
             $this->db->where('program.status',$search_query['status']);
         }
 
@@ -28,11 +37,12 @@ class Program_model extends CI_Model
             $this->db->where('program.team_id',$search_query['team_id']);
         }
 
-        if(!is_null($search_query['search'])){
+        if($search_query['search']!=null){
             $name_query = '(program.title like "%'.$search_query['search'].'%" or program.contents like "%'.$search_query['search'].'%" or team.name like "%'.$search_query['search'].'%")';
             $this->db->where($name_query);
 
         }
+        $this->db->group_by('program.program_id');
         if ($limit != '' || $offset != '') {
             $this->db->limit($limit, $offset);
         }
@@ -61,6 +71,15 @@ class Program_model extends CI_Model
         $result = $query -> row_array();
 
         return $result;
+    }
+    function get_team_id_by_program_id($program_id){
+        $this->db->select('team_id');
+        $this->db->where('program_id' ,$program_id);
+
+        $query = $this->db->get('program');
+        $result = $query -> row_array();
+
+        return $result['team_id'];
     }
 
 

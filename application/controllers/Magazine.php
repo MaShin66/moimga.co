@@ -40,23 +40,22 @@ class Magazine extends MY_Controller {
         if($search==null){
             $search_query = array(
                 'search' => null,
-                'status' =>null,
+                'status' =>'on',
                 'crt_date' =>null,
             );
 
         }else{
             $sort_date = $this->input->get('crt_date');
             $sort_search = $this->input->get('search');
-            $sort_status = $this->input->get('status');
 
             $search_query = array(
                 'search' => $sort_search,
-                'status' => $sort_status,
+                'status' => 'on',
                 'crt_date' => $sort_date,
             );
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'];
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'];
 
 		$this->load->library('pagination');
 		$config['suffix'] = $q_string;
@@ -108,14 +107,14 @@ class Magazine extends MY_Controller {
         );
 
 		$result = $this->magazine_model->get_magazine_info($magazine_id);
-		if($result['status']!='on'&&$level!=9){
-		    alert('공개되어있지 않습니다.','/magazine');
-        }else{
-		    $this->magazine_model->update_magazine_hit($magazine_id);
+		if($result['status']=='on' || ($result['status']=='off' && $level==9 )){
+
+            $this->magazine_model->update_magazine_hit($magazine_id);
             $this->layout->view('magazine/view', array('user'=>$user_data,'result'=>$result));
+        }else{
+
+            alert($this->lang->line('hidden_alert'),'/magazine');
         }
-
-
     }
     
     function upload(){

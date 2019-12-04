@@ -1,4 +1,5 @@
 <?php
+
 /**
  */?>
 <h2>프로그램 정보</h2>
@@ -16,6 +17,9 @@
 <?php }?>
 
 
+<div class="">
+    <a href="/@<?=$team_info['url']?>/program/upload/<?=$program_info['program_id']?>?type=modify" class="btn btn-outline-secondary">수정</a>
+</div>
 <div class="">
     상태: <?=$this->lang->line($program_info['status'])?>
 </div>

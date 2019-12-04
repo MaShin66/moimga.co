@@ -17,6 +17,18 @@ class Team_model extends CI_Model
             $this->db->where('team.user_id',$search_query['user_id']);
         }
 
+        //둘 중에 뭐가 더 먼저일까요..
+        // 후기, crt_date, subscribe
+        // 후기, subscribe 는 둘 다 선택 될 수 없다.
+        // crt_date 는 무조건 후순위
+
+        if($search_query['subscribe']!=null){
+            $this->db->order_by('team.subscribe_count',$search_query['subscribe']);
+        }
+        if($search_query['after']!=null){
+            $this->db->order_by('team.after_count',$search_query['after']);
+        }
+
         if(!is_null($search_query['crt_date'])){
             $this->db->order_by('team.crt_date',$search_query['crt_date']);
         }else{
@@ -24,11 +36,24 @@ class Team_model extends CI_Model
 
         }
 
-        if(!is_null($search_query['status'])){
+        if($search_query['status']!=null){
             $this->db->where('team.status',$search_query['status']);
         }
-        ///whwywywhwyww status sorting 안 됨!?!?! !
-        /// 
+
+        /* 후기 까지 적는 쿼리 ..  후기를 입력할때마다 자동으로 count를 한번에 세도록 한다
+      이유: 매번 list 뽑을 때마다 쿼리 날리는게 부하가 큼\
+         *
+SELECT * FROM team as A
+        LEFT OUTER JOIN (
+        SELECT team_id, COUNT(status) AS after_count
+        FROM after
+        WHERE status = 'on'
+        GROUP BY team_id) as B
+on (A.team_id = B.team_id)
+where A.status = 'on'
+GROUP BY A.team_id
+
+        */
 
         if($search_query['search']!=null){
 
@@ -384,6 +409,16 @@ class Team_model extends CI_Model
     }
 
 
+    function get_team_count($type='subscribe',$team_id){
+
+        $this->db->select($type.'_count');
+        $this->db->where('team_id' ,$team_id);
+
+        $query = $this->db->get('team');
+        $result = $query -> row_array();
+
+        return $result[$type.'_count'];
+    }
     
 
 }

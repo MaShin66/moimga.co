@@ -31,7 +31,7 @@
 </div>
 
 
-
+<a href="/after/upload/<?=$after_info['after_id']?>?type=modify" class="btn btn-outline-secondary">수정</a>
 <div class="">
     <form action="/mypage/after/delete/" method="post">
         <input type="hidden" name="after_id" value="<?=$after_info['after_id']?>">

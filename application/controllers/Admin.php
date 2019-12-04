@@ -422,6 +422,8 @@ class Admin extends Admin_Controller
                 'status' =>null,
                 'crt_date' =>null,
                 'user_id' => null,
+                'subscribe'=>null,
+                'after'=>null,
             );
 
         }else{
@@ -429,17 +431,23 @@ class Admin extends Admin_Controller
             $sort_search = $this->input->get('search');
             $sort_status = $this->input->get('status');
             $sort_user_id = $this->input->get('user_id');
+            $sort_subscribe = $this->input->get('subscribe');
+            $sort_after = $this->input->get('after');
 
             $search_query = array(
                 'search' => $sort_search,
                 'status' => $sort_status,
                 'crt_date' => $sort_date,
                 'user_id' => $sort_user_id,
+                'subscribe'=>$sort_subscribe,
+                'after'=>$sort_after,
+
             );
 
         }
 //        print_r($search_query);
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&user_id='.$search_query['user_id'].'&status='.$search_query['status'];
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&user_id='.$search_query['user_id']
+            .'&status='.$search_query['status'].'&subscribe='.$search_query['subscribe'].'&after='.$search_query['after'];
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
@@ -1121,6 +1129,8 @@ class Admin extends Admin_Controller
                 'status' =>null,
                 'crt_date' =>null,
                 'team_id'=>null,
+                'price'=>null,
+                'event'=>null,
             );
 
         }else{
@@ -1129,15 +1139,20 @@ class Admin extends Admin_Controller
             $sort_status = $this->input->get('status');
             $sort_team_id = $this->input->get('team_id');
 
+            $sort_price = $this->input->get('price');
+            $sort_event = $this->input->get('event');
+
             $search_query = array(
                 'search' => $sort_search,
                 'status' => $sort_status,
                 'crt_date' => $sort_date,
                 'team_id'=>$sort_team_id,
+                'price'=>$sort_price,
+                'event'=>$sort_event,
             );
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'].'&team_id='.$search_query['team_id'];
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'].'&team_id='.$search_query['team_id'].'&price='.$search_query['price'].'&event='.$search_query['event'];
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;

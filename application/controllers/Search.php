@@ -35,7 +35,7 @@ class Search extends MY_Controller { //통합검색
         );
 
         $search = $this->input->get('search');
-        if(is_null($search)){
+        if(is_null($search)){//||$search=='' 나중에 해.
             alert('검색어를 입력해주세요.','/');
         }else{
 
@@ -45,6 +45,10 @@ class Search extends MY_Controller { //통합검색
                 'user_id'=>null,//load_after 때문에
                 'status'=>'on', //무조건 공개
                 'team_id'=>null,
+                'subscribe'=>null, //team
+                'after'=>null, //team
+                'price'=>null,//program
+                'event'=>null,//program
             );
             $team_list =  $this->team_model->load_team('',0,8,$search_query);
             $program_list =  $this->program_model->load_program('',0,8,$search_query);
@@ -67,6 +71,8 @@ class Search extends MY_Controller { //통합검색
                 'search' => $search,
                 'user_id'=>null, //because of load_after
                 'status'=>'on', //무조건 공개
+                'subscribe'=>null, //team
+                'after'=>null, //team
             );
 
             switch ($type){
@@ -75,6 +81,8 @@ class Search extends MY_Controller { //통합검색
                     break;
                 case 'program':
                     $search_query['team_id']=null;
+                    $search_query['price']=null;
+                    $search_query['event']=null;
                     $result = $this->program_model->load_program('', '', '',$search_query);
                     break;
                 default:

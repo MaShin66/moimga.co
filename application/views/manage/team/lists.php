@@ -48,13 +48,14 @@
             <th>고유 주소</th>
             <th>권한</th>
             <th>상세</th>
+            <th>프로그램</th>
         </tr>
         </thead>
         <tbody>
 
         <?php if($data['total']==0){?>
             <tr>
-                <td colspan="9" class="form_empty">아직 만든 팀이 없습니다.</td>
+                <td colspan="6" class="form_empty">아직 만든 팀이 없습니다.</td>
             </tr>
 
         <?php }?>
@@ -65,6 +66,7 @@
                 <td><?=$result['url']?></td>
                 <td><?=$this->lang->line($result['position'])?></td>
                 <td><a href="/manage/team/detail/<?=$result['team_id']?>" class="btn btn-sm btn-outline-action">보기</a></td>
+                <td><a href="/manage/program/lists/<?=$result['team_id']?>" class="btn btn-sm btn-outline-action">목록</a></td>
 
             </tr>
         <?php endforeach;?>

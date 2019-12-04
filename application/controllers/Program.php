@@ -50,21 +50,27 @@ class Program extends MY_Controller {
                 'search'=>null,
                 'status'=>'on',
                 'team_id'=>$team_id,
+                'price'=>null,
+                'event'=>null,
             );
 
         }else{
             $sort_date = $this->input->get('crt_date');
             $sort_search = $this->input->get('search');
+            $sort_price = $this->input->get('price');
+            $sort_event = $this->input->get('event');
 
             $search_query = array(
                 'crt_date' => $sort_date,
                 'search' => $sort_search,
                 'status'=>'on', //무조건 공개
                 'team_id'=>$team_id,
+                'price'=>$sort_price,
+                'event'=>$sort_event,
             );
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'];
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&price='.$search_query['price'].'&event='.$search_query['event'];
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
@@ -126,9 +132,8 @@ class Program extends MY_Controller {
 
             $this->program_model->update_program_hit($program_id); // 조회수
             $this->layout->view('/program/view', array('user'=>$user_data,'program_info'=>$program_info,'team_info'=>$team_info,
-                'date_info'=>$date_info,'qna_info'=>$qna_info,'qualify_info'=>$qualify_info));
-        }else{
-
+                'date_info'=>$date_info,'qna_info'=>$qna_info,'qualify_info'=>$qualify_info,'as_member'=>$as_member));
+        }else{ //hidden
             alert($this->lang->line('hidden_alert'),'/program');
         }
 
@@ -183,7 +188,6 @@ class Program extends MY_Controller {
                     }
 
                     $data = array(
-                        'user_id'=>$user_id,
                         'team_id'=>$team_id,
                         'title'=>$title,
                         'participant'=>$participant,
@@ -241,6 +245,7 @@ class Program extends MY_Controller {
                         $time_array = $this->input->post('input_event_time');
 
 
+                        $data['user_id'] = $user_id; //절대 바뀌면 안됨
                         $data['heart_count'] = 0;
                         $data['hit'] = 0;
                         $data['crt_date'] = date('Y-m-d H:i:s');
@@ -386,11 +391,10 @@ class Program extends MY_Controller {
         $program_id = $this->input->post('program_id');
         $pdate_id = $this->input->post('pdate_id');
 
-        //내 프로그램인지 검사
-        //내 퀄리파이인지 검사
-        $program_info = $this->program_model->get_program_info($program_id);
-        $pdate_info = $this->program_model->get_program_date_info($pdate_id);
-        if($program_info['user_id']!=$user_id||$pdate_info['user_id']!=$user_id){
+        $team_id = $this->program_model->get_team_id_by_program_id($program_id);
+        $as_member = $this->team_model-> as_member($team_id, $user_id);
+
+        if($as_member){
             echo json_encode('auth');
         }else{
             $this->program_model-> delete_program_date($pdate_id);
@@ -404,12 +408,10 @@ class Program extends MY_Controller {
         $program_id = $this->input->post('program_id');
         $qualify_id = $this->input->post('qualify_id');
 
-        //내 프로그램인지 검사
-        //내 퀄리파이인지 검사
-        $program_info = $this->program_model->get_program_info($program_id);
-        $qualify_info = $this->program_model->get_program_qualify_info($qualify_id);
+        $team_id = $this->program_model->get_team_id_by_program_id($program_id);
+        $as_member = $this->team_model-> as_member($team_id, $user_id);
 
-        if($program_info['user_id']!=$user_id||$qualify_info['user_id']!=$user_id){
+        if($as_member){
 
             echo json_encode('auth');
         } else{ //모든 검사 다 통과하면 지운다.
@@ -425,12 +427,10 @@ class Program extends MY_Controller {
         $program_id = $this->input->post('program_id');
         $pqna_id = $this->input->post('pqna_id');
 
-        //내 프로그램인지 검사
-        //내 퀄리파이인지 검사
-        $program_info = $this->program_model->get_program_info($program_id);
-        $qna_info = $this->program_model->get_program_qna_info($pqna_id);
+        $team_id = $this->program_model->get_team_id_by_program_id($program_id);
+        $as_member = $this->team_model-> as_member($team_id, $user_id);
 
-        if($program_info['user_id']!=$user_id||$qna_info['user_id']!=$user_id){
+        if($as_member){
 
             echo json_encode('auth');
         } else{ //모든 검사 다 통과하면 지운다.
@@ -444,12 +444,13 @@ class Program extends MY_Controller {
         $user_id = $this->data['user_id'];
         $program_id = $this->input->post('program_id');
 
-        //내 프로그램인지 검사
-        //내 퀄리파이인지 검사
-        $program_info = $this->program_model->get_program_info($program_id);
 
-        if($program_info['user_id']!=$user_id){
-            echo 'auth';
+        //내 퀄리파이인지 검사
+        $team_id = $this->program_model->get_team_id_by_program_id($program_id);
+        $as_member = $this->team_model-> as_member($team_id, $user_id);
+        if(!$as_member){
+            echo json_encode('auth');
+
         } else{ //모든 검사 다 통과하면 지운다.
             $data = array(
                 'user_id'=>$user_id,
@@ -460,7 +461,8 @@ class Program extends MY_Controller {
 
             );
             $pdate_id = $this->program_model-> insert_program_date($data);
-            echo $pdate_id;
+
+            echo json_encode($pdate_id);
         }
     }
     function add_qualify(){
@@ -470,10 +472,12 @@ class Program extends MY_Controller {
 
         //내 프로그램인지 검사
         //내 퀄리파이인지 검사
-        $program_info = $this->program_model->get_program_info($program_id);
 
-        if($program_info['user_id']!=$user_id){
-            echo 'auth';
+        //내가 멤버인지 검사
+        $team_id = $this->program_model->get_team_id_by_program_id($program_id);
+        $as_member = $this->team_model-> as_member($team_id, $user_id);
+        if(!$as_member){
+            echo json_encode('auth');
         } else{ //모든 검사 다 통과하면 지운다.
             $data = array(
                 'user_id'=>$user_id,
@@ -483,7 +487,7 @@ class Program extends MY_Controller {
 
             );
             $qualify_id = $this->program_model-> insert_program_qualify($data);
-            echo $qualify_id;
+            echo json_encode($qualify_id);
         }
     }
 
@@ -492,15 +496,15 @@ class Program extends MY_Controller {
         $user_id = $this->data['user_id'];
         $program_id = $this->input->post('program_id');
 
-        //내 프로그램인지 검사
-        //내 퀄리파이인지 검사
-        $program_info = $this->program_model->get_program_info($program_id);
+        //내가 멤버인지 검사
+        $team_id = $this->program_model->get_program_info($program_id);
+        $as_member = $this->team_model-> as_member($team_id, $user_id);
 
-        if($program_info['user_id']!=$user_id){
-            echo 'auth';
+        if(!$as_member){
+            echo json_encode('auth');
         } else{ //모든 검사 다 통과하면 지운다.
             $data = array(
-                'user_id'=>$user_id,
+                'user_id'=>$user_id, //이건 만든사람이 책임을 가진다.
                 'program_id'=>$program_id,
                 'question'=>null,
                 'answer'=>null,
@@ -508,7 +512,7 @@ class Program extends MY_Controller {
 
             );
             $pqna_id = $this->program_model-> insert_program_qna($data);
-            echo $pqna_id;
+            echo json_encode($pqna_id);
         }
     }
 

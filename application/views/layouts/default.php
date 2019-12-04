@@ -12,7 +12,7 @@
     if($location[0]=='@'){
         $location = 'team';
     }
-    if($location=='team'&&$section){
+    if($location=='team'&&$section=='program'){
         $location='program';
     }
     ?>
@@ -210,7 +210,7 @@
     <script type="text/javascript" src="/www/js/language.js"></script>
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script type="text/javascript" src="/www/js/upload/editor.js"></script>
-    <?php if($location=='team'||$location=='after'){?>
+    <?php if($location=='team'||$location=='after'||$location=='magazine'){?>
     <script type="text/javascript" src="/www/js/upload/<?=$location?>.js"></script>
         <?php }else{?>
     <script type="text/javascript" src="/www/js/upload/<?= $section ?>.js"></script>
@@ -223,7 +223,7 @@
 <script type="text/javascript" src="/www/js/overlay.js"></script>
 <script type="text/javascript" src="/www/js/basic.js"></script>
 
-<?php if($section!='program'&&$section!='team'){?>
+<?php if($location=='program'&&$location=='team'){?>
     <script type="text/javascript" src="/www/js/<?= $location ?>.js"></script>
     <script type="text/javascript" src="/www/js/subscribe.js"></script> <!--section==team 일 경우에 유용-->
     <script type="text/javascript" src="/www/js/heart.js"></script>

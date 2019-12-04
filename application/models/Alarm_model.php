@@ -21,12 +21,12 @@ class Alarm_model extends CI_Model
     }
 
 
-    function find_alarm_id($alarm_type=null, $prod_id=null, $form_id=null, $user_id=null){
+    function find_alarm_id($alarm_type=null, $team_id=null, $program_id=null, $user_id=null){
 
         $this->db->where('type',$alarm_type);
-        $this->db->where('prod_id',$prod_id);
+        $this->db->where('team_id',$team_id);
         $this->db->where('user_id',$user_id);
-        $this->db->where('form_id',$form_id);
+        $this->db->where('program_id',$program_id);
 
         $query = $this->db->get('alarm');
         $result = $query -> row_array();
@@ -91,20 +91,20 @@ class Alarm_model extends CI_Model
         return $user_id;
     }
 
-    function delete_unread_alarm($alarm_type=null, $prod_id=null){
+    function delete_unread_alarm($alarm_type=null, $team_id=null){
 
         $this->db->where('type', $alarm_type);
-        $this->db->where('prod_id', $prod_id);
+        $this->db->where('team_id', $team_id);
         $this->db->where('status', 'unread');
         $this->db->delete('alarm');
     }
 
 
 
-    function get_alarm_specific($type='', $prod_id, $from_user_id='', $user_id=''){
+    function get_alarm_specific($type='', $team_id, $from_user_id='', $user_id=''){
 
         $this->db->where('type',$type);
-        $this->db->where('prod_id',$prod_id);
+        $this->db->where('team_id',$team_id);
         $this->db->where('from_user_id',$from_user_id);
         $this->db->where('user_id',$user_id);
         $this->db->order_by('crt_date','desc');
@@ -135,7 +135,7 @@ class Alarm_model extends CI_Model
             $this_type = $item['type'];
             $this_key = $key;
             $result_copy[$this_key]['count'] = 0;
-            $this_prod= $item['prod_id'];
+            $this_prod= $item['team_id'];
 
             for( $i=0; $i<count($result_copy); $i++){
                 //합치는게 필요한것만 여기로 오도록..
@@ -143,7 +143,7 @@ class Alarm_model extends CI_Model
                 if($result_copy[$i]['type']=='C1'||$result_copy[$i]['type']=='C2'||$result_copy[$i]['type']=='D1'
                     ||$result_copy[$i]['type']=='F1'||$result_copy[$i]['type']=='T1'){
 
-                    if(($result_copy[$i]['type']==$this_type) &&($result_copy[$i]['prod_id']==$this_prod)){
+                    if(($result_copy[$i]['type']==$this_type) &&($result_copy[$i]['team_id']==$this_prod)){
 
                         $result_copy[$this_key]['count'] = $result_copy[$this_key]['count']+1;
                         if($result_copy[$this_key]['count']>1 && !array_search($result_copy[$i]['alarm_id'], $id_array)){
@@ -165,14 +165,14 @@ class Alarm_model extends CI_Model
             }
         }
         foreach ($result_copy as $text_key => $text_item){
-            $result_copy[$text_key]['text'] = $this->set_alarm_text($text_item['type'], $text_item['prod_id'], $text_item['count'], $text_item['form_id']);
+            $result_copy[$text_key]['text'] = $this->set_alarm_text($text_item['type'], $text_item['team_id'], $text_item['count'], $text_item['program_id']);
 
             switch ($text_item['type'][0]){
                 case 'T':
 
                     $this->db->flush_cache();
                     $this->db->select('url');
-                    $this->db->where('ticket_id', $text_item['prod_id']);
+                    $this->db->where('ticket_id', $text_item['team_id']);
                     $this->db->order_by('crt_date', 'desc');
                     $this->db->limit(1);
 
@@ -189,7 +189,7 @@ class Alarm_model extends CI_Model
 
                     $this->db->flush_cache();
                     $this->db->select('url');
-                    $this->db->where('prod_id', $text_item['prod_id']);
+                    $this->db->where('team_id', $text_item['team_id']);
                     $this->db->order_by('crt_date', 'desc');
                     $this->db->limit(1);
 
@@ -200,7 +200,7 @@ class Alarm_model extends CI_Model
             }
 
             $result_copy[$text_key]['thumb_url'] = $result['url'];
-            $result_copy[$text_key]['url'] ='/prod/view/'.$text_item['prod_id'];
+            $result_copy[$text_key]['url'] ='/prod/view/'.$text_item['team_id'];
             $result_copy[$text_key]['icon'] ='<i class="fas fa-comments"></i>';
             switch ($text_item['type']){
                 case 'C1':
@@ -212,27 +212,27 @@ class Alarm_model extends CI_Model
                     break;
                 case 'D1':
                     $result_copy[$text_key]['icon'] ='<i class="far fa-paper-plane"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/demand/forms/'.$text_item['prod_id'];
+                    $result_copy[$text_key]['url'] ='/manage/demand/forms/'.$text_item['team_id'];
                     break;
                 case 'D2':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
                     break;
                 case 'D3':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/demand/view/'.$text_item['prod_id'];
+                    $result_copy[$text_key]['url'] ='/demand/view/'.$text_item['team_id'];
                     break;
                 case 'F1':
                     $result_copy[$text_key]['icon'] ='<i class="far fa-paper-plane"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/prod/forms/'.$text_item['prod_id'];
+                    $result_copy[$text_key]['url'] ='/manage/prod/forms/'.$text_item['team_id'];
                     break;
                 case 'F2':
                 case 'F12':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/form/'.$text_item['form_id'];
+                    $result_copy[$text_key]['url'] ='/mypage/form/'.$text_item['program_id'];
                     break;
                 case 'F4':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-hourglass-end"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/prod/detail/'.$text_item['prod_id'];
+                    $result_copy[$text_key]['url'] ='/manage/prod/detail/'.$text_item['team_id'];
                     break;
                 case 'F3':
                 case 'F6':
@@ -241,31 +241,31 @@ class Alarm_model extends CI_Model
                 case 'W3':
                 case 'W4':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/form/'.$text_item['form_id'];
+                    $result_copy[$text_key]['url'] ='/mypage/form/'.$text_item['program_id'];
                     break;
                 case 'F7':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/prod/forms/'.$text_item['prod_id'];
+                    $result_copy[$text_key]['url'] ='/manage/prod/forms/'.$text_item['team_id'];
                     break;
                 case 'F8':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
                     break;
                 case 'F9':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-hand-holding-heart"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/prod/forms/'.$text_item['prod_id'];
+                    $result_copy[$text_key]['url'] ='/manage/prod/forms/'.$text_item['team_id'];
                     break;
                 case 'F10':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/prod/forms/'.$text_item['prod_id'];
+                    $result_copy[$text_key]['url'] ='/manage/prod/forms/'.$text_item['team_id'];
                     break;
                 case 'P1':
                 case 'W5':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/prod/detail/'.$text_item['prod_id'];
+                    $result_copy[$text_key]['url'] ='/manage/prod/detail/'.$text_item['team_id'];
                     break;
                 case 'P2':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/import/detail/'.$text_item['prod_id'];
+                    $result_copy[$text_key]['url'] ='/manage/import/detail/'.$text_item['team_id'];
                     break;
                 case 'P3'://후원
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-hand-holding-heart"></i>';
@@ -277,7 +277,7 @@ class Alarm_model extends CI_Model
                     break;
                 case 'P5': //티켓 결제
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/ticket/detail/'.$text_item['prod_id'];
+                    $result_copy[$text_key]['url'] ='/manage/ticket/detail/'.$text_item['team_id'];
                     break;
                 case 'P6': //문자메시지 충전 결제
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
@@ -285,30 +285,30 @@ class Alarm_model extends CI_Model
                     break;
                 case 'V1':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-truck"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/form/'.$text_item['form_id'];
+                    $result_copy[$text_key]['url'] ='/mypage/form/'.$text_item['program_id'];
                     break;
                 case 'M1':
                     $result_copy[$text_key]['icon'] ='<i class="far fa-envelope"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/form/'.$text_item['form_id'];
+                    $result_copy[$text_key]['url'] ='/mypage/form/'.$text_item['program_id'];
                     break;
                 case 'T1':
                     $result_copy[$text_key]['icon'] ='<i class="far fa-paper-plane"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/ticket/forms/'.$text_item['prod_id'];
+                    $result_copy[$text_key]['url'] ='/manage/ticket/forms/'.$text_item['team_id'];
                     break;
                 case 'T2':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/ticket/'.$text_item['form_id'];
+                    $result_copy[$text_key]['url'] ='/mypage/ticket/'.$text_item['program_id'];
                     break;
                 case 'T3':
                 case 'T5':
                 case 'T10':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/ticket/'.$text_item['form_id'];
+                    $result_copy[$text_key]['url'] ='/mypage/ticket/'.$text_item['program_id'];
                     break;
                 case 'T4':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-hourglass-end"></i>';
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-hourglass-end"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/ticket/detail/'.$text_item['prod_id'];
+                    $result_copy[$text_key]['url'] ='/manage/ticket/detail/'.$text_item['team_id'];
                     break;
                 case 'T6':
                 case 'T11':
@@ -317,15 +317,15 @@ class Alarm_model extends CI_Model
                     break;
                 case 'T7':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/ticket/view/'.$text_item['prod_id'];
+                    $result_copy[$text_key]['url'] ='/ticket/view/'.$text_item['team_id'];
                     break;
                 case 'T8':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-hand-holding-heart"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/ticket/detail/'.$text_item['prod_id'];
+                    $result_copy[$text_key]['url'] ='/manage/ticket/detail/'.$text_item['team_id'];
                     break;
                 case 'T9':
                     $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/ticket/'.$text_item['form_id'];
+                    $result_copy[$text_key]['url'] ='/mypage/ticket/'.$text_item['program_id'];
                     break;
                 case 'S1':
                 case 'W1':
@@ -404,31 +404,31 @@ class Alarm_model extends CI_Model
 
     }
 
-    function set_alarm_text($type, $prod_id, $count='', $form_id=null){
+    function set_alarm_text($type, $team_id, $count='', $program_id=null){
         $this->db->select('title');
         
         switch ($type[0]){
           case  'D':
-              $this->db->where('demand_id',$prod_id);
+              $this->db->where('demand_id',$team_id);
               $query = $this->db->get('demand');
               break;
           case  'T':
-                $this->db->where('ticket_id',$prod_id);
+                $this->db->where('ticket_id',$team_id);
                 $query = $this->db->get('ticket');
                 break;
             case  'P': //애앵 ㅇㅣ건 payment 인디..
                 //P는 각각의 경우에 따라서 바꾼다..
                 switch ($type){
                     case 'P1':
-                        $this->db->where('prod_id',$prod_id);
+                        $this->db->where('team_id',$team_id);
                         $query = $this->db->get('product');
                         break;
                     case 'P2':
-                        $this->db->where('import_prod_id',$prod_id);
+                        $this->db->where('import_team_id',$team_id);
                         $query = $this->db->get('import_product');
                         break;
                     case 'P5':
-                        $this->db->where('ticket_id',$prod_id);
+                        $this->db->where('ticket_id',$team_id);
                         $query = $this->db->get('ticket');
                         break;
                     default: //p3, p4
@@ -437,7 +437,7 @@ class Alarm_model extends CI_Model
                 break;
 
             default: //c comment, f form, v delivery, m message, a assignment -- 모든 경우에 대해
-                $this->db->where('prod_id',$prod_id);
+                $this->db->where('team_id',$team_id);
                 $query = $this->db->get('product');
                 break;
 
@@ -449,7 +449,7 @@ class Alarm_model extends CI_Model
             $title =  iconv_substr($title, 0, 18, "utf-8").'...';
         }
 
-        $text = sprintf($this->lang->line($type), $title, $form_id, $count);
+        $text = sprintf($this->lang->line($type), $title, $program_id, $count);
         return $text;
     }
 

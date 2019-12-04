@@ -9,7 +9,7 @@ $write_type=$this->input->get('write');
 		글 쓰기
 	</h1>
 
-	<form method="post" action="/magazine/upload<?php if($write_type=='modify') {echo '?write=modify&id='.$result['magazine_id'];}?>" name="board"  enctype="multipart/form-data">
+	<form method="post" action="/magazine/upload<?php if($write_type=='modify') {echo '?write=modify&id='.$result['magazine_id'];}?>" name="board" id="magazine_form" enctype="multipart/form-data">
 
 		<div class="">
 			<h2 class="form_p_title">제목</h2>

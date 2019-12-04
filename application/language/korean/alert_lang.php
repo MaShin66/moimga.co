@@ -7,3 +7,5 @@
 */
 
 $lang['hidden_alert']='공개되어있지 않습니다.';
+
+$lang['forbidden']='권한이 없습니다.';

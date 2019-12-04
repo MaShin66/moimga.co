@@ -118,7 +118,7 @@ class After extends MY_Controller
 
     }
 
-    function upload(){
+    function upload($after_id=null){
 
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
@@ -156,27 +156,66 @@ class After extends MY_Controller
             if($type=='modify'){
 
                 $after_id = $this->input->post('after_id');
+                $before_info = $this->after_model->get_after_info($after_id);
                 $this->after_model->update_after($after_id,$data);
+                //이전거랑 비교
+                if($before_info['team_id']!=$team_id){
+
+                    $before_count = $this->team_model->get_team_count('after',$before_info['team_id']);
+                    $after_count = $this->team_model->get_team_count('after',$team_id);
+
+                    $before_array = array( //이전거 -1
+                        'after_count' => $before_count-1
+                    );
+                    $this->team_model->update_team($before_info['team_id'],$before_array);
+
+                    $after_array = array(//지금거 +1
+                        'after_count' => $after_count+1
+                    );
+                    $this->team_model->update_team($team_id,$after_array);
+
+
+                }//같으면 아무런 액션 취하지 않음
+
 
             }else{ //새로 쓰기
                 $data['hit']=0;
                 $data['crt_date'] = date('Y-m-d H:i:s');
+
                 $after_id = $this->after_model->insert_after($data);
+
+                $after_count = $this->team_model->get_team_count('after',$team_id);
+
+                //team에 after_count에 +1
+                $after_array = array(
+                    'after_count' => $after_count+1
+                );
+                $this->team_model->update_team($team_id,$after_array);
+
 
             }
             //다 끝나면 redirect
             redirect('/after/view/'.$after_id);
         }else{ //없으면 글쓰기 화면
 
-            $data = array(
-                'title'=>null,
-                'team_id'=>null,
-                'contents'=>null,
-                'team_title'=>null,
-                'after_id'=>null,
-                'status'=>'on',
-                'type'=>'new' //새로 글쓰기
-            );
+            if($type=='modify'){
+                $data = $this->after_model->get_after_info($after_id);
+                if($data['user_id']!=$user_id){
+                    alert($this->lang->line('forbidden'),'/mypage/after');
+                }
+            }else{
+                $data = array(
+                    'title'=>null,
+                    'team_id'=>null,
+                    'contents'=>null,
+                    'team_title'=>null,
+                    'team_name'=>null,
+                    'after_id'=>null,
+                    'status'=>'on',
+                    'type'=>'new' //새로 글쓰기
+                );
+            }
+
             $this->layout->view('after/upload', array('user'=>$user_data,'result'=>$data));
         }
 

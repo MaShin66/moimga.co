@@ -5,12 +5,12 @@ $btn_text = '등록하기';
 $checked = null;
 if(!is_null($write_type)){
     $btn_text = '수정하기';
-    $action_url = '/after/upload/'.$after_id.'?type=modify';
+    $action_url = '/after/upload/'.$result['after_id'].'?type=modify';
 }
 if($result['status']=='on'){
     $checked = 'checked';
 }?>
-<h1>후기 쓰기</h1>
+<h1>후기 <?=$btn_text?></h1>
 
 <form method="post" action="<?=$action_url?>" id="after_form">
     <div class="">
@@ -22,17 +22,19 @@ if($result['status']=='on'){
 팀 검색
 
         <div class="input-group">
-            <input type="text" name="team_title" id="team_title" value="<?=$result['team_title']?>" class="form-control">
+            <input type="text" name="team_title" id="team_title" value="<?=$result['team_name']?>" class="form-control">
             <div class="input-group-append">
                 <input type="button" class="btn btn-outline-secondary" onclick="search_team()" value="검색하기">
             </div>
         </div>
-
+        <?php if($write_type=='modify'){?>
+            <?=$result['team_name']?>의 후기로 입력합니다. 변경하고 싶으시다면 다시 검색해주세요.
+        <?php }?>
         <div class="">
             팀 검색 결과
         </div>
         <div class="" id="search_list">
-여기에 팀 검색 결과가 나옵니다.
+            여기에 팀 검색 결과가 나옵니다.
 
         </div>
     </div>

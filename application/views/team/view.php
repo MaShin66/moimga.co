@@ -7,6 +7,13 @@
  */?>
 
 
+<?php if($as_member){?>
+    <div class="">
+        <a href="/manage/team/detail/<?=$team_info['team_id']?>" class="btn btn-outline-primary">관리</a>
+        <a href="/team/upload/<?=$team_info['team_id']?>?type=modify" class="btn btn-outline-secondary">수정</a>
+    </div>
+<?php }?>
+
 <div class="subscribe" onclick="set_subscribe(<?=$team_info['team_id']?>)">
 북마크
 </div>

@@ -42,11 +42,15 @@ class Team extends MY_Controller {
                 'search'=>null,
                 'user_id'=>null,
                 'status'=>'on',
+                'after'=>null,
+                'subscribe'=>null,
             );
 
         }else{
             $sort_date = $this->input->get('crt_date');
             $sort_search = $this->input->get('search');
+            $sort_after = $this->input->get('after');
+            $sort_subscribe = $this->input->get('subscribe');
 
             $search_query = array(
                 'crt_date' => $sort_date,
@@ -54,10 +58,12 @@ class Team extends MY_Controller {
 
                 'user_id'=>null,
                 'status'=>'on', //무조건 공개
+                'after'=>$sort_after,
+                'subscribe'=>$sort_subscribe,
             );
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'];
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&after='.$search_query['after'].'&subscribe='.$search_query['subscribe'];
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
@@ -123,7 +129,6 @@ class Team extends MY_Controller {
             }
 
             $data = array(
-                'user_id'=>$user_id,
                 'url'=>$url,
                 'title'=>$title,
                 'name'=>$name,
@@ -139,9 +144,11 @@ class Team extends MY_Controller {
                 $this->team_model->update_team($team_id,$data);
 
             }else{ //새로 쓰기
+                $data['user_id']=$user_id; //user_id 는 절대 바꾸면 안됨. 팀장이 변해 ㅠㅠ
                 $data['thumb_url'] = '/www/thumbs/team/basic.jpg'; //새로쓸때는 이렇게..
                 $data['subscribe_count'] = 0;
                 $data['heart_count'] = 0;
+                $data['after_count']=0;
                 $data['hit'] = 0;
                 $data['crt_date'] = date('Y-m-d H:i:s');
                 $team_id = $this->team_model->insert_team($data);
@@ -171,11 +178,17 @@ class Team extends MY_Controller {
             //다 끝나면 redirect
             redirect('/@'.$url);
         }else{ //없으면 글쓰기 화면
-
             if($type=='modify'){
 
                 $team_id = $this->uri->segment(3);
                 $data = $this->team_model->get_team_info($team_id); //이것도 중복될 수 없으니까 unique 임
+                $as_member = $this->team_model-> as_member($team_id, $user_data['user_id']);
+                if($as_member || $user_data['level']===9){
+
+                }else{
+                    alert($this->lang->line('forbidden'),'/manage/team');
+                }
+
 
             }else{
 
@@ -225,7 +238,7 @@ class Team extends MY_Controller {
             $team_blog = $this->team_model->load_team_blog('','',4,$search_query);
             $this->team_model->update_team_hit($team_info['team_id']);
             $this->layout->view('/team/view', array('user'=>$user_data,'team_info'=>$team_info,
-                'team_blog'=>$team_blog,'programs'=>$programs,'at_url'=>$at_url));
+                'team_blog'=>$team_blog,'programs'=>$programs,'at_url'=>$at_url,'as_member'=>$as_member));
 
         }else{
             alert($this->lang->line('hidden_alert'),'/team');

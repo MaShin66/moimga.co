@@ -14,9 +14,7 @@ if($result['status']=='on'){
 }
 
 /* 프로그램 등록 */?>
-
-
-<h1>프로그램 등록</h1>
+<h1>프로그램 <?=$btn_text?></h1>
 
 <h2><?=$team_info['title']?></h2>
 <h3><?=$team_info['name']?></h3>

@@ -15,6 +15,9 @@
     </div>
 
 <?php }?>
+<div class="">
+    <a href="/team/upload/<?=$team_info['team_id']?>?type=modify" class="btn btn-outline-secondary">수정</a>
+</div>
 
 
 <div class="">

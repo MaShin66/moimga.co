@@ -7,30 +7,38 @@
 	</h1>
 
 	<div class="mp_form_list">
-		<?php foreach ($data['result'] as $result){
+		<?php
+         if(count($data['result'])==0){?>
+            <div class="">
+                아직 발행된 포스트가 없습니다.
+            </div>
+        <?php }else{
+             foreach ($data['result'] as $result){
 
-			$text = substr($result['contents'], 0, 1050);
-			$content = strip_tags ($text);
-		?>
-		<a class="magazine_list_item" href="/magazine/view/<?=$result['magazine_id']?>">
-			<span class="magazine_list_title"><?=$result['title']?></span>
-			<span class="magazine_list_cont"><?=str_replace("&nbsp;","",$content);?></span>
-			<span class="magazine_list_info">
+             $text = substr($result['contents'], 0, 1050);
+             $content = strip_tags ($text);
+             ?>
+             <a class="magazine_list_item" href="/magazine/view/<?=$result['magazine_id']?>">
+                 <span class="magazine_list_title"><?=$result['title']?></span>
+                 <span class="magazine_list_cont"><?=str_replace("&nbsp;","",$content);?></span>
+                 <span class="magazine_list_info">
 				<span class="magazine_list_read_more">Read more  →</span>
 				<span class="magazine_list_date"><i class="far fa-clock"></i> <?=substr($result['crt_date'],0,10); ?></span>
 			</span>
-		</a>
+             </a>
 
-		<?php }?>
+         <?php }
+
+         }?>
 
 	</div>
-    <?php if($user['level']==9){?>
-        <a href="/magazine/upload" class="btn btn-outline-primary">등록</a>
-    <?php }?>
-
 	<nav class="page-navigation">
 		<ul class="pagination justify-content-center">
 			<?php echo $data['pagination'];?>
 		</ul>
 	</nav>
 </div>
+
+<?php if($user['level']==9){?>
+    <a href="/magazine/upload" class="btn btn-outline-primary">등록</a>
+<?php }?>

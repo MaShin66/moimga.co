@@ -14,10 +14,23 @@
             <a href="/admin/team/lists/1/q?search=<?=$search_query['search']?>&status=on" class="btn <?php echo ($search_query['status']=='on') ? 'btn-secondary' : 'btn-outline-secondary';?>">공개</a>
             <a href="/admin/team/lists/1/q?search=<?=$search_query['search']?>&status=off" class="btn <?php echo ($search_query['status']=='off') ? 'btn-secondary' : 'btn-outline-secondary';?>">비공개</a>
         </div>
+
+        <div class="btn-group btn-group-sm" role="group" aria-label="sort group">
+            <a href="/admin/team/lists/1/q?search=<?=$search_query['search']?>&crt_date=<?=$search_query['crt_date']?>&status=<?=$search_query['status']?>&after=desc" class="btn <?php echo ($search_query['after']=='desc') ? 'btn-secondary' : 'btn-outline-secondary';?>">후기 많은 순</a>
+            <a href="/admin/team/lists/1/q?search=<?=$search_query['search']?>&crt_date=<?=$search_query['crt_date']?>&status=<?=$search_query['status']?>&after=asc" class="btn <?php echo ($search_query['after']=='asc') ? 'btn-secondary' : 'btn-outline-secondary';?>">후기 적은 순</a>
+        </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="sort group">
+            <a href="/admin/team/lists/1/q?search=<?=$search_query['search']?>&crt_date=<?=$search_query['crt_date']?>&status=<?=$search_query['status']?>&subscribe=desc" class="btn <?php echo ($search_query['subscribe']=='desc') ? 'btn-secondary' : 'btn-outline-secondary';?>">구독 많은 순</a>
+            <a href="/admin/team/lists/1/q?search=<?=$search_query['search']?>&crt_date=<?=$search_query['crt_date']?>&status=<?=$search_query['status']?>&subscribe=asc" class="btn <?php echo ($search_query['subscribe']=='asc') ? 'btn-secondary' : 'btn-outline-secondary';?>">구독 적은 순</a>
+        </div>
+
+
         <form action="/admin/team/lists/1/q" method="get">
             <div class="input-group input-group-sm">
                 <input type="text" name="search" class="form-control" placeholder="검색어를 입력해주세요"  value="<?=$search_query['search']?>">
                 <input type="hidden" name="status" value="<?=$search_query['status']?>">
+                <input type="hidden" name="subscribe" value="<?=$search_query['subscribe']?>">
+                <input type="hidden" name="after" value="<?=$search_query['after']?>">
 
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="submit">검색</button>

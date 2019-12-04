@@ -13,7 +13,7 @@ class After_model extends CI_Model
 
     function get_after_info($after_id){
 
-        $this->db->select('after.*, team.title as team_title, users.nickname as nickname');
+        $this->db->select('after.*, team.title as team_title,team.name as team_name, users.nickname as nickname');
         $this->db->join('team','team.team_id = after.team_id');
         $this->db->join('users','users.id = after.user_id');
         $this->db->where('after.after_id',$after_id);

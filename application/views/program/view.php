@@ -5,8 +5,8 @@
  * Date: 2019-05-07
  * Time: 오후 5:11
  */?>
-<!--내 프로그램이면 수정 가능-->
-<?php if($program_info['user_id']==$user['user_id']){?>
+<!--내가 멤버면 수정 가능-->
+<?php if($as_member){?>
     <div class="">
         <a href="/manage/program/detail/<?=$program_info['program_id']?>" class="btn btn-outline-primary">관리</a>
         <a href="/@<?=$team_info['url']?>/program/upload/<?=$program_info['program_id']?>?type=modify" class="btn btn-outline-secondary">수정</a>
