@@ -16,3 +16,20 @@ function get_team_id($at_url){
 
     return $team_id;
 }
+
+function is_team_url($segment){ //첫번째 segment가 @로 시작하면.. url 타입이 뭔지 던져준다.
+
+    $CI =& get_instance();
+
+    $location = 'team'; //기본으로 설정
+    $org_url = explode('@',$segment);
+
+    if($org_url!=$segment){ //team url임
+        $section = $CI->uri->segment(2);
+        if($section=='program'){
+            $location = 'team';
+        }
+    }
+
+    return $location;
+}

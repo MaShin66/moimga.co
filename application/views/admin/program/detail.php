@@ -133,7 +133,7 @@
 <div class="">
     <form action="/admin/program/delete/" method="post">
         <input type="hidden" name="program_id" value="<?=$data['program_id']?>">
-        <input type="submit"  class="btn btn-outline-danger btn-delete" value="삭제">
+        <input type="submit"  class="btn btn-outline-danger btn-delete btn-sm" value="삭제">
     </form>
 </div>
 

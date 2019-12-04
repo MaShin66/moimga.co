@@ -116,16 +116,21 @@ class Program extends MY_Controller {
             'level' => $level,
             'alarm' =>$alarm_cnt
         );
-
         $program_info = $this->program_model->get_program_info($program_id);
-        $team_info = $this->team_model->get_team_info($program_info['team_id']);
-        $date_info = $this->program_model->load_program_date_info_by_p_id($program_id);
-        $qna_info = $this->program_model->load_program_qna_info_by_p_id($program_id);
-        $qualify_info = $this->program_model->load_program_qualify_info_by_p_id($program_id); //이것도 중복될 수 없으니까 unique 임
+        $as_member = $this->team_model-> as_member($program_info['team_id'], $user_data['user_id']);
+        if($program_info['status']=='on' ||($program_info['status']!='on' && $as_member) || $level==9){
+            $team_info = $this->team_model->get_team_info($program_info['team_id']);
+            $date_info = $this->program_model->load_program_date_info_by_p_id($program_id);
+            $qna_info = $this->program_model->load_program_qna_info_by_p_id($program_id);
+            $qualify_info = $this->program_model->load_program_qualify_info_by_p_id($program_id); //이것도 중복될 수 없으니까 unique 임
 
-        $this->program_model->update_program_hit($program_id); // 조회수
-        $this->layout->view('/program/view', array('user'=>$user_data,'program_info'=>$program_info,'team_info'=>$team_info,
-        'date_info'=>$date_info,'qna_info'=>$qna_info,'qualify_info'=>$qualify_info));
+            $this->program_model->update_program_hit($program_id); // 조회수
+            $this->layout->view('/program/view', array('user'=>$user_data,'program_info'=>$program_info,'team_info'=>$team_info,
+                'date_info'=>$date_info,'qna_info'=>$qna_info,'qualify_info'=>$qualify_info));
+        }else{
+
+            alert($this->lang->line('hidden_alert'),'/program');
+        }
 
     }
 
@@ -339,14 +344,15 @@ class Program extends MY_Controller {
 
     }
 
-    function heart($program_id){ //좋아요
+    function heart(){ //좋아요
         $user_id = $this->data['user_id'];
+        $program_id = $this->input->post('unique_id');
         if($user_id==0){
             echo 'login';
         }else{
             //이미 내가 누른지 확인
             $today = date('Y-m-d H:i:s');
-            $heart_info = $this->heart_model->get_program_heart_user($user_id, $program_id);
+            $heart_info = $this->heart_model->get_heart_user('program',$user_id, $program_id);
             $program_info = $this->program_model->get_program_info($program_id); //detail_product
 
             if($heart_info==null){ // 안눌렀으면 새로 쓰기
@@ -355,7 +361,7 @@ class Program extends MY_Controller {
                     'user_id'=>$user_id,
                     'crt_date'=>$today,
                 );
-                $this->heart_model->insert_program_heart($heart_data);
+                $this->heart_model->insert_heart('program',$heart_data);
 
                 $detail_data['heart_count'] =$program_info['heart_count']+1;
                 $this->program_model->update_program($program_info['program_id'], $detail_data);
@@ -364,7 +370,7 @@ class Program extends MY_Controller {
 
             }else{// 눌렀으면 누른거 취소
                 //이 episode bookmark에 하나 빼기
-                $this->heart_model->delete_program_heart($heart_info['program_heart_id']); //취소 - 아예 지운다
+                $this->heart_model->delete_heart('program',$heart_info['program_heart_id']); //취소 - 아예 지운다
 
                 $detail_data['heart_count'] =$program_info['heart_count']-1;
                 $this->program_model->update_program($program_info['program_id'], $detail_data);

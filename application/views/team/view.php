@@ -11,6 +11,12 @@
 북마크
 </div>
 
+    <div class="btn-heart" onclick="heart('team',<?=$team_info['team_id']?>)">하트
+        <span id="heart_cnt"><?=$team_info['heart_count']?></span>
+    </div>
+
+
+
 <h1>팀 정보</h1>
 <h2><?=$team_info['title']?></h2>
 <h3><?=$team_info['name']?></h3>

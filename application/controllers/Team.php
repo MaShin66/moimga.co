@@ -18,9 +18,7 @@ class Team extends MY_Controller {
     public function index()
     {
         $this->lists();
-
     }
-
 
     function lists(){ //너는 그냥 이거 써  != manage team_list() (load_assigned_team)
 
@@ -40,7 +38,7 @@ class Team extends MY_Controller {
 
         if($search==null){
             $search_query = array(
-                'crt_date' => '',
+                'crt_date' => null,
                 'search'=>null,
                 'user_id'=>null,
                 'status'=>'on',
@@ -90,6 +88,7 @@ class Team extends MY_Controller {
 
         $data['result'] = $this->team_model->load_team('', $start, $limit,$search_query);
         $data['total']=$config['total_rows'];
+
 
         $this->layout->view('team/list', array('user'=>$user_data,'result'=>$data,'search_query'=>$search_query));
     }
@@ -142,6 +141,7 @@ class Team extends MY_Controller {
             }else{ //새로 쓰기
                 $data['thumb_url'] = '/www/thumbs/team/basic.jpg'; //새로쓸때는 이렇게..
                 $data['subscribe_count'] = 0;
+                $data['heart_count'] = 0;
                 $data['hit'] = 0;
                 $data['crt_date'] = date('Y-m-d H:i:s');
                 $team_id = $this->team_model->insert_team($data);
@@ -210,32 +210,39 @@ class Team extends MY_Controller {
             'alarm' =>$alarm_cnt
         );
         $team_info = $this->team_model->get_team_info_by_url($url); //이것도 중복될 수 없으니까 unique 임
+        $as_member = $this->team_model-> as_member($team_info['team_id'], $user_data['user_id']);
+        if($team_info['status']=='on' ||($team_info['status']!='on' && $as_member) || $level==9){
 
-        $search_query = array(
-            'crt_date' => '',
-            'search'=>null,
-            'status'=>'on',
-            'team_id'=>$team_info['team_id'],
-        );
+            $search_query = array(
+                'crt_date' => '',
+                'search'=>null,
+                'status'=>'on',
+                'team_id'=>$team_info['team_id'],
+            );
 
-        $at_url = $this->uri->segment(1); //@가 붙은 url
-        $programs = $this->program_model->load_program('','',4,$search_query);
-        $team_blog = $this->team_model->load_team_blog('','',4,$search_query);
-        $this->team_model->update_team_hit($team_info['team_id']);
-        $this->layout->view('/team/view', array('user'=>$user_data,'team_info'=>$team_info,
-            'team_blog'=>$team_blog,'programs'=>$programs,'at_url'=>$at_url));
+            $at_url = $this->uri->segment(1); //@가 붙은 url
+            $programs = $this->program_model->load_program('','',4,$search_query);
+            $team_blog = $this->team_model->load_team_blog('','',4,$search_query);
+            $this->team_model->update_team_hit($team_info['team_id']);
+            $this->layout->view('/team/view', array('user'=>$user_data,'team_info'=>$team_info,
+                'team_blog'=>$team_blog,'programs'=>$programs,'at_url'=>$at_url));
+
+        }else{
+            alert($this->lang->line('hidden_alert'),'/team');
+        }
 
     }
 
 
-    function heart($team_id){ //좋아요
+    function heart(){ //좋아요
         $user_id = $this->data['user_id'];
+        $team_id = $this->input->post('unique_id');
         if($user_id==0){
             echo 'login';
         }else{
             //이미 내가 누른지 확인
             $today = date('Y-m-d H:i:s');
-            $like_info = $this->heart_model->get_team_like_user($user_id, $team_id);
+            $like_info = $this->heart_model->get_heart_user('team',$user_id, $team_id);
             $team_info = $this->team_model->get_team_info($team_id); //detail_product
 
             if($like_info==null){ // 안눌렀으면 새로 쓰기
@@ -244,19 +251,19 @@ class Team extends MY_Controller {
                     'user_id'=>$user_id,
                     'crt_date'=>$today,
                 );
-                $this->heart_model->insert_team_like($like_data);
+                $this->heart_model->insert_heart('team',$like_data);
 
-                $detail_data['like'] =$team_info['like']+1;
-                $this->team_model->update_moim($team_info['team_id'], $detail_data);
+                $detail_data['heart_count'] =$team_info['heart_count']+1;
+                $this->team_model->update_team($team_info['team_id'], $detail_data);
 
                 echo 'done';
 
             }else{// 눌렀으면 누른거 취소
                 //이 episode bookmark에 하나 빼기
-                $this->heart_model->delete_team_like($like_info['team_like_id']); //취소 - 아예 지운다
+                $this->heart_model->delete_heart('team',$like_info['team_heart_id']); //취소 - 아예 지운다
 
-                $detail_data['like'] =$team_info['like']-1;
-                $this->team_model->update_moim($team_info['team_id'], $detail_data);
+                $detail_data['heart_count'] =$team_info['heart_count']-1;
+                $this->team_model->update_team($team_info['team_id'], $detail_data);
 
                 echo 'cancel';
             }
@@ -299,85 +306,94 @@ class Team extends MY_Controller {
         $at_url = $this->uri->segment(1); //@가 붙은 url
         $search = $this->uri->segment(4);
 
-        if($search==null){
-            $search_query = array(
-                'crt_date' => '',
-                'search'=>null,
-                'status'=>'on',
-                'team_id'=>$team_id,
-            );
-
-        }else{
-            $sort_date = $this->input->get('crt_date');
-            $sort_search = $this->input->get('search');
-
-            $search_query = array(
-                'crt_date' => $sort_date,
-                'search' => $sort_search,
-                'status'=>'on', //무조건 공개
-                'team_id'=>$team_id,
-            );
-
-        }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'];
-
-        $this->load->library('pagination');
-        $config['suffix'] = $q_string;
-        $config['base_url'] = '/team/blog/lists/'; // 페이징 주소
-        $config['total_rows'] = $this -> team_model->load_team_blog('count','','',$search_query); // 게시물 전체 개수
-
-        $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
-        $config['uri_segment'] = 3; // 페이지 번호가 위치한 세그먼트
-        $config['first_url'] = $config['base_url'].'/1'; // 첫페이지에 query string 에러나서..
-        $config = pagination_config($config);
-        // 페이지네이션 초기화
-        $this->pagination->initialize($config);
-        // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
-        $data['pagination'] = $this -> pagination -> create_links();
-
-        // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
-        $page = $this -> uri -> segment(3);
-
-
-        if($page==null){
-            $start=0;
-        }else{
-
-            $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
-        }
-
-        $limit = $config['per_page'];
-
-        $data['result'] = $this->team_model->load_team_blog('', $start, $limit,$search_query);
-        $data['total']=$config['total_rows'];
-
+        $team_info = $this->team_model->get_team_info($team_id); //이것도 중복될 수 없으니까 unique 임
         $as_member = $this->team_model-> as_member($team_id, $user_data['user_id']);
-        //as_member
 
-        $this->layout->view('team/blog/list', array('user'=>$user_data,'data'=>$data,'as_member'=>$as_member,'at_url'=>$at_url));
+        if($team_info['status']=='on' ||($team_info['status']!='on' && $as_member)|| $user_data['level']==9 ){
+            if($search==null){
+                $search_query = array(
+                    'crt_date' => '',
+                    'search'=>null,
+                    'status'=>'on',
+                    'team_id'=>$team_id,
+                );
+
+            }else{
+                $sort_date = $this->input->get('crt_date');
+                $sort_search = $this->input->get('search');
+
+                $search_query = array(
+                    'crt_date' => $sort_date,
+                    'search' => $sort_search,
+                    'status'=>'on', //무조건 공개
+                    'team_id'=>$team_id,
+                );
+
+            }
+            $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'];
+
+            $this->load->library('pagination');
+            $config['suffix'] = $q_string;
+            $config['base_url'] = '/team/blog/lists/'; // 페이징 주소
+            $config['total_rows'] = $this -> team_model->load_team_blog('count','','',$search_query); // 게시물 전체 개수
+
+            $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
+            $config['uri_segment'] = 3; // 페이지 번호가 위치한 세그먼트
+            $config['first_url'] = $config['base_url'].'/1'; // 첫페이지에 query string 에러나서..
+            $config = pagination_config($config);
+            // 페이지네이션 초기화
+            $this->pagination->initialize($config);
+            // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
+            $data['pagination'] = $this -> pagination -> create_links();
+
+            // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
+            $page = $this -> uri -> segment(3);
+
+
+            if($page==null){
+                $start=0;
+            }else{
+
+                $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
+            }
+
+            $limit = $config['per_page'];
+
+            $data['result'] = $this->team_model->load_team_blog('', $start, $limit,$search_query);
+            $data['total']=$config['total_rows'];
+
+            $as_member = $this->team_model-> as_member($team_id, $user_data['user_id']);
+            //as_member
+
+            $this->layout->view('team/blog/list', array('user'=>$user_data,'data'=>$data,'as_member'=>$as_member,'at_url'=>$at_url));
+
+        }else{
+
+            alert($this->lang->line('hidden_alert'),'/team');
+        }
     }
     function _blog_view($user_data,$team_id){
         $at_url = $this->uri->segment(1); //@가 붙은 url
         $team_blog_id = $this->uri->segment(3);
-        $is_opened = $this->team_model->is_opened($team_blog_id);
-
+        $is_opened = $this->team_model->is_post_opened($team_blog_id);
+//여기 다시 짜!!!!
         if($is_opened=='on'){
 
             $post_info = $this->team_model->get_team_blog_info($team_blog_id);
         }else{
             $as_member = $this->team_model-> as_member($team_id, $user_data['user_id']);
-            if(!$as_member) {
-                $post_info  =array();
-                alert('공개되어있지 않습니다.');
-            }else{
-                //off면 멤버만 볼 수 있다.
+            if($as_member || $user_data['level']==9){
                 $post_info = $this->team_model->get_team_blog_info($team_blog_id);
+                $this->team_model->update_team_blog_hit($team_blog_id);
+                $team_info = $this->team_model->get_team_info($post_info['team_id']);
+                //들어오면 힛수 +1
+                $this->layout->view('/team/blog/view', array('user'=>$user_data,'post_info'=>$post_info,'team_info'=>$team_info,'at_url'=>$at_url));
+            }else{
+                $post_info  =array();
+                alert($this->lang->line('hidden_alert'),'/team');
             }
         }
-       $this->team_model->update_team_blog_hit($team_blog_id);
-        $team_info = $this->team_model->get_team_info($post_info['team_id']);
-        //들어오면 힛수 +1
-        $this->layout->view('/team/blog/view', array('user'=>$user_data,'post_info'=>$post_info,'team_info'=>$team_info,'at_url'=>$at_url));
+
     }
 
     function _blog_upload($user_data,$team_id){
@@ -446,4 +462,5 @@ class Team extends MY_Controller {
             alert('해당 팀에 포스팅을 쓸 수 없습니다.','/'.$at_url);
         }
     }
+
 }

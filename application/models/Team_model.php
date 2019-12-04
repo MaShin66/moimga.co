@@ -17,16 +17,15 @@ class Team_model extends CI_Model
             $this->db->where('team.user_id',$search_query['user_id']);
         }
 
-
         if(!is_null($search_query['crt_date'])){
-            $this->db->order_by('crt_date',$search_query['crt_date']);
+            $this->db->order_by('team.crt_date',$search_query['crt_date']);
         }else{
-            $this->db->order_by('crt_date','desc');
+            $this->db->order_by('team.crt_date','desc');
 
         }
 
         if(!is_null($search_query['status'])){
-            $this->db->where('status',$search_query['status']);
+            $this->db->where('team.status',$search_query['status']);
         }
         ///whwywywhwyww status sorting 안 됨!?!?! !
         /// 
@@ -226,7 +225,7 @@ class Team_model extends CI_Model
     }
 
 
-    function is_opened($team_blog_id){
+    function is_post_opened($team_blog_id){
 
         $this->db->select('status');
         $this->db->where('team_blog_id' ,$team_blog_id);

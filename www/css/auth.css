@@ -211,7 +211,9 @@
 }
 
 
-
+.fade_form{
+    display: none;
+}
 
 
 .kakao_btn_img{

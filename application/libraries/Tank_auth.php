@@ -348,7 +348,8 @@ class Tank_auth
 
                 $this->ci->session->set_userdata(array(
                     'user_id'	=> $user->id,
-                    'username'	=> $username,
+                    'username'	=> $user->username,
+                    'nickname'	=> $user->nickname,
                     'status'	=> ($user->activated == 1) ? STATUS_ACTIVATED : STATUS_NOT_ACTIVATED,
                 ));
 

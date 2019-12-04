@@ -10,64 +10,57 @@ class Heart_model extends CI_Model
         parent::__construct();
 
     }
-    function get_program_heart_user($user_id, $program_id){
+    
+    function get_heart_user($type='team', $user_id, $unique_id){
         $this->db->where('user_id',$user_id);
-        $this->db->where('program_id',$program_id);
+        $this->db->where($type.'_id',$unique_id);
 
-        $query = $this->db->get('program_heart');
+        $query = $this->db->get($type.'_heart');
         $result = $query -> row_array();
 
         return $result;
     }
 
 
-    function get_program_heart_info($program_heart_id=null){
+    function get_heart_info($type='team',$heart_id=null){
 
-        if($program_heart_id==null){
-            $this->db->order_by('mod_date','desc');
-            $this->db->limit(1);
-        }else{
-
-            $this->db->where('program_heart_id',$program_heart_id);
-
-        }
-        $query = $this->db->get('program_heart');
+        $this->db->where($type.'_heart_id',$heart_id);
+        $query = $this->db->get($type.'_heart');
         $result = $query -> row_array();
 
         return $result;
     }
 
-    function insert_program_heart($data) {
+    function insert_heart($type='team', $data) {
 
-        $result = $this->db->insert('program_heart', $data);
+        $result = $this->db->insert($type.'_heart', $data);
 
         $latest_id = $this->db->insert_id();
         return $latest_id;
     }
 
-    function delete_program_heart($program_heart_id){
+    function delete_heart($type='team', $heart_id){
 
-        $this->db->where('program_heart_id', $program_heart_id);
-        $this->db->delete('program_heart');
+        $this->db->where($type.'_heart_id', $heart_id);
+        $this->db->delete($type.'_heart');
     }
 
 
-    function update_program_heart($program_heart_id, $data){
+    function update_heart($type='team', $heart_id, $data){
 
-        $this->db->where('program_heart_id', $program_heart_id);
-        $this->db->update('program_heart', $data);
-        return $program_heart_id;
+        $this->db->where($type.'_heart_id', $heart_id);
+        $this->db->update($type.'_heart', $data);
+        return $heart_id;
     }
 
 
-    function load_program_heart($offset='',$limit='',$type=''){
+    function load_heart($table='team', $offset='',$limit='',$type=''){
 
         $this->db->order_by('crt_date','desc');
-        $this->db->where('status','on');
         if ($limit != '' || $offset != '') {
             $this->db->limit($limit, $offset);
         }
-        $query = $this->db->get('program_heart');
+        $query = $this->db->get($table.'_heart');
 
         if($type=='count'){
 
@@ -76,34 +69,6 @@ class Heart_model extends CI_Model
             $result = $query -> result_array();
 
         }
-        return $result;
-    }
-
-
-    function load_program_heart_by_user_id($user_id, $offset='',$limit='',$type=''){
-
-        $this->db->from('program_heart');
-        $this->db->join('program', 'program.program_id = program_heart.program_id');
-        $this->db->where('program_heart.user_id',$user_id);
-
-        $this->db->order_by('product.close_date','asc'); //종료날 오름차순
-        if ($limit != '' || $offset != '') {
-            $this->db->limit($limit, $offset);
-        }
-        $query = $this->db->get();
-
-        if($type=='count'){
-
-            $result = $query -> num_rows();
-        }else{
-
-            $result = $query -> result_array();
-            $today = date("Y-m-d H:i:s",time());
-            foreach ($result as $key => $item){
-
-            }
-        }
-
         return $result;
     }
 

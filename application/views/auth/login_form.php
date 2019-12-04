@@ -37,17 +37,30 @@ $captcha = array(
         <div class="auth_logo_wrap">
             <a href="<?php echo base_url()?>"><img src="/www/img/logo.png" class="auth_logo" alt="moimga logo"></a>
         </div>
-        <div style="padding: 40px 0">
-            <a id="custom-login-btn" href="javascript:loginWithKakao()" class="btn btn-kakao btn-full">
-                <img src="/www/img/kakao_icon.png" class="kakao_btn_img" alt="Kakao login">카카오 계정으로 로그인
-            </a>
+            <div id="kakaoIdLogin">
+                <a id="custom-login-btn" href="javascript:loginWithKakao()" class="btn btn-kakao btn-full">
+                    <img src="/www/img/kakao_icon.png" class="kakao_btn_img" alt="Kakao login">카카오 계정으로 로그인
+                </a>
+            </div>
+
+            <div id="naverIdLogin">
+                <a id="naverIdLogin_loginButton" href="#" role="button" class="btn btn-circle">
+                    <img src="/www/img/sprite/icon-naver.png" alt="Naver login">네이버 아이디로 로그인</a>
+            </div>
+
             <div id="gSignInWrapper" onclick="startApp();">
                 <div id="customGoogleBtn" class="customGPlusSignIn">
                     <img src="/www/img/google_icon.png" class="google_icon" alt="Google login">
                     <span class="buttonText">구글 계정으로 로그인</span>
                 </div>
             </div>
-
+            <div id="FacebookIdLogin">
+                페이스북으로 로그인
+                <fb:login-button
+                        scope="public_profile,email"
+                        onlogin="checkLoginState();">
+                </fb:login-button>
+            </div>
 
             <small class="text-muted auth_desc">소셜 로그인 버튼으로 회원가입을 함으로써 '모임가'의 <a href="/info/terms" target="_blank" rel="noopener">이용 약관</a>, <a href="/info/privacy" target="_blank" rel="noopener">개인정보보호정책</a>에 동의하는 것으로 간주됩니다.</small>
 

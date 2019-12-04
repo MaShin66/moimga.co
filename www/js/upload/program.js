@@ -396,7 +396,7 @@ function add_qualify() {
     var now_num = $('#qualify_wrap').children().length; // 현재 갯수 -- 이거는 처음일 때..
     var next_num = Number(now_num+1);
     var common_buttons= '<div class="col-md-1 col-sm-6 col-6">' +
-        '         <div class="btn btn-outline-danger " onclick="delete_qualify('+next_num+');">- 삭제</div>' +
+        '         <div class="btn btn-outline-danger btn-delete " onclick="delete_qualify('+next_num+');">- 삭제</div>' +
         '      </div>';
 
     if(write_type=='modify'){

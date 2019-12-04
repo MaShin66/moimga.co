@@ -16,7 +16,7 @@
 <h2 class=""><?=$program_info['title']?></h2>
 <div class="">팀 이름: <?=$team_info['name']?></div>
 
-<div class="btn-heart" onclick="program_heart(<?=$program_info['program_id']?>)">하트
+<div class="btn-heart" onclick="heart('program',<?=$program_info['program_id']?>)">하트
 <span id="heart_cnt"><?=$program_info['heart_count']?></span>
 </div>
 

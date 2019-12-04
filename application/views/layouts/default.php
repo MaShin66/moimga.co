@@ -6,12 +6,29 @@
 
     $location = $this->uri->segment(1);
     $section = $this->uri->segment(2);
-    $detail = $this->uri->segment(3);?>
+    $detail = $this->uri->segment(3);
+    //team 구하기 위해서..
+    //explode 계속하면 너무 귀찮을텐데..ㅠㅠ 흑흑..
+    if($location[0]=='@'){
+        $location = 'team';
+    }
+    if($location=='team'&&$section){
+        $location='program';
+    }
+    ?>
     <!-- ga-->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="white">
     <meta name="apple-mobile-web-app-title" content="moimga">
     <!--google 웹마스터 도구--->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-153793050-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-153793050-1');
+    </script>
     <!--naver 웹마스터 도구--->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -208,11 +225,17 @@
 
 <?php if($section!='program'&&$section!='team'){?>
     <script type="text/javascript" src="/www/js/<?= $location ?>.js"></script>
+    <script type="text/javascript" src="/www/js/subscribe.js"></script> <!--section==team 일 경우에 유용-->
+    <script type="text/javascript" src="/www/js/heart.js"></script>
 <?php }else{?>
     <script type="text/javascript" src="/www/js/<?= $section ?>.js"></script>
-    <script type="text/javascript" src="/www/js/subscribe.js"></script> <!--section==team 일 경우에 유용-->
 
 <?php }?>
+
+<?php if($section=='program'){?>
+    <script type="text/javascript" src="/www/js/heart.js"></script>
+<?php }?>
+
 <?php if($location=='manage'){?>
     <script type="text/javascript" src="/www/js/<?= $section ?>.js"></script>
 <?php }?>

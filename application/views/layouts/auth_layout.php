@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-114822551-1"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-153793050-1"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'UA-114822551-1');
+        gtag('config', 'UA-153793050-1');
     </script>
+
     <?php
     $location = $this->uri->segment(1);
     $section = $this->uri->segment(2);
@@ -48,11 +49,31 @@
     <link rel="stylesheet" href="/www/css/overlay.css">
     <link rel="stylesheet" href="/www/css/bootstrap.css">
     <link rel="stylesheet" href="/www/css/basic.css">
-    <link rel="stylesheet" href="/www/css/quill.css">
     <link rel="stylesheet" href="/www/css/spinner.css">
 </head>
 <body>
 
+<script>
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId      : '895120010883967',
+            cookie     : true,
+            xfbml      : true,
+            version    : 'v5.0'
+        });
+
+        FB.AppEvents.logPageView();
+
+    };
+
+    (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+</script>
 
 <nav class="navbar navbar-expand-md fixed-top bg-light">
     <div class="container hidden-md-up">

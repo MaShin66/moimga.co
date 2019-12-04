@@ -318,11 +318,12 @@ class Auth extends MY_Controller
         $remember = $this->input->post('remember');
         $unique_id = $this->input->post('unique_id');
 
-        $result = $this-> user_model ->check_sns_user($sns_email,$sns_type); // user table 에서 해당 아이디로 있는지 없는지 확인
+        $result = $this-> user_model ->check_sns_user($sns_type, $unique_id); // user table 에서 해당 아이디로 있는지 없는지 확인
 
+//        echo json_encode($result);
         //$result==1이면 가입 된건데, sns_profile에도 있는지 확인..
         $type = 'default';
-        if($result==1){ //가입돼있으면
+        if($result>0){ //가입돼있으면
             //user_profile에 대해서..
             $this->tank_auth->sns_login($sns_email, $remember, $sns_type,$unique_id);
             $type = 'login';

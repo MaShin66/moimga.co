@@ -108,8 +108,14 @@ class After extends MY_Controller
         );
 
         $after_info = $this->after_model->get_after_info($after_id);
-        $this->after_model->update_after_hit($after_id); //후기 hit
-        $this->layout->view('after/view', array('user'=>$user_data,'after_info'=>$after_info));
+        if($after_info['status']=='on' || ($after_info['status']=='off' && ($after_info['user_id']==$user_id))){
+            $this->after_model->update_after_hit($after_id); //후기 hit
+            $this->layout->view('after/view', array('user'=>$user_data,'after_info'=>$after_info));
+            }else{
+            alert($this->lang->line('hidden_alert'),'/after');
+
+        }
+
     }
 
     function upload(){
