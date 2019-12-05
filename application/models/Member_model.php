@@ -14,6 +14,9 @@ class Member_model extends CI_Model
         $this->db->join('users','users.id = team_member.user_id');
         $this->db->join('team','team.team_id = team_member.team_id');
 
+        if(!is_null($search_query['user_id'])) {
+            $this->db->where('team_member.user_id',$search_query['user_id']);
+        }
         if(!is_null($search_query['team_id'])) {
             $this->db->where('team_member.team_id',$search_query['team_id']);
         }
@@ -79,7 +82,7 @@ class Member_model extends CI_Model
 
     function update_team_member($team_member_id,$data){ // 전체 invoice null로 초기화
 
-        $this->db->set( $data);
+        $this->db->set($data);
         $this->db->where('team_member_id' ,$team_member_id);
         $this->db->update('team_member');
 

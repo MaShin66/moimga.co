@@ -148,6 +148,7 @@ class Team extends MY_Controller {
                 $data['thumb_url'] = '/www/thumbs/team/basic.jpg'; //새로쓸때는 이렇게..
                 $data['subscribe_count'] = 0;
                 $data['heart_count'] = 0;
+
                 $data['after_count']=0;
                 $data['hit'] = 0;
                 $data['crt_date'] = date('Y-m-d H:i:s');
@@ -231,13 +232,17 @@ class Team extends MY_Controller {
                 'search'=>null,
                 'status'=>'on',
                 'team_id'=>$team_info['team_id'],
+                'price'=>null, //program
+                'event'=>null, //program
+                'user_id'=>null, //after
             );
 
             $at_url = $this->uri->segment(1); //@가 붙은 url
             $programs = $this->program_model->load_program('','',4,$search_query);
             $team_blog = $this->team_model->load_team_blog('','',4,$search_query);
+            $after_list =  $this->after_model->load_after('','',4,$search_query);
             $this->team_model->update_team_hit($team_info['team_id']);
-            $this->layout->view('/team/view', array('user'=>$user_data,'team_info'=>$team_info,
+            $this->layout->view('/team/view', array('user'=>$user_data,'team_info'=>$team_info,'after_list'=>$after_list,
                 'team_blog'=>$team_blog,'programs'=>$programs,'at_url'=>$at_url,'as_member'=>$as_member));
 
         }else{

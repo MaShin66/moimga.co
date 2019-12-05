@@ -35,7 +35,7 @@ class Search extends MY_Controller { //통합검색
         );
 
         $search = $this->input->get('search');
-        if(is_null($search)){//||$search=='' 나중에 해.
+        if(is_null($search)||$search==''){//||$search=='' 나중에 해.
             alert('검색어를 입력해주세요.','/');
         }else{
 

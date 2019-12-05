@@ -9,6 +9,9 @@ $lang['fin']='종료';
 $lang['representative']='대표';
 $lang['member']='멤버';
 
+$lang['member_1']='대표';
+$lang['member_2']='멤버';
+
 
 $lang['currency']='원';
 $lang['year']='년';

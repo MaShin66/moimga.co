@@ -5,7 +5,7 @@
     <h1 class="page_title">프로그램 목록</h1>
     <div class="mp_count">총 <?=$data['total']?>개</div>
     <div class="manage_top_write">
-        <a href="/@<?=$team_info['url']?>/program/upload" class="btn btn-sm btn-outline-action">팀 등록</a>
+        <a href="/@<?=$team_info['url']?>/program/upload" class="btn btn-sm btn-outline-action">프로그램 등록</a>
     </div>
 </div>
 
@@ -17,7 +17,7 @@
             <div class="form_empty">아직 만든 프로그램이 없습니다.</div>
 
             <div class="try_test_form">
-                <a href="/@<?=$team_info['url']?>/program/upload" class="btn btn-outline-action">팀 등록</a>
+                <a href="/@<?=$team_info['url']?>/program/upload" class="btn btn-outline-action">프로그램 등록</a>
             </div>
 
         <?php }?>

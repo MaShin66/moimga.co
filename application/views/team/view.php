@@ -55,3 +55,16 @@
         <?php }?>
     </ol>
 <?php }?>
+
+<h2>후기</h2>
+
+<?php if(count($after_list)==0){?>
+    아직 후기가 없습니다.
+<?php }else{?>
+    <ol>
+        <?php foreach ($after_list as $a_key=>$a_item){?>
+            <li>  <a href="/after/view/<?=$a_item['after_id']?>"><?=$a_item['title']?></a></li>
+        <?php }?>
+    </ol>
+<?php }?>
+

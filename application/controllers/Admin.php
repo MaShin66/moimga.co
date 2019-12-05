@@ -491,6 +491,8 @@ class Admin extends Admin_Controller
             'status'=>null, //무조건 공개
             'team_id'=>$team_id,
             'type'=>null,// $member_list 때문에
+            'event'=>null, //program
+            'price'=>null, //program
         );
         $member_list = $this->member_model->load_team_member('','','',$search_query);
         $program_list =  $this->program_model->load_program('','','',$search_query);
@@ -804,7 +806,7 @@ class Admin extends Admin_Controller
                 'search' => null,
                 'type' =>null,
                 'crt_date' =>null,
-//                'user_id'=>null, // 근데 난 이거 없어도될거같음. 한명만 나오는건데?
+                'user_id'=>null, // 특정 멤버의 소속팀 확인
                 'team_id'=>null,
             );
 
@@ -813,18 +815,18 @@ class Admin extends Admin_Controller
             $sort_search = $this->input->get('search');
             $sort_type = $this->input->get('type');
             $sort_team_id = $this->input->get('team_id');
-//            $sort_user_id = $this->input->get('user_id');
+            $sort_user_id = $this->input->get('user_id');
 
             $search_query = array(
                 'search' => $sort_search,
                 'type' => $sort_type,
                 'crt_date' => $sort_date,
-//                'user_id'=>$sort_user_id,
+                'user_id'=>$sort_user_id,
                 'team_id'=>$sort_team_id,
             );
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&type='.$search_query['type'].'&team_id='.$search_query['team_id'];
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&type='.$search_query['type'].'&team_id='.$search_query['team_id'].'&user_id='.$search_query['user_id'];
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
@@ -1130,6 +1132,7 @@ class Admin extends Admin_Controller
                 'crt_date' =>null,
                 'team_id'=>null,
                 'price'=>null,
+                'user_id'=>null,
                 'event'=>null,
             );
 
@@ -1138,6 +1141,7 @@ class Admin extends Admin_Controller
             $sort_search = $this->input->get('search');
             $sort_status = $this->input->get('status');
             $sort_team_id = $this->input->get('team_id');
+            $sort_user_id = $this->input->get('user_id');
 
             $sort_price = $this->input->get('price');
             $sort_event = $this->input->get('event');
@@ -1148,11 +1152,12 @@ class Admin extends Admin_Controller
                 'crt_date' => $sort_date,
                 'team_id'=>$sort_team_id,
                 'price'=>$sort_price,
+                'user_id'=>$sort_user_id, //특정 사용자가 작성한 프로그램
                 'event'=>$sort_event,
             );
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'].'&team_id='.$search_query['team_id'].'&price='.$search_query['price'].'&event='.$search_query['event'];
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'].'&team_id='.$search_query['team_id'].'&price='.$search_query['price'].'&event='.$search_query['event'].'&user_id='.$search_query['user_id'];
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
@@ -1688,8 +1693,8 @@ class Admin extends Admin_Controller
             case 'team_blog':
                 $this->team_model->update_team_blog($unique_id,$status_data);
                 break;
-            case 'blog':
-                $this->blog_model->update_blog($unique_id,$status_data);
+            case 'magazine':
+                $this->magazine_model->update_magazine($unique_id,$status_data);
                 break;
             default:
             case 'team':

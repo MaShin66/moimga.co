@@ -51,6 +51,7 @@ class Program extends MY_Controller {
                 'status'=>'on',
                 'team_id'=>$team_id,
                 'price'=>null,
+                'user_id'=>null,
                 'event'=>null,
             );
 
@@ -66,6 +67,7 @@ class Program extends MY_Controller {
                 'status'=>'on', //무조건 공개
                 'team_id'=>$team_id,
                 'price'=>$sort_price,
+                'user_id'=>null,
                 'event'=>$sort_event,
             );
 

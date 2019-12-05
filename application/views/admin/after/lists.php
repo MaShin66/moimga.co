@@ -6,7 +6,7 @@
  * Time: 오후 4:06
  */?>
 
-<h1 class="admin_sec_title"><a href="/admin/program/">후기</a></h1>
+<h1 class="admin_sec_title"><a href="/admin/program/">후기 (총 <?=$data['total']?> 개)</a></h1>
 <div class="admin_sort">
 
     <div class="btn-toolbar justify-content-between" role="toolbar">

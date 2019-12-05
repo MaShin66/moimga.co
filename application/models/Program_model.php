@@ -16,6 +16,9 @@ class Program_model extends CI_Model
         $this->db->join('program_date','program_date.program_id = program.program_id');
         $this->db->join('users','users.id = program.user_id');
 
+        if($search_query['user_id']!=null){
+            $this->db->where('program.user_id',$search_query['user_id']);
+        }
         if($search_query['event']=='on') { // 가까운 날짜
             $this->db->where('program_date.date > NOW()');
             $this->db->order_by('event_date','asc');

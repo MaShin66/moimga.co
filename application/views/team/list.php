@@ -12,8 +12,8 @@ if(!is_null($search_query['after'])){
 ?>
 <div class="cont-padding">
     <div class="header_box header_space"></div>
-    <h1 class="top_title">팀 목록</h1>
-    <?php if(!is_null($search_query['search'])){?>
+    <h1 class="top_title">팀</h1>
+    <?php if(!is_null($search_query['search'])&&$search_query['search']!=''){?>
 
         <div class="">
             <?=$search_query['search']?>의 검색 결과

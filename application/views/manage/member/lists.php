@@ -43,6 +43,7 @@
             <th>이름</th>
             <th>지정 날짜</th>
             <th>이메일</th>
+            <th>타입</th>
             <th>상세</th>
         </tr>
         </thead>
@@ -60,6 +61,7 @@
                 <td><a href="/manage/member/detail/<?=$result['team_member_id']?>"><?=$result['realname']?></a></td>
                 <td><?=$result['set_date']?></td>
                 <td><?=$result['email']?></td>
+                <td><?=$this->lang->line('member_'.$result['type']);?></td>
                 <td><a href="/manage/member/detail/<?=$result['team_member_id']?>" class="btn btn-sm btn-outline-action">보기</a></td>
 
             </tr>

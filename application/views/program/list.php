@@ -12,10 +12,9 @@ if($search_query['event']=='on'){
 
 <div class="cont-padding">
     <div class="header_box header_space"></div>
-    <h1 class="top_title">프로그램 목록</h1>
+    <h1 class="top_title">프로그램</h1>
 
-    <?php if(!is_null($search_query['search'])){?>
-
+    <?php if(!is_null($search_query['search'])&&$search_query['search']!=''){?>
         <div class="">
             <?=$search_query['search']?>의 검색 결과
         </div>

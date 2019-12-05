@@ -22,8 +22,8 @@
 
 <h2>프로그램</h2>
 
-<div class="">모집 인원: <?=$program_info['participant']?></div>
-<div class="">가격: <?=$program_info['price']?></div>
+<div class="">모집 인원: <?=$program_info['participant']?>명</div>
+<div class="">가격: <?=number_format($program_info['price'])?>원</div>
 <div class="">지역: <?=$program_info['district']?></div>
 <div class="">장소: <?=$program_info['venue']?></div>
 <div class="">주소: <?=$program_info['address']?></div>

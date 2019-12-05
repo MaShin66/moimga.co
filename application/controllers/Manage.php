@@ -123,6 +123,8 @@ class Manage extends Manage_Controller {
                 'status'=>null, //무조건 공개
                 'team_id'=>$team_id,
                 'type'=>null, //member_list
+                'event'=>null,
+                'price'=>null,
             );
             $member_list = $this->member_model->load_team_member('','','',$search_query);
             $program_list =  $this->program_model->load_program('','','',$search_query);
@@ -249,62 +251,69 @@ class Manage extends Manage_Controller {
 
     function _after_lists($user_data){
 
-        $search = $this->uri->segment(6);
         $team_id = $this->uri->segment(4);
+        if(is_null($team_id) || $team_id==''){
 
-        if($search==null){
-            $search_query = array(
-                'crt_date' => null,
-                'status'=>'on', //after의 status는 'on'인것만 보여줌: 사용자가 after의 권한을 갖고있다.
-                'search' => null,
-                'team_id'=>$team_id, //기본은 team_id임 로 남긴다..
-                'user_id'=>null,
-            );
+            $this->layout->view('manage/empty', array('user' => $user_data));
 
         }else{
-            $sort_date = $this->input->get('crt_date');
-            $sort_search = $this->input->get('search');
 
-            $search_query = array(
-                'crt_date' => $sort_date,
-                'status'=>'on',//after의 status는 'on'인것만 보여줌: 사용자가 after의 권한을 갖고있다.
-                'search' => $sort_search,
-                'team_id'=>$team_id,
-                'user_id'=>null,
-            );
+            $search = $this->uri->segment(6);
+            if($search==null){
+                $search_query = array(
+                    'crt_date' => null,
+                    'status'=>'on', //after의 status는 'on'인것만 보여줌: 사용자가 after의 권한을 갖고있다.
+                    'search' => null,
+                    'team_id'=>$team_id, //기본은 team_id임 로 남긴다..
+                    'user_id'=>null,
+                );
+
+            }else{
+                $sort_date = $this->input->get('crt_date');
+                $sort_search = $this->input->get('search');
+
+                $search_query = array(
+                    'crt_date' => $sort_date,
+                    'status'=>'on',//after의 status는 'on'인것만 보여줌: 사용자가 after의 권한을 갖고있다.
+                    'search' => $sort_search,
+                    'team_id'=>$team_id,
+                    'user_id'=>null,
+                );
+
+            }
+            $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'];
+
+            $this->load->library('pagination');
+            $config['suffix'] = $q_string;
+            $config['base_url'] = '/manage/after/lists'; // 페이징 주소
+            $config['total_rows'] = $this -> after_model -> load_after('count','','',$search_query); // 게시물 전체 개수
+
+            $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
+            $config['uri_segment'] = 5; // 페이지 번호가 위치한 세그먼트
+            $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
+            $config = pagination_config($config);
+            // 페이지네이션 초기화
+            $this->pagination->initialize($config);
+            // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
+            $data['pagination'] = $this->pagination->create_links();
+
+            // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
+            $page = $this->uri->segment(5);
+            if($page==null){
+                $start=0;
+            }else{
+
+                $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
+            }
+
+            $limit = $config['per_page'];
+
+            $data['result'] = $this->after_model->load_after('', $start, $limit, $search_query);
+            $data['total']=$config['total_rows'];
+
+            $this->layout->view('manage/after/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'];
-
-        $this->load->library('pagination');
-        $config['suffix'] = $q_string;
-        $config['base_url'] = '/manage/after/lists'; // 페이징 주소
-        $config['total_rows'] = $this -> after_model -> load_after('count','','',$search_query); // 게시물 전체 개수
-
-        $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
-        $config['uri_segment'] = 5; // 페이지 번호가 위치한 세그먼트
-        $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
-        $config = pagination_config($config);
-        // 페이지네이션 초기화
-        $this->pagination->initialize($config);
-        // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
-        $data['pagination'] = $this->pagination->create_links();
-
-        // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
-        $page = $this->uri->segment(5);
-        if($page==null){
-            $start=0;
-        }else{
-
-            $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
-        }
-
-        $limit = $config['per_page'];
-
-        $data['result'] = $this->after_model->load_after('', $start, $limit, $search_query);
-        $data['total']=$config['total_rows'];
-
-        $this->layout->view('manage/after/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
 
     }
 
@@ -435,61 +444,73 @@ class Manage extends Manage_Controller {
     function _program_lists($user_data){
 
         $team_id =$this->uri->segment(4);
-        $search = $this->uri->segment(5);
-
-        if($search==null){
-            $search_query = array(
-                'crt_date' => null,
-                'search' => null,
-                'status'=>null,
-                'team_id'=>$team_id
-            );
+        if(is_null($team_id) || $team_id==''){
+            $this->layout->view('manage/empty', array('user' => $user_data));
 
         }else{
-            $sort_date = $this->input->get('crt_date');
-            $sort_search = $this->input->get('search');
-            $sort_status = $this->input->get('status');
 
-            $search_query = array(
-                'crt_date' => $sort_date,
-                'search' => $sort_search,
-                'status'=>$sort_status,
-                'team_id'=>$team_id
-            );
+            $search = $this->uri->segment(6);
+            if($search==null){
+                $search_query = array(
+                    'crt_date' => null,
+                    'search' => null,
+                    'status'=>null,
+                    'team_id'=>$team_id,
+                    'event'=>null,
+                    'price'=>null,
+                    'user_id'=>null,
+                );
+
+            }else{
+                $sort_date = $this->input->get('crt_date');
+                $sort_search = $this->input->get('search');
+                $sort_status = $this->input->get('status');
+
+                $search_query = array(
+                    'crt_date' => $sort_date,
+                    'search' => $sort_search,
+                    'status'=>$sort_status,
+                    'team_id'=>$team_id,
+                    'event'=>null,
+                    'price'=>null,
+                    'user_id'=>null,
+                );
+
+            }
+            $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'];
+
+            $this->load->library('pagination');
+            $config['suffix'] = $q_string;
+            $config['base_url'] = '/manage/program/lists/'.$team_id; // 페이징 주소
+            $config['total_rows'] = $this -> program_model -> load_program('count','','',$search_query); // 게시물 전체 개수
+
+            $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
+            $config['uri_segment'] = 5; // 페이지 번호가 위치한 세그먼트
+            $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
+            $config = pagination_config($config);
+            // 페이지네이션 초기화
+            $this->pagination->initialize($config);
+            // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
+            $data['pagination'] = $this->pagination->create_links();
+
+            // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
+            $page = $this->uri->segment(5);
+            if($page==null){
+                $start=0;
+            }else{
+
+                $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
+            }
+
+            $limit = $config['per_page'];
+
+            $data['result'] = $this->program_model->load_program('', $start, $limit, $search_query);
+            $data['total']=$config['total_rows'];
+
+            $team_info = $this->team_model-> get_team_info($team_id);
+            $this->layout->view('manage/program/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'team_info'=>$team_info));
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'];
-
-        $this->load->library('pagination');
-        $config['suffix'] = $q_string;
-        $config['base_url'] = '/manage/program/lists/'.$team_id; // 페이징 주소
-        $config['total_rows'] = $this -> program_model -> load_program('count','','',$search_query); // 게시물 전체 개수
-
-        $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
-        $config['uri_segment'] = 6; // 페이지 번호가 위치한 세그먼트
-        $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
-        $config = pagination_config($config);
-        // 페이지네이션 초기화
-        $this->pagination->initialize($config);
-        // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
-        $data['pagination'] = $this->pagination->create_links();
-
-        // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
-        $page = $this->uri->segment(6);
-        if($page==null){
-            $start=0;
-        }else{
-
-            $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
-        }
-
-        $limit = $config['per_page'];
-
-        $data['result'] = $this->program_model->load_program('', $start, $limit, $search_query);
-        $data['total']=$config['total_rows'];
-
-        $team_info = $this->team_model-> get_team_info($team_id);
-        $this->layout->view('manage/program/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'team_info'=>$team_info));
 
     }
     function _program_detail($program_id,$user_data){ //detail - 정보
@@ -587,64 +608,72 @@ class Manage extends Manage_Controller {
 
 
         $team_id = $this->uri->segment(4);//list만 segment 다르다..
-        $search = $this->uri->segment(6);
 
-        if($search==null){
-            $search_query = array(
-                'crt_date' => '',
-                'search' => '',
-                'status'=>null,
-                'team_id'=>$team_id,
-                'user_id'=>$user_data['user_id']
-            );
+        if(is_null($team_id) || $team_id==''){
+
+            $this->layout->view('manage/empty', array('user' => $user_data));
 
         }else{
-            $sort_date = $this->input->get('crt_date');
-            $sort_search = $this->input->get('search');
-            $sort_status = $this->input->get('status');
+            $search = $this->uri->segment(6);
 
-            $search_query = array(
-                'crt_date' => $sort_date,
-                'search' => $sort_search,
-                'team_id'=>$team_id,
-                'status'=>$sort_status,
-                'user_id'=>$user_data['user_id']
-            );
+
+            if($search==null){
+                $search_query = array(
+                    'crt_date' => '',
+                    'search' => '',
+                    'status'=>null,
+                    'team_id'=>$team_id,
+                    'user_id'=>$user_data['user_id']
+                );
+
+            }else{
+                $sort_date = $this->input->get('crt_date');
+                $sort_search = $this->input->get('search');
+                $sort_status = $this->input->get('status');
+
+                $search_query = array(
+                    'crt_date' => $sort_date,
+                    'search' => $sort_search,
+                    'team_id'=>$team_id,
+                    'status'=>$sort_status,
+                    'user_id'=>$user_data['user_id']
+                );
+
+            }
+            $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'];
+
+            $this->load->library('pagination');
+            $config['suffix'] = $q_string;
+            $config['base_url'] = '/manage/blog/lists'; // 페이징 주소
+            $config['total_rows'] = $this -> team_model -> load_team_blog('count','','',$search_query); // 게시물 전체 개수
+
+            $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
+            $config['uri_segment'] = 5; // 페이지 번호가 위치한 세그먼트
+            $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
+            $config = pagination_config($config);
+            // 페이지네이션 초기화
+            $this->pagination->initialize($config);
+            // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
+            $data['pagination'] = $this->pagination->create_links();
+
+            // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
+            $page = $this->uri->segment(5);
+            if($page==null){
+                $start=0;
+            }else{
+
+                $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
+            }
+
+            $limit = $config['per_page'];
+
+            $data['result'] = $this->team_model->load_team_blog('', $start, $limit, $search_query);
+            $data['total']=$config['total_rows'];
+
+            $team_info = $this->team_model->get_team_info($team_id);
+            $this->layout->view('manage/blog/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'team_info'=>$team_info));
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'];
-
-        $this->load->library('pagination');
-        $config['suffix'] = $q_string;
-        $config['base_url'] = '/manage/blog/lists'; // 페이징 주소
-        $config['total_rows'] = $this -> team_model -> load_team_blog('count','','',$search_query); // 게시물 전체 개수
-
-        $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
-        $config['uri_segment'] = 5; // 페이지 번호가 위치한 세그먼트
-        $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
-        $config = pagination_config($config);
-        // 페이지네이션 초기화
-        $this->pagination->initialize($config);
-        // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
-        $data['pagination'] = $this->pagination->create_links();
-
-        // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
-        $page = $this->uri->segment(5);
-        if($page==null){
-            $start=0;
-        }else{
-
-            $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
-        }
-
-        $limit = $config['per_page'];
-
-        $data['result'] = $this->team_model->load_team_blog('', $start, $limit, $search_query);
-        $data['total']=$config['total_rows'];
-
-        $team_info = $this->team_model->get_team_info($team_id);
-        $this->layout->view('manage/blog/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'team_info'=>$team_info));
-
     }
 
     function _blog_status($user_data){ //detail - 정보
@@ -714,6 +743,10 @@ class Manage extends Manage_Controller {
             case 'detail':
                 $this->_member_detail($member_id,$user_data);
                 break;
+            case 'set':
+                $member_id = $this->input->post('member_id');
+                $this->_member_set($member_id,$user_data);
+                break;
 
             case 'delete':
                 $this->_member_delete($user_data);
@@ -726,63 +759,71 @@ class Manage extends Manage_Controller {
         }
     }
 
-    function _member_lists( $user_data){
+    function _member_lists($user_data){
 
-        $search = $this->uri->segment(6);
         $team_id = $this->uri->segment(4);
+        if(is_null($team_id)||$team_id==''){ //아무것도 없는 경우 먼저 팀 구성해야됨
 
-        if($search==null){
-            $search_query = array(
-                'crt_date' => '',
-                'search' => '',
-                'user_id' => null,
-                'team_id'=>$team_id
-            );
+            $this->layout->view('manage/empty', array('user' => $user_data));
 
         }else{
-            $sort_date = $this->input->get('crt_date');
-            $sort_search = $this->input->get('search');
+            $search = $this->uri->segment(6);
+            if($search==null){
+                $search_query = array(
+                    'crt_date' => '',
+                    'search' => '',
+                    'user_id' => null,
+                    'type'=>null,
+                    'team_id'=>$team_id
+                );
 
-            $search_query = array(
-                'crt_date' => $sort_date,
-                'search' => $sort_search,
-                'user_id' => null,
-                'team_id'=>$team_id
-            );
+            }else{
+                $sort_date = $this->input->get('crt_date');
+                $sort_search = $this->input->get('search');
+
+                $search_query = array(
+                    'crt_date' => $sort_date,
+                    'search' => $sort_search,
+                    'user_id' => null,
+                    'type'=>null,
+                    'team_id'=>$team_id
+                );
+
+            }
+            $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'];
+
+            $this->load->library('pagination');
+            $config['suffix'] = $q_string;
+            $config['base_url'] = '/manage/member/lists'; // 페이징 주소
+            $config['total_rows'] = $this -> member_model -> load_team_member('count','','',$search_query); // 게시물 전체 개수
+
+            $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
+            $config['uri_segment'] = 5; // 페이지 번호가 위치한 세그먼트
+            $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
+            $config = pagination_config($config);
+            // 페이지네이션 초기화
+            $this->pagination->initialize($config);
+            // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
+            $data['pagination'] = $this->pagination->create_links();
+
+            // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
+            $page = $this->uri->segment(5);
+            if($page==null){
+                $start=0;
+            }else{
+
+                $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
+            }
+
+            $limit = $config['per_page'];
+
+            $data['result'] = $this->member_model->load_team_member('', $start, $limit, $search_query);
+            $data['total']=$config['total_rows'];
+
+            $team_info =   $this->team_model->get_team_info($team_id);
+            $this->layout->view('manage/member/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'team_info'=>$team_info));
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'];
-
-        $this->load->library('pagination');
-        $config['suffix'] = $q_string;
-        $config['base_url'] = '/manage/member/lists'; // 페이징 주소
-        $config['total_rows'] = $this -> member_model -> load_team_member('count','','',$search_query); // 게시물 전체 개수
-
-        $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
-        $config['uri_segment'] = 5; // 페이지 번호가 위치한 세그먼트
-        $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
-        $config = pagination_config($config);
-        // 페이지네이션 초기화
-        $this->pagination->initialize($config);
-        // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
-        $data['pagination'] = $this->pagination->create_links();
-
-        // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
-        $page = $this->uri->segment(5);
-        if($page==null){
-            $start=0;
-        }else{
-
-            $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
-        }
-
-        $limit = $config['per_page'];
-
-        $data['result'] = $this->member_model->load_team_member('', $start, $limit, $search_query);
-        $data['total']=$config['total_rows'];
-
-        $team_info =   $this->team_model->get_team_info($team_id);
-        $this->layout->view('manage/member/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'team_info'=>$team_info));
 
     }
 
@@ -800,10 +841,10 @@ class Manage extends Manage_Controller {
             );
             $this->member_model->insert_team_member($member_info);
             //이 사람의 레벨을 3으로 지정
-            $level_info = array(
-                'level'=>3,
-            );
-            $this->user_model->update_users($form_data['user_id'],$level_info);
+//            $level_info = array(
+//                'level'=>3,
+//            );
+//            $this->user_model->update_users($form_data['user_id'],$level_info);
 
             alert('팀 멤버가 등록되었습니다.','/manage/member/lists/'.$form_data['team_id']);
         }else{
@@ -814,6 +855,24 @@ class Manage extends Manage_Controller {
 
     }
 
+    function _member_set($member_id,$user_data){
+        $team_id = $this->input->post('team_id');
+        $type = $this->input->post('type');
+
+        $auth = $this->_get_auth_code('team',$team_id, $user_data['user_id']); //지정하는 사람이 지정할 수 있는지 확인
+
+        if($auth<3) { //권한이 있으면 삭제 (admin, boss)
+            $member_info = array(
+                'type'=>$type, //일반 멤버는 type:2, 대표는 1
+            );
+            $this->member_model->update_team_member($member_id, $member_info);
+            alert('선택하신 회원이 '.$this->lang->line('member_'.$type).'로 지정되었습니다.','/manage/member/detail/'.$member_id);
+
+
+        }else{
+            alert('권한이 없습니다. [MD01]','/manage/member');
+        }
+    }
     function _member_detail($member_id,$user_data){ //detail - 정보
 
         $member_info = $this->member_model->get_team_member_info($member_id);

@@ -14,6 +14,13 @@
         <a href="/mypage/after/detail/<?=$after_info['after_id']?>" class="btn btn-outline-primary">관리</a>
         <a href="/after/upload/<?=$after_info['after_id']?>?type=modify" class="btn btn-outline-secondary">수정</a>
     </div>
+    <div class="">
+        <form action="/mypage/after/delete/" method="post">
+            <input type="hidden" name="after_id" value="<?=$after_info['after_id']?>">
+            <input type="submit"  class="btn btn-outline-danger btn-delete" value="삭제">
+        </form>
+    </div>
+    
 <?php }?>
 
 <h2><?=$after_info['title']?></h2>
