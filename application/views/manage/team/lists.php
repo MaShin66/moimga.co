@@ -64,7 +64,7 @@
                 <td><?=$result['team_id']?></td>
                 <td><a href="/manage/team/detail/<?=$result['team_id']?>"><?=$result['title']?></a></td>
                 <td><?=$result['url']?></td>
-                <td><?=$this->lang->line($result['position'])?></td>
+                <td><?=$this->lang->line('member_'.$result['type'])?></td>
                 <td><a href="/manage/team/detail/<?=$result['team_id']?>" class="btn btn-sm btn-outline-action">보기</a></td>
                 <td><a href="/manage/program/lists/<?=$result['team_id']?>" class="btn btn-sm btn-outline-action">목록</a></td>
 
