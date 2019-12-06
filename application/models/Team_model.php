@@ -303,7 +303,7 @@ GROUP BY A.team_id
             $this->db->limit($limit, $offset);
         }
 
-        $this->db->group_by('team_id');
+        $this->db->group_by('team.team_id');
         $query = $this->db->get('team_member');
 
         if ($type == 'count') {
