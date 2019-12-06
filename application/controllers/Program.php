@@ -180,8 +180,8 @@ class Program extends MY_Controller {
                     $price = $this->input->post('price');
                     $address = $this->input->post('address');
                     $status = $this->input->post('status');
-                    $lang = $this->input->post('lang');
-                    $long = $this->input->post('long');
+                    $latitude = $this->input->post('latitude');
+                    $longitude= $this->input->post('longitude');
 
                     //array
 
@@ -200,8 +200,8 @@ class Program extends MY_Controller {
                         'price'=>$price,
                         'address'=>$address,
                         'contents'=>$contents,
-                        'lang'=>$lang,
-                        'long'=>$long,
+                        'latitude'=>$latitude,
+                        'longitude'=>$longitude,
                         'status'=>$status,
                     );
                     if($type=='modify'){
@@ -333,8 +333,8 @@ class Program extends MY_Controller {
                             'price'=>null,
 
                             'address'=>null,
-                            'lang'=>null, //지도용 위도
-                            'long'=>null, //지도용 경도
+                            'latitude'=>null, //지도용 위도
+                            'longitude'=>null, //지도용 경도
                             'status'=>'on',
                             'thumbs_url'=>null,//기본 섬네일 지정,
                             'type'=>'new' //새로 글쓰기
