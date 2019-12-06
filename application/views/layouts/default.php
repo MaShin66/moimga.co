@@ -224,7 +224,7 @@
 <script type="text/javascript" src="/www/js/basic.js"></script>
 
 <?php if(($location=='program'||$location=='team')||$section=='program'){?>
-    <script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=b96a3667e5757f2d026734edddb51d5e&autoload=false"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b96a3667e5757f2d026734edddb51d5e&autoload=false"></script>
     <script type="text/javascript" src="/www/js/<?= $location ?>.js"></script>
     <script type="text/javascript" src="/www/js/subscribe.js"></script> <!--section==team 일 경우에 유용-->
     <script type="text/javascript" src="/www/js/heart.js"></script>
