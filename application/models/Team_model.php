@@ -271,8 +271,10 @@ GROUP BY A.team_id
 
     //내가 멤버로 있는것과 동시에 출력하기..
     function load_assigned_team($type = '', $offset = '', $limit = '', $search_query){
-        //감동적 ㅠㅠㅠ
-        $this->db->select('team.*, ANY_VALUE(team.team_id),users.nickname, ANY_VALUE(team_member.user_id) as member_user_id');
+//        //감동적 ㅠㅠㅠ
+//        $this->db->select('team.*, ANY_VALUE(team.team_id),users.nickname, ANY_VALUE(team_member.user_id) as member_user_id');
+
+        $this->db->select('team.*,users.nickname, team_member.user_id as member_user_id');
         $this->db->join('team','team.team_id = team_member.team_id');
         $this->db->join('users','users.id = team.user_id');
 
@@ -310,14 +312,6 @@ GROUP BY A.team_id
             $result = $query -> num_rows();
         } else {
             $result = $query -> result_array();
-            foreach ($result as $key=>$value){
-                if($value['user_id']==$search_query['user_id']){
-                    $result[$key]['position'] = 'representative';
-                }else{
-
-                    $result[$key]['position'] = 'member';
-                }
-            }
         }
 
         return $result;
