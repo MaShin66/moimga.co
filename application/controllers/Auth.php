@@ -887,6 +887,9 @@ class Auth extends MY_Controller
 	    return true;
     }
 
+    function fbcallback(){
+	 print_r('here');
+    }
 }
 
 /* End of file auth.php */

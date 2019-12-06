@@ -524,4 +524,8 @@ class Program extends MY_Controller {
         echo json_encode($date_list);
     }
 
+    function set_lang_long(){
+
+    }
+
 }

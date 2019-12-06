@@ -20,7 +20,7 @@
             <input type="submit"  class="btn btn-outline-danger btn-delete" value="삭제">
         </form>
     </div>
-    
+
 <?php }?>
 
 <h2><?=$after_info['title']?></h2>

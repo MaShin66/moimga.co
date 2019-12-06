@@ -26,8 +26,6 @@ $lang['or']='또는';
 $lang['d_day']='%s일';
 $lang['day_passed']='지남';
 
-$lang['online']='통신판매';
-$lang['offline']='현장수령';
 $lang['basic']='기본';
 $lang['shipping']='배송';
 
@@ -197,26 +195,11 @@ $lang['privacy_delete']='개인정보 폐기';
 $lang['privacy_delete_desc']='"개인정보 폐기" 버튼을 누르시면 수령인 이름, 이메일, 휴대폰 번호, 입금일, 주소, 입금액, 은행 내역이 삭제됩니다. (주문 상품 관련 정보는 유지됩니다.) 꼭 구매하신 상품을 받으신 후에 실행해주세요.';
 
 
-$lang['dont_send_email']='입금 확인 \'메일\'은 전송되지 않습니다. 이 페이지(\'마이페이지 - 작성한 폼\') 에서 입금확인 상태를 확인할 수 있습니다.';
-$lang['status_done']='입금 확인이 완료되었습니다. 입금 확인 메일은 전송되지 않습니다.';
-$lang['ask_prod_user']='수정을 원하시면 %s님에게 직접 문의해주세요.';
-
-$lang['form_tracking_etc']='배송 업체가 기타로 등록되어있습니다. 판매자에게 문의하여 직접 추적하세요.';
-
-//pickup
-$lang['form_pickup_status']='수령 상태';
-$lang['form_pickup_pending']='수령 전';
-$lang['form_pickup_done']='수령 완료';
-$lang['form_pickup_date']='수령일';
-$lang['form_pickup_qrcode']='이 코드를 현장수령 시 판매자에게 보여주세요.';
-
-
 /*footer*/
 $lang['about']='서비스 소개';
 $lang['faq']='자주 묻는 질문';
 $lang['term']='이용약관';
 $lang['privacy']='개인정보처리방침';
-$lang['refund_term']='결제 및 환불 정책';
 
 /*auth*/
 
@@ -227,6 +210,7 @@ $lang['forgot_password']='비밀번호 찾기';
 $lang['login_with_naver']='네이버 계정으로 로그인';
 $lang['login_with_kakao']='카카오 계정으로 로그인';
 $lang['login_with_google']='구글 계정으로 로그인';
+$lang['login_with_facebook']='페이스북 계정으로 로그인';
 $lang['login_please_check']='회원 가입 시 개인정보 승인 팝업에서 모든 내용 체크 후 승인 버튼을 눌러주세요.';
 
 /*search*/
@@ -242,11 +226,6 @@ $lang['sort_recent']='최신 순';
 $lang['sort_old']='오래된 순';
 $lang['search_result_desc']='의 검색 결과';
 $lang['search_try_again']='검색 결과가 없습니다.<br>다른 검색어로 검색해보세요!';
-
-/*main*/
-$lang['latest_form']='%s 님이 최근 작성한 폼';
-$lang['latest_prod']='최근 판매중인 상품';
-$lang['product_list']='상품 목록';
 
 /*comment*/
 

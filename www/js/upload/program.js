@@ -60,11 +60,6 @@ $(document).ready(function() {
 
 });
 
-//비밀 티켓 토글
-$('#secretCheckbox').change(function(){
-    $('#secret_input_wrap').toggle();
-});
-
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
 });
@@ -388,7 +383,6 @@ function delete_event_date(event_date_num) {
 }
 
 //ticket_option
-
 
 function add_qualify() {
     var write_type = $('#write_type').val(); //write_type이 new가 아닌경우에 바로 db에
@@ -885,6 +879,7 @@ $("#participant").keyup(function(e) {
 function open_postcode() {
     new daum.Postcode({
         oncomplete: function(data) {
+            console.log(data);
             var fullAddr = ''; // 최종 주소 변수
             var extraAddr = ''; // 조합형 주소 변수
 
@@ -910,6 +905,8 @@ function open_postcode() {
 
             //주소만 필요함
             document.getElementById('address').value = fullAddr;
+            //fullAddr를 가지고 lang, long 을 입력함
+            
 
         }
     }).open();
