@@ -180,6 +180,8 @@ class Program extends MY_Controller {
                     $price = $this->input->post('price');
                     $address = $this->input->post('address');
                     $status = $this->input->post('status');
+                    $lang = $this->input->post('lang');
+                    $long = $this->input->post('long');
 
                     //array
 
@@ -198,6 +200,8 @@ class Program extends MY_Controller {
                         'price'=>$price,
                         'address'=>$address,
                         'contents'=>$contents,
+                        'lang'=>$lang,
+                        'long'=>$long,
                         'status'=>$status,
                     );
                     if($type=='modify'){
@@ -329,7 +333,8 @@ class Program extends MY_Controller {
                             'price'=>null,
 
                             'address'=>null,
-
+                            'lang'=>null, //지도용 위도
+                            'long'=>null, //지도용 경도
                             'status'=>'on',
                             'thumbs_url'=>null,//기본 섬네일 지정,
                             'type'=>'new' //새로 글쓰기
@@ -524,8 +529,12 @@ class Program extends MY_Controller {
         echo json_encode($date_list);
     }
 
-    function set_lang_long(){
+    function get_geolocation(){
 
+        $program_id = $this->input->post('program_id');
+        $return = $this->program_model->get_geolocation($program_id);
+        echo json_encode($return);
     }
+
 
 }

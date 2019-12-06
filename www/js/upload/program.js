@@ -879,7 +879,6 @@ $("#participant").keyup(function(e) {
 function open_postcode() {
     new daum.Postcode({
         oncomplete: function(data) {
-            console.log(data);
             var fullAddr = ''; // 최종 주소 변수
             var extraAddr = ''; // 조합형 주소 변수
 
@@ -906,6 +905,22 @@ function open_postcode() {
             //주소만 필요함
             document.getElementById('address').value = fullAddr;
             //fullAddr를 가지고 lang, long 을 입력함
+            $.ajax({
+                type: "POST",
+                url: '/search/set_geolocation/',
+                data: {address: fullAddr},
+                success: function (data) {
+                    data = JSON.parse(data);
+                    console.log(data);
+                    //다 됐으면 hidden에 lang, long 설정
+                    document.querySelector('#longitude').value = data.longitude;
+                    document.querySelector('#latitude').value = data.latitude;
+                },
+                error : function (jqXHR, errorType, error) {
+                    console.log(errorType + ": " + error);
+                }
+            });
+
             
 
         }

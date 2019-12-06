@@ -129,6 +129,17 @@ class Program_model extends CI_Model
 
         return $result;
     }
+
+    function get_geolocation($program_id){
+
+        $this->db->select('latitude, longitude');
+        $this->db->where('program_id' ,$program_id);
+
+        $query = $this->db->get('program');
+        $result = $query -> row_array();
+
+        return $result;
+    }
     
     /*qualify*/
 
@@ -293,5 +304,7 @@ class Program_model extends CI_Model
 
         return $program_id;
     }
+
+
 
 }

@@ -13,6 +13,7 @@
     </div>
 <?php }?>
 <h1>프로그램 보기</h1>
+<input type="hidden" value="<?=$program_info['program_id']?>" id="program_id">
 <h2 class=""><?=$program_info['title']?></h2>
 <div class="">팀 이름: <?=$team_info['name']?></div>
 
@@ -51,3 +52,10 @@
     <li><?=$qvalue['contents']?></li>
 <?php }?>
 </ul>
+
+<div class="map_wrap">
+
+    <h2>지도</h2>
+    <div id="map" style="width:500px;height:400px;" data-role="content" ></div>
+
+</div>

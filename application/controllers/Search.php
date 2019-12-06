@@ -102,4 +102,40 @@ class Search extends MY_Controller { //통합검색
 
         echo json_encode($result); //
     }
+
+    function set_geolocation(){
+        $address =urlencode( $this->input->post('address'));
+        if(!is_null($address) || $address!=null){ //값이 있을 경우
+            $apiURL = 'https://dapi.kakao.com/v2/local/search/address.json?query='.$address;
+            $headers = array('Authorization: KakaoAK 0640a76b62f498f215d756296d221652');
+            $DN_SERVICE_URL = $apiURL;
+            $DN_CONNECT_TIMEOUT = "5";
+            $DN_TIMEOUT = "30";
+
+            $ch = curl_init();
+            curl_setopt( $ch,CURLOPT_POST,1 );
+            curl_setopt( $ch,CURLOPT_SSLVERSION,0 );
+            curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER,0 );
+            curl_setopt( $ch,CURLOPT_CONNECTTIMEOUT,$DN_CONNECT_TIMEOUT );
+            curl_setopt( $ch,CURLOPT_TIMEOUT,$DN_TIMEOUT );
+            curl_setopt( $ch,CURLOPT_URL,$DN_SERVICE_URL );
+            curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers);
+            curl_setopt( $ch,CURLOPT_RETURNTRANSFER,1 );
+            curl_setopt( $ch,CURLINFO_HEADER_OUT,1 );
+
+            $RES_STR = curl_exec($ch);
+            $document = json_decode($RES_STR);
+            $address_array = (array) $document->documents[0]->address;
+
+            $return_array = array(
+                'longitude'=>$address_array['x'],
+                'latitude'=>$address_array['y'],
+            );
+
+            echo json_encode($return_array);
+        }else{
+
+            echo json_encode('no_data');
+        }
+    }
 }

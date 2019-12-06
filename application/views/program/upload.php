@@ -271,6 +271,8 @@ if($result['status']=='on'){
     <input type="hidden" id="input_mirror" name="contents"/>
     <input type="hidden" name="team_id" value="<?=$result['team_id']?>">
     <input type="hidden" name="write_type" id="write_type" value="<?=$write_type?>">
+    <input type="hidden" name="latitude" value="<?=$result['latitude']?>" id="latitude">
+    <input type="hidden" name="longitude" value="<?=$result['longitude']?>" id="longitude">
 
 <?php if(!is_null($write_type)){?>
     <input type="hidden" name="program_id" id="program_id" value="<?=$result['program_id']?>">
