@@ -162,7 +162,7 @@ if(url.indexOf('auth/login') > 0) {
 function facebook_login() {
     FB.login(function (res) {
             if (res.authResponse) {
-                FB.api('/me', function(res) {
+                FB.api('/me',  {fields: 'name,email'}, function(res) {
                     console.log(res);
                     var email = res.email;
                     var name = res.name;
@@ -174,9 +174,7 @@ function facebook_login() {
             } else {
                 console.log('User cancelled login or did not fully authorize.');
             }
-        },
-        {scope: 'email',
-            return_scopes: true}
+        }
     );
 }
 $('#naverIdLogin_loginButton').click(function () {
