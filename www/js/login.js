@@ -1,6 +1,29 @@
 
 var url = window.location.href;
 
+//fb login
+
+window.fbAsyncInit = function() {
+    console.log('FB 로그인 대기');
+
+    FB.init({
+        appId      : '895120010883967',
+        cookie     : true,                     // Enable cookies to allow the server to access the session.
+        xfbml      : true,                     // Parse social plugins on this webpage.
+        version    : 'v5.0'           // Use this Graph API version for this call.
+    });
+
+};
+
+
+(function(d, s, id) {                      // Load the SDK asynchronously
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/es_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
 //네이버 로그인
 if(url.indexOf('auth/login') > 0) {
 
@@ -135,20 +158,31 @@ if(url.indexOf('auth/login') > 0) {
     console.log(new_ref);
 
 }
+
+function facebook_login() {
+    FB.login(function (res) {
+            console.log(res);
+            if (res.authResponse) {
+                FB.api('/me', function(res) {
+                    var email = res.email;
+                    var name = res.name;
+                    var unique_id = res.id;
+                    var sns_type = 'facebook';
+                    sns_login_ajax(name, email,sns_type,new_ref,unique_id);
+
+                });
+            } else {
+                console.log('User cancelled login or did not fully authorize.');
+            }
+        },
+        {scope: 'email',
+            return_scopes: true}
+    );
+}
 $('#naverIdLogin_loginButton').click(function () {
 
     $('.fade_form').show();
 });
-
-FB.getLoginStatus(function(response) { // Facebook  로그인 상태 확인
-    statusChangeCallback(response);
-});
-function checkLoginState() {
-    FB.getLoginStatus(function(response) {
-        statusChangeCallback(response);
-    });
-}
-
 
 function sns_login_ajax(name, email, sns_type,referrer,unique_id){
     var remember =$('.input_check:checked').val();
@@ -168,21 +202,21 @@ function sns_login_ajax(name, email, sns_type,referrer,unique_id){
             switch (data){
                 case 'regi':
                     alert('회원가입이 완료되었습니다.');
-                    window.location.href='https://moimga.co';
                     break;
                 case 'login':
-                    if(referrer==undefined||referrer==''){
-                        referrer = 'https://moimga.co';
-                    }
-                   window.location.href=referrer;
+
                     break;
                 default: //가입했는데 카카오인 경우
                     console.log(data);
                     alert('에러가 발생했습니다. 메인 페이지로 이동합니다.');
-                    window.location.href='https://moimga.co';
                     break;
 
             }
+            if(referrer==undefined||referrer==''){
+                referrer = 'https://moimga.co';
+            }
+            window.location.href=referrer;
+
         },
         error : function (jqXHR, errorType, error) {
             console.log(errorType + ": " + error);

@@ -54,13 +54,10 @@ $captcha = array(
                     <span class="buttonText">구글 계정으로 로그인</span>
                 </div>
             </div>
-            <div id="FacebookIdLogin">
-                페이스북으로 로그인
-                <fb:login-button
-                        scope="public_profile,email"
-                        onlogin="checkLoginState();">
-                </fb:login-button>
-            </div>
+
+            <div id="FacebookIdLogin" onclick="facebook_login()" class="btn btn-facebook btn-full">
+                <img src="/www/img/fb_icon.png" class="fb_btn_img" alt="Facebook login">페이스북으로 로그인
+                </div>
             <small class="text-muted auth_desc">소셜 로그인 버튼으로 회원가입을 함으로써 '모임가'의 <a href="/info/terms" target="_blank" rel="noopener">이용 약관</a>, <a href="/info/privacy" target="_blank" rel="noopener">개인정보보호정책</a>에 동의하는 것으로 간주됩니다.</small>
 
             <div class="login_or">

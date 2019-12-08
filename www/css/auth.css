@@ -239,7 +239,8 @@
     padding: 0 10px;
     display: inline-block;
 }
-.btn-kakao-img{
+.btn-kakao-img,
+.btn-facebook-img{
     max-height: 40px;
 }
 .btn-kakao{
@@ -249,7 +250,6 @@
     font-size: 0.9rem !important;
 }
 .btn-kakao:hover{
-
     color: #1e1e1e;
     background-color: #f0d800;
 }
@@ -257,4 +257,15 @@
 .buttonText {
     margin-top: 6px;
     display: inline-block;
+}
+
+.btn-facebook{
+    font-weight: bold !important;;
+    color: #fff;
+    background-color: #3b5998;
+    font-size: 0.9rem !important;
+}
+.btn-facebook:hover{
+    color: #fff;
+    background-color: #2f55a4;
 }
