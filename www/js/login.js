@@ -161,9 +161,9 @@ if(url.indexOf('auth/login') > 0) {
 
 function facebook_login() {
     FB.login(function (res) {
-            console.log(res);
             if (res.authResponse) {
                 FB.api('/me', function(res) {
+                    console.log(res);
                     var email = res.email;
                     var name = res.name;
                     var unique_id = res.id;
