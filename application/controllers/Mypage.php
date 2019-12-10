@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Mypage extends MY_Controller {
+class Mypage extends Mypage_Controller {
 
     function __construct()
     {
@@ -142,9 +142,16 @@ class Mypage extends MY_Controller {
     function _after_detail($after_id,$user_data){ //detail - 정보
 
         $after_info = $this->after_model->get_after_info($after_id);
-        // 정보 가져오는건 권한과 상관 없음
 
-        $this->layout->view('mypage/after/detail', array('user'=>$user_data,'after_info'=>$after_info));
+        $auth = $this->_is_my_after($after_id, $user_data['user_id']); //권한 확인하는 함수
+
+        if($auth){  //내 후기만 볼 수있음
+            $this->layout->view('mypage/after/detail', array('user'=>$user_data,'after_info'=>$after_info));
+
+        }else{
+            alert('권한이 없습니다. [MD01]');
+        }
+
     }
 
     function _after_status($user_data){ //detail - 정보
@@ -152,7 +159,7 @@ class Mypage extends MY_Controller {
         $after_id = $this->input->post('after_id');
         $status = $this->input->post('status');
         //권한 확인
-        $auth = $this->_is_mine($after_id, $user_data['user_id']); //권한 확인하는 함수
+        $auth = $this->_is_my_after($after_id, $user_data['user_id']); //권한 확인하는 함수
 
         if($auth){ //권한이 있으면 상태 변경
             $status_data = array(
@@ -172,7 +179,7 @@ class Mypage extends MY_Controller {
 
         $after_id = $this->input->post('after_id');
 
-        $auth = $this->_is_mine($after_id, $user_data['user_id']); //권한 확인하는 함수
+        $auth = $this->_is_my_after($after_id, $user_data['user_id']); //권한 확인하는 함수
 
         if($auth){ //권한이 있으면 삭제
             $this->after_model->delete_after($after_id); //정말 삭제할지 .. 아니면 남겨둘 것인지.
@@ -184,7 +191,88 @@ class Mypage extends MY_Controller {
 
     }
 
-    function _is_mine($after_id, $user_id){
+    function subscribe($type='lists', $subscribe_id=null){ //내가 쓴 후기
+
+        $status = $this->data['status'];
+        $user_id = $this->data['user_id'];
+        $level = $this->data['level'];
+        $alarm_cnt = $this->data['alarm'];
+
+        $user_data = array(
+            'status' => $status,
+            'user_id' => $user_id,
+            'username' =>$this->data['username'],
+            'level' => $level,
+            'alarm' =>$alarm_cnt,
+        );
+
+        switch ($type){
+            case 'delete':
+
+                $this->_subscribe_delete($user_data);
+                break;
+
+            default:
+            case 'lists':
+
+                $this->_subscribe_lists($user_data);
+                break;
+
+        }
+    }
+
+    function _subscribe_lists($user_data){
+
+        $search = $this->uri->segment(5);
+
+        $this->load->library('pagination');
+        $config['base_url'] = '/mypage/subscribe/lists'; // 페이징 주소
+        $config['total_rows'] = $this -> subscribe_model -> load_subscribe_by_user_id($user_data['user_id'],'','','count'); // 게시물 전체 개수
+
+        $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
+        $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
+        $config['first_url'] = $config['base_url'].'/1'; // 첫페이지에 query string 에러나서..
+        $config = pagination_config($config);
+        // 페이지네이션 초기화
+        $this->pagination->initialize($config);
+        // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
+        $data['pagination'] = $this->pagination->create_links();
+
+        // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
+        $page = $this->uri->segment(4);
+        if($page==null){
+            $start=0;
+        }else{
+
+            $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
+        }
+
+        $limit = $config['per_page'];
+
+        $data['result'] = $this->subscribe_model->load_subscribe_by_user_id($user_data['user_id'],$start,$limit,'');
+        $data['total']=$config['total_rows'];
+
+        $this->layout->view('mypage/subscribe/lists', array('user' => $user_data, 'data' => $data));
+
+    }
+
+    function _subscribe_delete($user_data){ //unique_id!=moin_id
+
+        $subscribe_id = $this->input->post('subscribe_id');
+
+        $auth = $this->_is_my_subscribe($subscribe_id, $user_data['user_id']); //권한 확인하는 함수
+
+        if($auth){ //권한이 있으면 삭제
+            $this->subscribe_model->delete_subscribe($subscribe_id); //정말 삭제할지 .. 아니면 남겨둘 것인지.
+            alert('구독이 취소되었습니다. 내 구독 목록으로 이동합니다.','/mypage/subscribe');
+
+        }else{
+            alert('권한이 없습니다. [MD02]');
+        }
+
+    }
+
+    function _is_my_after($after_id, $user_id){
 
         $level = $this->user_model->get_user_level($user_id);
         if($level==9){ //super users always return true;
@@ -200,6 +288,16 @@ class Mypage extends MY_Controller {
 
     }
 
+    function _is_my_subscribe($subscribe_id, $user_id){
+
+        $subscribe_info = $this->subscribe_model->get_subscribe_info($subscribe_id);
+        if($subscribe_info['user_id']==$user_id){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
 
     function verify($type='ready'){
         $this->load->model('verify_model');

@@ -325,7 +325,7 @@ class Auth extends MY_Controller
         $type = 'default';
         if($result>0){ //가입돼있으면
             //user_profile에 대해서..
-            $this->tank_auth->sns_login($sns_email, $remember, $sns_type,$unique_id);
+            $result = $this->tank_auth->sns_login($sns_email, $remember, $sns_type,$unique_id);
             $type = 'login';
 
         }else{ //가입 안돼있으면

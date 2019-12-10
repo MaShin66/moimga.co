@@ -333,7 +333,7 @@ class Tank_auth
 	}
     function sns_login($username, $remember, $sns_type,$unique_id)
     {
-        if ((strlen($username) > 0)) {
+        $result = 0;
             $login_by_username = false;
             $login_by_email= true;
             // Which function to use to login (based on config)
@@ -346,6 +346,7 @@ class Tank_auth
 //            }//get_user_by_email_sns 이걸로 로그인함
             if (!is_null($user = $this->ci->users->get_user_sns($sns_type,$unique_id))) {	// login ok
 
+                $result = json_encode($user);
                 $this->ci->session->set_userdata(array(
                     'user_id'	=> $user->id,
                     'username'	=> $user->username,
@@ -360,8 +361,12 @@ class Tank_auth
                     if ($remember==1) {
                         $this->create_autologin($user->id);
                     }
+                    if(strlen($username)>1){
+                        $this->clear_login_attempts($username); //작으면 이메일 업없는거니까 unique_id만 쓴다
+                    }else{
 
-                    $this->clear_login_attempts($username);
+                        $this->clear_login_attempts($unique_id); //작으면 이메일 업없는거니까 unique_id만 쓴다
+                    }
 
                     $this->ci->users->update_login_info(
                         $user->id,
@@ -374,8 +379,7 @@ class Tank_auth
 
                 return FALSE;
             }
-        }
-        return FALSE;
+        return true;
     }
 
 

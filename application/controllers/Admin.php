@@ -869,6 +869,118 @@ class Admin extends Admin_Controller
 
     }
 
+
+    function subscribe($type = 'list',$subscribe_id=null)
+    {
+        $status = $this->data['status'];
+        $user_id = $this->data['user_id'];
+        $level = $this->data['level'];
+        $user_data = array(
+            'status' => $status,
+            'user_id' => $user_id,
+            'level' => $level
+        );
+
+        if (!$this->tank_auth->is_logged_in()) {
+
+            show_error('접근이 불가능합니다.');
+        } else {
+            if ($user_data['level'] != 9) {
+
+                show_error('접근이 불가능합니다.');
+            } else {
+
+                switch ($type){
+                    case 'list':
+                        $this->_subscribe_list($user_data);
+                        break;
+                    case 'delete':
+                        $subscribe_id = $this->input->post('subscribe_id');
+                        $this->_subscribe_delete($subscribe_id);
+                        break;
+                    default:
+                        $this->_subscribe_list($user_data);
+                        break;
+                }
+
+            }
+
+        }
+    }
+
+    function _subscribe_list($user_data){
+
+        $search = $this->uri->segment(5);
+
+        if($search==null){
+            $search_query = array(
+                'search' => null,
+                'type' =>null,
+                'crt_date' =>null,
+                'user_id'=>null, // 특정 멤버의 소속팀 확인
+                'team_id'=>null,
+            );
+
+        }else{
+            $sort_date = $this->input->get('crt_date');
+            $sort_search = $this->input->get('search');
+            $sort_type = $this->input->get('type');
+            $sort_team_id = $this->input->get('team_id');
+            $sort_user_id = $this->input->get('user_id');
+
+            $search_query = array(
+                'search' => $sort_search,
+                'type' => $sort_type,
+                'crt_date' => $sort_date,
+                'user_id'=>$sort_user_id,
+                'team_id'=>$sort_team_id,
+            );
+
+        }
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&type='.$search_query['type'].'&team_id='.$search_query['team_id'].'&user_id='.$search_query['user_id'];
+
+        $this->load->library('pagination');
+        $config['suffix'] = $q_string;
+        $config['base_url'] = '/admin/subscribe/lists'; // 페이징 주소
+        $config['total_rows'] = $this -> subscribe_model -> load_subscribe('count','','',$search_query); // 게시물 전체 개수
+
+        $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
+        $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
+        $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
+        $config = pagination_config($config);
+        // 페이지네이션 초기화
+        $this->pagination->initialize($config);
+        // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
+        $data['pagination'] = $this->pagination->create_links();
+
+        // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
+        $page = $this->uri->segment(4);
+
+
+        if($page==null){
+            $start=0;
+        }else{
+            $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
+        }
+
+        $limit = $config['per_page'];
+
+        $data['result'] = $this->subscribe_model->load_subscribe('', $start, $limit, $search_query);
+        $data['total']=$config['total_rows'];
+
+        $this->layout->view('admin/subscribe/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+
+    }
+
+    function _subscribe_delete($subscribe_id){
+
+        $this->subscribe_model->delete_subscribe($subscribe_id); //진짜 삭제 (관리자에서 복구 가능)
+
+        alert('이 포스팅이 삭제되었습니다.','/admin/subscribe');
+
+    }
+
+    
     function faq_category($type = 'list',$category_id=null)
     {
         $this->load->model(array('faq_model'));

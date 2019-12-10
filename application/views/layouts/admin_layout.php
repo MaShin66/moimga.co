@@ -65,6 +65,7 @@
                         <a class="dropdown-item <?php if($location=='deleted'&&($section==null||$section=='list')){echo 'active';}?>" href="/admin/deleted">삭제됨</a>
                         <a class="dropdown-item <?php if($location=='team_blog'&&($section==null||$section=='list')){echo 'active';}?>" href="/admin/team_blog">블로그</a>
                         <a class="dropdown-item <?php if($location=='member'&&($section==null||$section=='list')){echo 'active';}?>" href="/admin/member">멤버</a>
+                        <a class="dropdown-item <?php if($location=='subscribe'&&($section==null||$section=='list')){echo 'active';}?>" href="/admin/subscribe">구독</a>
                     </div>
                 </li>
 

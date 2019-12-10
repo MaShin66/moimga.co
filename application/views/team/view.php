@@ -36,6 +36,7 @@
 <?php if(count($programs)==0){?>
     아직 프로그램이 없습니다.
 <?php }else{?>
+    <a href="">검색</a>
     <ol>
         <?php foreach ($programs as $key=>$item){?>
             <li>  <a href="/<?=$at_url?>/program/<?=$item['program_id']?>"><?=$item['title']?></a></li>

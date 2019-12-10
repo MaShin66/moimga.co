@@ -151,6 +151,39 @@ class Manage extends Manage_Controller {
                 'status'=>$status,
             );
             $this->team_model->update_team($team_id,$status_data);
+
+            //모든 팀 멤버
+
+            $team_info = $this->team_model->get_team_info($team_id);
+
+            $search_query = array(
+                'crt_date' => '',
+                'search' => '',
+                'user_id' => null,
+                'type'=>null,
+                'team_id'=>$team_id
+            );
+            $alarm_data = array(
+                'from_user_id'=>$team_info['user_id'],//팀 대표
+                'team_id'=>$team_id,
+                'program_id'=>null,
+                'status'=>'unread',
+                'crt_date'=>date('Y-m-d H:i:s')
+            );
+
+            //팀멤버에게 알람 -T5, T6
+            $member_list = $this->member_model->load_team_member('', '', '', $search_query);   //팀멤버 리스트
+            $alarm_data['type'] = 'T5'; //on 공개 기본으로 T5
+            if($status=='off'){
+                $alarm_data['type'] = 'T6'; //비공개
+            }
+
+            foreach ($member_list as $m_key => $m_item){
+
+                $alarm_data['user_id'] = $m_item['user_id'];
+                $this->alarm_model->insert_alarm($alarm_data);
+            }
+
             alert('이 팀이 '.$this->lang->line($status).'로 변경되었습니다.');
 
         }else{
@@ -546,6 +579,38 @@ class Manage extends Manage_Controller {
                 'status'=>$status,
             );
             $this->program_model->update_program($program_id,$status_data);
+            $program_info = $this->program_model->get_program_info($program_id);
+            $team_info = $this->team_model->get_team_info($program_info['team_id']); //이것도 중복될 수 없으니까 unique 임
+
+            $search_query = array(
+                'crt_date' => '',
+                'search' => '',
+                'user_id' => null,
+                'type'=>null,
+                'team_id'=>$program_info['team_id']
+            );
+
+            $alarm_data = array(
+                'from_user_id'=>$team_info['user_id'],//팀 대표
+                'team_id'=>$program_info['team_id'],
+                'program_id'=>$program_id,
+                'status'=>'unread',
+                'crt_date'=>date('Y-m-d H:i:s')
+            );
+
+            //팀멤버에게 알람 -T5, T6
+            $member_list = $this->member_model->load_team_member('', '', '', $search_query);   //팀멤버 리스트
+            $alarm_data['type'] = 'P1'; //on 공개 기본으로 T5
+            if($status=='off'){
+                $alarm_data['type'] = 'P2'; //비공개
+            }
+
+            foreach ($member_list as $m_key => $m_item){
+
+                $alarm_data['user_id'] = $m_item['user_id'];
+                $this->alarm_model->insert_alarm($alarm_data);
+            }
+
             alert('이 프로그램이 '.$this->lang->line($status).'로 변경되었습니다.');
 
         }else{
@@ -831,15 +896,57 @@ class Manage extends Manage_Controller {
         //업로드 합시다..
 
         if($this->input->post('user_id')!=null){ //여기에는 수정이 있을 수 없음.. 그냥 지우면 됨
-
             $form_data = $this->input->post();
+            $team_info = $this->team_model->get_team_info($form_data['team_id']);
             $member_info = array(
                 'user_id'=>$form_data['user_id'],
                 'team_id'=>$form_data['team_id'],
                 'type'=>2, //일반 멤버는 type:2, 대표는 1
                 'crt_date'=>date('Y-m-d H:i:s')
             );
+
+            //모든 팀멤버한테 알람
+            $search_query = array(
+                'crt_date' => '',
+                'search' => '',
+                'user_id' => null,
+                'type'=>null,
+                'team_id'=>$form_data['team_id']
+            );
+
+            $member_list = $this->member_model->load_team_member('', '', '', $search_query);
+
             $this->member_model->insert_team_member($member_info);
+
+            foreach ($member_list as $key => $item){
+
+                $member_data = array(
+                    'type'=>'T3',
+                    'user_id'=>$item['user_id'],// 팀 member id
+                    'from_user_id'=>$team_info['user_id'],//팀 대표
+                    'team_id'=>$team_id,
+                    'program_id'=>null,
+                    'status'=>'unread',
+                    'crt_date'=>date('Y-m-d H:i:s')
+                );
+
+                $this->alarm_model->insert_alarm($member_data);
+            }
+
+            //나한테 알람
+
+            $my_alarm_data = array(
+                'type'=>'T10',
+                'user_id'=>$form_data['user_id'],// 팀 관리자 id
+                'from_user_id'=>$team_info['user_id'],
+                'team_id'=>$team_id,
+                'program_id'=>null,
+                'status'=>'unread',
+                'crt_date'=>date('Y-m-d H:i:s')
+            );
+
+            $this->alarm_model->insert_alarm($my_alarm_data);
+
             //이 사람의 레벨을 3으로 지정
 //            $level_info = array(
 //                'level'=>3,
@@ -866,6 +973,26 @@ class Manage extends Manage_Controller {
                 'type'=>$type, //일반 멤버는 type:2, 대표는 1
             );
             $this->member_model->update_team_member($member_id, $member_info);
+            //이 사람한테만 바꾼다..
+
+            $alarm_type = 'T8'; //멤버
+            if($type=='1'){
+                $alarm_type = 'T9'; //대표
+            }
+            $this_user_info = $this->member_model->get_team_member_info($member_id);
+            $my_alarm_data = array(
+                'type'=>$alarm_type,
+                'user_id'=>$this_user_info['user_id'],// 받는 사람,.. 변경된 사람 user_id
+                'from_user_id'=>$user_data['user_id'],
+                'team_id'=>$team_id,
+                'program_id'=>null,
+                'status'=>'unread',
+                'crt_date'=>date('Y-m-d H:i:s')
+            );
+
+            $this->alarm_model->insert_alarm($my_alarm_data);
+
+
             alert('선택하신 회원이 '.$this->lang->line('member_'.$type).'로 지정되었습니다.','/manage/member/detail/'.$member_id);
 
 

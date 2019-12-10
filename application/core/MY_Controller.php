@@ -5,7 +5,7 @@ class MY_Controller extends CI_Controller{
     {
         parent::__construct();
         $this->load->library('tank_auth');
-        $this->load->model(array('user_model','team_model','form_model','program_model','after_model','heart_model','subscribe_model','alarm_model','member_model'));
+        $this->load->model(array('user_model','team_model','program_model','after_model','heart_model','subscribe_model','alarm_model','member_model'));
 
         if ($this->tank_auth->is_logged_in()) {									// logged in
             $this->data['user_id'] = $this->tank_auth->get_user_id();
@@ -29,7 +29,32 @@ class MY_Controller extends CI_Controller{
 
     }
 }
+class Mypage_Controller extends CI_Controller{
+    function __construct()
+    {
+        parent::__construct();
+        $this->load->library('tank_auth');
+        $this->load->model(array('user_model','program_model','after_model','subscribe_model','alarm_model'));
 
+        if ($this->tank_auth->is_logged_in()) {									// logged in
+            $this->data['user_id'] = $this->tank_auth->get_user_id();
+            $this->data['username'] = $this->tank_auth->get_username($this->data['user_id']);
+            $this->data['level'] = $this->tank_auth->get_level($this->data['user_id']);
+
+            $this->data['alarm'] =$this->alarm_model->get_alarm_count($this->data['user_id']);
+            $this->data['realname']  = $this->tank_auth->get_realname($this->data['user_id']);
+            $this->data['status'] = 'yes';
+
+        } else{
+            if($this->uri->segment(1)!='auth'){
+                $this->session->set_userdata('login_before', current_url());
+            }
+
+            redirect('/auth/login');
+        }
+
+    }
+}
 class Admin_Controller extends CI_Controller{
     function __construct()
     {

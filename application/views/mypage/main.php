@@ -1,5 +1,4 @@
 <?php
-print_r($user);
 /** 실명, 닉네임, 이메일 (변경), sns_type
  * 본인인증
  * Created by PhpStorm.
@@ -11,6 +10,7 @@ print_r($user);
 <ul>
     <li><a href="/mypage/info">내 정보</a> </li>
     <li><a href="/mypage/after">후기</a> </li>
+    <li><a href="/mypage/subscribe">구독</a> </li>
 </ul>
 <div class="row">
     <div class="col-lg-6 col-md-6 col-sm-12">

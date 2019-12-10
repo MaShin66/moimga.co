@@ -62,7 +62,9 @@ $route['@(:any)/blog/upload/(:num)'] = 'team/blog/upload'; //수정
 /*team/program*/ // upload를 제외하고 정보 보는건 다 일로 온다..
 
 $route['@(:any)/program'] = 'program/lists';
-$route['@(:any)/program/list'] = 'program/lists';
+$route['@(:any)/program/lists'] = 'program/lists';
+$route['@(:any)/program/lists/(:num)'] = 'program/lists/(:num)';
+$route['@(:any)/program/lists/(:num)/q'] = 'program/lists/(:num)/q';
 $route['@(:any)/program/(:num)'] = 'program/view/$1';
 $route['@(:any)/program/upload'] = 'program/upload';
 $route['@(:any)/program/upload/(:num)'] = 'program/upload'; //수정

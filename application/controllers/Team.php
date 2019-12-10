@@ -398,20 +398,22 @@ class Team extends MY_Controller {
         if($is_opened=='on'){
 
             $post_info = $this->team_model->get_team_blog_info($team_blog_id);
+            $team_info = $this->team_model->get_team_info($post_info['team_id']);
         }else{
             $as_member = $this->team_model-> as_member($team_id, $user_data['user_id']);
             if($as_member || $user_data['level']==9){
                 $post_info = $this->team_model->get_team_blog_info($team_blog_id);
-                $this->team_model->update_team_blog_hit($team_blog_id);
                 $team_info = $this->team_model->get_team_info($post_info['team_id']);
                 //들어오면 힛수 +1
-                $this->layout->view('/team/blog/view', array('user'=>$user_data,'post_info'=>$post_info,'team_info'=>$team_info,'at_url'=>$at_url));
+                $this->team_model->update_team_blog_hit($team_blog_id);
             }else{
                 $post_info  =array();
+                $team_info  =array();
                 alert($this->lang->line('hidden_alert'),'/team');
             }
         }
 
+        $this->layout->view('/team/blog/view', array('user'=>$user_data,'post_info'=>$post_info,'team_info'=>$team_info,'at_url'=>$at_url));
     }
 
     function _blog_upload($user_data,$team_id){
@@ -452,8 +454,43 @@ class Team extends MY_Controller {
                     $data['crt_date'] = date('Y-m-d H:i:s');
                     $team_blog_id = $this->team_model->insert_team_blog($data);
 
+                    $search_query = array(
+                        'crt_date' => '',
+                        'search' => '',
+                        'user_id' => null,
+                        'type'=>null,
+                        'team_id'=>$team_id
+                    );
+
+                    $alarm_data = array(
+                        'from_user_id'=>$user_data['user_id'],//팀 대표
+                        'team_id'=>$team_id,
+                        'program_id'=>null,
+                        'status'=>'unread',
+                        'crt_date'=>date('Y-m-d H:i:s')
+                    );
+
+                    //구독 회원에게 알람 - B1
+
+                    $subs_list = $this->subscribe_model->load_subscribe('', '', '', $search_query);  //구독 회원 리스트
+                    $alarm_data['type'] = 'B1';
+                    foreach ($subs_list as $key => $item){
+
+                        $alarm_data['user_id'] = $item['user_id'];
+                        $this->alarm_model->insert_alarm($alarm_data);
+                    }
+
+                    //팀멤버에게 알람 -b2
+                    $member_list = $this->member_model->load_team_member('', '', '', $search_query);   //팀멤버 리스트
+                    $alarm_data['type'] = 'B2';
+                    foreach ($member_list as $m_key => $m_item){
+
+                        $alarm_data['user_id'] = $m_item['user_id'];
+                        $this->alarm_model->insert_alarm($alarm_data);
+                    }
+
                 }
-                
+
                 //다 끝나면 redirect
                 redirect($at_url.'/blog/'.$team_blog_id);
             }else{ //없으면 글쓰기 화면

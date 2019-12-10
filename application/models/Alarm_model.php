@@ -101,12 +101,16 @@ class Alarm_model extends CI_Model
 
 
 
-    function get_alarm_specific($type='', $team_id, $from_user_id='', $user_id=''){
+    function get_alarm_specific($type='',$user_id='', $from_user_id='', $team_id, $program_id=null){
 
         $this->db->where('type',$type);
-        $this->db->where('team_id',$team_id);
-        $this->db->where('from_user_id',$from_user_id);
         $this->db->where('user_id',$user_id);
+        $this->db->where('from_user_id',$from_user_id);
+        $this->db->where('team_id',$team_id);
+        if($program_id!=null){
+            $this->db->where('program_id',$program_id);
+
+        }
         $this->db->order_by('crt_date','desc');
         $this->db->limit(1);
 
@@ -135,15 +139,14 @@ class Alarm_model extends CI_Model
             $this_type = $item['type'];
             $this_key = $key;
             $result_copy[$this_key]['count'] = 0;
-            $this_prod= $item['team_id'];
+            $this_team= $item['team_id'];
 
             for( $i=0; $i<count($result_copy); $i++){
                 //합치는게 필요한것만 여기로 오도록..
                 //C1,2, / D1, /F1
-                if($result_copy[$i]['type']=='C1'||$result_copy[$i]['type']=='C2'||$result_copy[$i]['type']=='D1'
-                    ||$result_copy[$i]['type']=='F1'||$result_copy[$i]['type']=='T1'){
+                if($result_copy[$i]['type']=='T1'){
 
-                    if(($result_copy[$i]['type']==$this_type) &&($result_copy[$i]['team_id']==$this_prod)){
+                    if(($result_copy[$i]['type']==$this_type) &&($result_copy[$i]['team_id']==$this_team)){
 
                         $result_copy[$this_key]['count'] = $result_copy[$this_key]['count']+1;
                         if($result_copy[$this_key]['count']>1 && !array_search($result_copy[$i]['alarm_id'], $id_array)){
@@ -167,192 +170,73 @@ class Alarm_model extends CI_Model
         foreach ($result_copy as $text_key => $text_item){
             $result_copy[$text_key]['text'] = $this->set_alarm_text($text_item['type'], $text_item['team_id'], $text_item['count'], $text_item['program_id']);
 
+            $this->db->flush_cache();
+
             switch ($text_item['type'][0]){
-                case 'T':
+                case 'P': //프로그램
 
-                    $this->db->flush_cache();
-                    $this->db->select('url');
-                    $this->db->where('ticket_id', $text_item['team_id']);
-                    $this->db->order_by('crt_date', 'desc');
-                    $this->db->limit(1);
-
-                    $query = $this->db->get('ticket_thumbs');
-                    $result = $query->row_array();
+                    $this->db->select('program.thumb_url, team.url as url');
+                    $this->db->join('team','team.team_id = program.team_id');
+                    $this->db->where('program.program_id', $text_item['program_id']);
+                    $query = $this->db->get('program');
                     break;
-                case 'S': //검색 허용
-                case 'D': //수요조사
-                case 'U': //쿠폰
-                case 'A': //양도인 경우에는 섬네일 기본으로 설정
-                    $result['url'] = '/www/img/basic_thumbs.jpg';
-                    break;
-                default:
+                case 'B':
+                default: //T
 
-                    $this->db->flush_cache();
-                    $this->db->select('url');
+                    $this->db->select('url, thumb_url');
                     $this->db->where('team_id', $text_item['team_id']);
-                    $this->db->order_by('crt_date', 'desc');
-                    $this->db->limit(1);
-
-                    $query = $this->db->get('thumbs');
-                    $result = $query->row_array();
+                    $query = $this->db->get('team');
                     break;
 
             }
 
-            $result_copy[$text_key]['thumb_url'] = $result['url'];
-            $result_copy[$text_key]['url'] ='/prod/view/'.$text_item['team_id'];
-            $result_copy[$text_key]['icon'] ='<i class="fas fa-comments"></i>';
+            $result = $query->row_array();
+            $result_copy[$text_key]['thumb_url'] = $result['thumb_url'];
+            $result_copy[$text_key]['url'] ='/manage/team/detail/'.$text_item['team_id']; //T3,8,10은 기본
+            $result_copy[$text_key]['icon'] ='<i class="fas fa-user-plus"></i>';
             switch ($text_item['type']){
-                case 'C1':
-                case 'C2':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-comments"></i>';
-                    break;
-                case 'C3':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-bullhorn"></i>';
-                    break;
-                case 'D1':
-                    $result_copy[$text_key]['icon'] ='<i class="far fa-paper-plane"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/demand/forms/'.$text_item['team_id'];
-                    break;
-                case 'D2':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    break;
-                case 'D3':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/demand/view/'.$text_item['team_id'];
-                    break;
-                case 'F1':
-                    $result_copy[$text_key]['icon'] ='<i class="far fa-paper-plane"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/prod/forms/'.$text_item['team_id'];
-                    break;
-                case 'F2':
-                case 'F12':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/form/'.$text_item['program_id'];
-                    break;
-                case 'F4':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-hourglass-end"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/prod/detail/'.$text_item['team_id'];
-                    break;
-                case 'F3':
-                case 'F6':
-                case 'F11':
-                case 'F13':
-                case 'W3':
-                case 'W4':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/form/'.$text_item['program_id'];
-                    break;
-                case 'F7':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/prod/forms/'.$text_item['team_id'];
-                    break;
-                case 'F8':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    break;
-                case 'F9':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-hand-holding-heart"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/prod/forms/'.$text_item['team_id'];
-                    break;
-                case 'F10':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/prod/forms/'.$text_item['team_id'];
-                    break;
-                case 'P1':
-                case 'W5':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/prod/detail/'.$text_item['team_id'];
-                    break;
-                case 'P2':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/import/detail/'.$text_item['team_id'];
-                    break;
-                case 'P3'://후원
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-hand-holding-heart"></i>';
-                    $result_copy[$text_key]['url'] ='/';
-                    break;
-                case 'P4': //프로모션
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/prod';
-                    break;
-                case 'P5': //티켓 결제
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/ticket/detail/'.$text_item['team_id'];
-                    break;
-                case 'P6': //문자메시지 충전 결제
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/sms/';
-                    break;
-                case 'V1':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-truck"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/form/'.$text_item['program_id'];
-                    break;
-                case 'M1':
-                    $result_copy[$text_key]['icon'] ='<i class="far fa-envelope"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/form/'.$text_item['program_id'];
-                    break;
                 case 'T1':
-                    $result_copy[$text_key]['icon'] ='<i class="far fa-paper-plane"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/ticket/forms/'.$text_item['team_id'];
+                    $result_copy[$text_key]['icon'] ='<i class="fas fa-bookmark"></i>';
                     break;
                 case 'T2':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/ticket/'.$text_item['program_id'];
+                    $result_copy[$text_key]['icon'] ='<i class="fas fa-pen-nib"></i>';
                     break;
                 case 'T3':
-                case 'T5':
-                case 'T10':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/ticket/'.$text_item['program_id'];
+                    $result_copy[$text_key]['url'] ='/manage/member/lists/'.$text_item['team_id']; //T3,8,10은 기본
+                    $result_copy[$text_key]['icon'] ='<i class="fas fa-pen-nib"></i>';
                     break;
-                case 'T4':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-hourglass-end"></i>';
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-hourglass-end"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/ticket/detail/'.$text_item['team_id'];
+                case 'T5':
+                    $result_copy[$text_key]['icon'] ='<i class="fas fa-eye"></i>';
                     break;
                 case 'T6':
-                case 'T11':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/ticket/forms';
-                    break;
-                case 'T7':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/ticket/view/'.$text_item['team_id'];
-                    break;
-                case 'T8':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-hand-holding-heart"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/ticket/detail/'.$text_item['team_id'];
+                    $result_copy[$text_key]['icon'] ='<i class="fas fa-eye-slash"></i>';
                     break;
                 case 'T9':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/ticket/'.$text_item['program_id'];
+                    $result_copy[$text_key]['icon'] ='<i class="fas fa-medal"></i>';
                     break;
-                case 'S1':
-                case 'W1':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/';
+                case 'P1':
+                    $result_copy[$text_key]['url'] ='/manage/program/detail/'.$text_item['program_id'];
+                    $result_copy[$text_key]['icon'] ='<i class="fas fa-eye"></i>';
                     break;
-                case 'S2':
-                case 'W2':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/';
+                case 'P2':
+                    $result_copy[$text_key]['url'] ='/manage/program/detail/'.$text_item['program_id'];
+                    $result_copy[$text_key]['icon'] ='<i class="fas fa-eye-slash"></i>';
                     break;
-                case 'A1':
-                case 'A2':
-                case 'A3':
-                case 'A4':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-check-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/transfer'; //이건 연결 못해서 어쩔 수 없네요..
+                case 'T12':
+                    $result_copy[$text_key]['url'] ='/@'.$result['url'].'/program/'.$text_item['program_id'];
+                    $result_copy[$text_key]['icon'] ='<i class="fas fa-plus"></i>';
                     break;
-                case 'A5':
-                case 'A6':
-                case 'A7':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-exclamation-circle"></i>';
-                    $result_copy[$text_key]['url'] ='/mypage/transfer';//이건 연결 못해서 어쩔 수 없네요..
+                case 'T13':
+                    $result_copy[$text_key]['url'] ='/manage/program/lists/'.$text_item['team_id'];
+                    $result_copy[$text_key]['icon'] ='<i class="fas fa-plus"></i>';
                     break;
-                case 'U1':
-                    $result_copy[$text_key]['icon'] ='<i class="fas fa-ticket-alt"></i>';
-                    $result_copy[$text_key]['url'] ='/manage/coupon';
+                case 'B1':
+                    $result_copy[$text_key]['url'] ='/@'.$result['url'].'/blog/'.$text_item['program_id']; //blog_id = program_id 로 사용한다
+                    $result_copy[$text_key]['icon'] ='<i class="fas fa-file-alt"></i>';
+                    break;
+                case 'B2':
+                    $result_copy[$text_key]['url'] ='/manage/blog/lists/'.$text_item['team_id'];
+                    $result_copy[$text_key]['icon'] ='<i class="fas fa-file-alt"></i>';
                     break;
                 default:
                     break;
@@ -366,38 +250,17 @@ class Alarm_model extends CI_Model
 
     function _set_alarm_broad_type($start_char){
         switch ($start_char){
-            case 'F':
-                $type = 'form';
+            case 'T':
+                $type = 'team';
                 break;
-            case 'C':
-                $type = 'comment';
-                break;
-            case 'D':
-                $type = 'demand';
+            case 'B':
+                $type = 'blog'; //post
                 break;
             case 'P':
-                $type = 'payment';
+                $type = 'program';
                 break;
-            case 'V':
-                $type = 'delivery';
-                break;
-            case 'M':
-                $type = 'message';
-                break;
-            case 'T':
-                $type = 'ticket';
-                break;
-            case 'A':
-                $type = 'assignment'; //양도
-                break;
-			case 'W':
-				$type = 'switch';
-				break;
-			case 'S':
-				$type = 'search';
-				break;
             default:
-                $type = 'form';
+                $type = 'team';
                 break;
         }
         return $type;
@@ -405,46 +268,26 @@ class Alarm_model extends CI_Model
     }
 
     function set_alarm_text($type, $team_id, $count='', $program_id=null){
-        $this->db->select('title');
         
         switch ($type[0]){
-          case  'D':
-              $this->db->where('demand_id',$team_id);
-              $query = $this->db->get('demand');
-              break;
-          case  'T':
-                $this->db->where('ticket_id',$team_id);
-                $query = $this->db->get('ticket');
+          case  'P':
+              $this->db->select('title');
+              $this->db->where('program_id',$program_id);
+              $query = $this->db->get('program');
+              $result = $query -> row_array();
+              $title = $result['title'];
                 break;
-            case  'P': //애앵 ㅇㅣ건 payment 인디..
-                //P는 각각의 경우에 따라서 바꾼다..
-                switch ($type){
-                    case 'P1':
-                        $this->db->where('team_id',$team_id);
-                        $query = $this->db->get('product');
-                        break;
-                    case 'P2':
-                        $this->db->where('import_team_id',$team_id);
-                        $query = $this->db->get('import_product');
-                        break;
-                    case 'P5':
-                        $this->db->where('ticket_id',$team_id);
-                        $query = $this->db->get('ticket');
-                        break;
-                    default: //p3, p4
-                        break;
-                }
-                break;
-
-            default: //c comment, f form, v delivery, m message, a assignment -- 모든 경우에 대해
-                $this->db->where('team_id',$team_id);
-                $query = $this->db->get('product');
-                break;
+        case  'B':
+        default:
+            $this->db->select('name');
+            $this->db->where('team_id',$team_id);
+            $query = $this->db->get('team');
+            $result = $query -> row_array();
+            $title = $result['name'];
+            break;
 
         }
-        
-        $result = $query -> row_array();
-        $title = $result['title'];
+
         if(strlen($title)>20){
             $title =  iconv_substr($title, 0, 18, "utf-8").'...';
         }

@@ -15,7 +15,6 @@ window.fbAsyncInit = function() {
 
 };
 
-
 (function(d, s, id) {                      // Load the SDK asynchronously
     var js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return;

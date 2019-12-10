@@ -3,10 +3,10 @@
 <head>
     <?php
     $meta_title = 'moimga';
-
     $location = $this->uri->segment(1);
     $section = $this->uri->segment(2);
     $detail = $this->uri->segment(3);
+    $query = $this->uri->segment(4);
     //team 구하기 위해서..
     //explode 계속하면 너무 귀찮을텐데..ㅠㅠ 흑흑..
     if($location[0]=='@'){
@@ -14,7 +14,26 @@
     }
     if($location=='team'&&$section=='program'){
         $location='program';
+        //세번째가 업로드면
+        switch ($detail){
+            case 'upload':
+                $section = 'upload'; //정보 보는 페이지임$detail
+                break;
+            case 'lists':
+                $section = 'lists'; //정보 보는 페이지임$detail
+                if(!is_null($query)){
+                    $section = 'search'; //정보 보는 페이지임$detail
+                }
+                break;
+            default:
+
+                $section = 'view'; //정보 보는 페이지임$detail
+                break;
+
+        }
+
     }
+    echo $section;
     ?>
     <!-- ga-->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -39,7 +58,137 @@
 
     <meta name="twitter:card" content="summary_large_image">
 
-    <title><?= $meta_title ?></title>
+
+    <?php
+    switch ($location){
+        case 'team':
+            switch ($section){
+                case 'upload':
+                    //등록
+                    //수정
+                    $meta_title = '등록 - 모임가';
+                    break;
+                case 'blog':
+                    //글 보기
+                    //목록
+                    $meta_title = '내 구독함 - 모임가';
+                    break;
+                default:
+                    //목록
+                case 'info':
+                    //정보 보기
+                    $meta_title = '마이페이지 - 모임가';
+                    break;
+            }
+
+            $meta_title = '팀 - 모임가';
+            break;
+        case 'program':
+            switch ($section){
+                case 'upload':
+                    $meta_title = '프로그램 등록 - 모임가';
+                    break;
+                case 'view':
+                    $meta_title = '[프로그램] '.$program_info['title'].'- 모임가';
+                    break;
+                default:
+                    $meta_title = '프로그램 - 모임가';
+
+                    if($search_query['search']!=null){
+                        $meta_title = '프로그램 검색 > '.$search_query['search'].' - 모임가';
+                    }
+                    break;
+            }
+
+            break;
+        case 'after':
+            switch ($section){
+                case 'upload':
+                    //등록   //수정
+                    $meta_title = '후기 등록 - 모임가';
+                    break;
+                case 'view':
+                    //글 보기
+                    $meta_title = '후기 > '.$after_info['title'].' - 모임가';
+                    break;
+                default:
+                    $meta_title = '후기 - 모임가';
+
+                    if($search_query['search']!=null){
+                        $meta_title = '후기 검색 > '.$search_query['search'].' - 모임가';
+                    }
+
+                    break;
+            }
+
+            break;
+        case 'search':
+            $meta_title = '통합 검색 > '.$search_query['search'].' - 모임가';
+            break;
+        case 'mypage':
+
+            switch ($section){
+                case 'after':
+                    //faq은 제목에 따라서..
+                    if($detail=='detail'){
+                        //후기 이름
+                        $meta_title = '내 후기 > '.$after_info['title'].' - 모임가';
+                    }else{
+                        $meta_title = '내 후기 - 모임가';
+                    }
+
+                    break;
+                case 'subscribe':
+                    $meta_title = '내 구독함 - 모임가';
+                    break;
+                default:
+                case 'info':
+                    $meta_title = '마이페이지 - 모임가';
+                    break;
+            }
+
+            break;
+
+        case 'info':
+            switch ($section){
+                case 'faq':
+                    //faq은 제목에 따라서..
+                    $meta_title = '자주묻는질문 - 모임가';
+                    break;
+                case 'privacy':
+                    $meta_title = '개인정보 보호정책 - 모임가';
+                    break;
+                default:
+                case 'terms':
+                    $meta_title = '이용약관 - 모임가';
+                    break;
+            }
+
+            break;
+
+        case 'magazine':
+            switch ($section){
+                case 'upload':
+                    //faq은 제목에 따라서..
+                    $meta_title = '매거진 등록 - 모임가';
+                    break;
+                case 'view':
+                    $meta_title = $result['title'].' - 모임가 매거진';
+                    break;
+                default:
+                    case 'terms':
+                    $meta_title = '매거진 - 모임가';
+                    break;
+            }
+
+            break;
+
+        default:
+            $meta_title = '모임가';
+            break;
+    }?>
+    <title><?=$meta_title?></title>
+
     <meta name="title" content="<?= $meta_title ?>">
     <meta name="twitter:title" content="<?= $meta_title ?>">
     <meta property="og:title" content="<?= $meta_title ?>">
@@ -66,6 +215,7 @@
         <link rel="stylesheet" href="/www/css/asDatepicker.css">
     <?php }?>
     <link rel="stylesheet" href="/www/css/<?=$location?>.css">
+
 
 </head>
 <body>
@@ -95,6 +245,9 @@
                     </div>
 
                 <?php }else{//로그인 후 ?>
+                    <div class="">
+                        <a class="" href="/alarm">알람</a>
+                    </div>
                     <div class="">
                         <a class="" href="/mypage">마이페이지</a>
                     </div>
@@ -156,6 +309,11 @@
                     } ?>" href="/auth">로그인</a>
                 </li>
             <?php }else{//로그인 후 ?>
+                <li class="nav-item">
+                    <a class="nav-link alarm-nav <?php if ($location == 'alarm') {
+                        echo 'active';
+                    } ?>" href="/alarm">알람</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link alarm-nav <?php if ($location == 'mypage') {
                         echo 'active';

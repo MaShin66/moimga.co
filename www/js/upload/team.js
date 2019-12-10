@@ -9,6 +9,13 @@ function submit_team() {
         event.preventDefault();
         return false;
     }
+    //글자 수 세기
+
+    if (team_url.length<2) {
+        alert('URL을 두글자 이상으로 지정해주세요.');
+        event.preventDefault();
+        return false;
+    }
     dup_url_check(); // url check
 
     //제목에 <>, 불가능
@@ -54,7 +61,7 @@ $("#team_url").keyup(function(e) {
 function dup_url_check() {
 
     var team_url = $('#team_url').val();
-    if(team_url!=''){
+    if(team_url!='' && team_url.length>1){
         $.ajax({
             type: "POST",
             url: '/search/team_url/',
@@ -76,7 +83,7 @@ function dup_url_check() {
         });
     }else{
 
-        document.getElementById('url_dup_error').innerHTML = '';
+        document.getElementById('url_dup_error').innerHTML = '팀 URL을 두글자 이상으로 지정해주세요.';
     }
 
 }

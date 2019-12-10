@@ -41,8 +41,13 @@ class Program extends MY_Controller {
         if($at_url!='program'){ //첫번째 segment가 program이 아니면 team으로 구분한다.
 
             $team_id = get_team_id($at_url);
+            $search = $this->uri->segment(5);
+            $page_segment = 4;
+        }else{//기본으로
+            $search = $this->uri->segment(4);
+            $page_segment = 3;
+
         }
-        $search = $this->uri->segment(4);
 
         if($search==null){
             $search_query = array(
@@ -80,7 +85,7 @@ class Program extends MY_Controller {
         $config['total_rows'] = $this -> program_model->load_program('count','','',$search_query); // 게시물 전체 개수
 
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
-        $config['uri_segment'] = 3; // 페이지 번호가 위치한 세그먼트
+        $config['uri_segment'] = $page_segment; // 페이지 번호가 위치한 세그먼트
         $config['first_url'] = $config['base_url'].'/1'; // 첫페이지에 query string 에러나서..
         $config = pagination_config($config);
         // 페이지네이션 초기화
@@ -89,7 +94,7 @@ class Program extends MY_Controller {
         $data['pagination'] = $this -> pagination -> create_links();
 
         // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
-        $page = $this -> uri -> segment(3);
+        $page = $this -> uri -> segment($page_segment);
 
 
         if($page==null){
@@ -291,6 +296,44 @@ class Program extends MY_Controller {
                             $this->program_model->insert_program_qna($pqna_data); //집어넣기
                         }
 
+                        //알람/////////
+
+                        $team_info = $this->team_model->get_team_info($team_id); //이것도 중복될 수 없으니까 unique 임
+
+                        $search_query = array(
+                            'crt_date' => '',
+                            'search' => '',
+                            'user_id' => null,
+                            'type'=>null,
+                            'team_id'=>$team_id
+                        );
+
+                        $alarm_data = array(
+                            'from_user_id'=>$team_info['user_id'],//팀 대표
+                            'team_id'=>$team_id,
+                            'program_id'=>$program_id,
+                            'status'=>'unread',
+                            'crt_date'=>date('Y-m-d H:i:s')
+                        );
+
+                        //구독회원 P3
+
+                        $subs_list = $this->subscribe_model->load_subscribe('', '', '', $search_query);  //구독 회원 리스트
+                        $alarm_data['type'] = 'T12';
+                        foreach ($subs_list as $key => $item){
+
+                            $alarm_data['user_id'] = $item['user_id'];
+                            $this->alarm_model->insert_alarm($alarm_data);
+                        }
+
+                        //팀 멤버 P4
+                        $member_list = $this->member_model->load_team_member('', '', '', $search_query);   //팀멤버 리스트
+                        $alarm_data['type'] = 'T13';
+                        foreach ($member_list as $m_key => $m_item){
+
+                            $alarm_data['user_id'] = $m_item['user_id'];
+                            $this->alarm_model->insert_alarm($alarm_data);
+                        }
 
                     }
 

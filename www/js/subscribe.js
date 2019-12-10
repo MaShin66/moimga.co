@@ -3,7 +3,8 @@ function set_subscribe(team_id) {
 
     $.ajax({
         type: "post",
-        url: '/subscribe/register/'+team_id,
+        url: '/subscribe/register/',
+        data: {team_id : team_id},
         success: function (data) {
             var result = data.trim();
             console.log(result);

@@ -16,7 +16,6 @@ class Alarm extends Mypage_Controller
         }
         $this->config->set_item('language', $lang_text);
         $this->lang->load('alarm');
-        $this->load->model(array('Prod_model', 'Alarm_model'));
 
         $this->load->library('tank_auth');
         $this->load->library('layout', 'layouts/default');
@@ -39,11 +38,11 @@ class Alarm extends Mypage_Controller
         );
 
         header('Content-Type: text/html; charset=UTF-8');
-        $alarms = $this->Alarm_model->load_alarm($user_id, 'unread');
-        $read_alarms = $this->Alarm_model->load_alarm($user_id, 'read');
+        $alarms = $this->alarm_model->load_alarm($user_id, 'unread');
+        $read_alarms = $this->alarm_model->load_alarm($user_id, 'read');
         $alarm_result = array_merge($alarms, $read_alarms);
         //모든 내용 읽음 처리 된다..
-        $this->Alarm_model->set_alarm_read_all($user_id);
+        $this->alarm_model->set_alarm_read_all($user_id);
 
         //7일까지의 내용만 가져온다는거 있어야함
         //알람 기본입니다..

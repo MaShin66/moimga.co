@@ -192,6 +192,20 @@ class After extends MY_Controller
                 );
                 $this->team_model->update_team($team_id,$after_array);
 
+                $team_info = $this->team_model->get_team_info($after_id);
+                //알람
+                $alarm_data = array(
+                    'type'=>'T2',
+                    'user_id'=>$team_info['user_id'],// 팀 관리자 id
+                    'from_user_id'=>$user_id,
+                    'team_id'=>$team_id,
+                    'program_id'=>null,
+                    'status'=>'unread',
+                    'crt_date'=>date('Y-m-d H:i:s')
+                );
+
+                $this->alarm_model->insert_alarm($alarm_data);
+
 
             }
             //다 끝나면 redirect

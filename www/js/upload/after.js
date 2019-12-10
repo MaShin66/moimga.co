@@ -5,7 +5,7 @@ function search_team() {
     list_div.empty(); //초기화
     var search = $('#team_title').val();
     if(search==''){
-        alert('검색어를 입력해주세요');
+        document.querySelector('#search_list').innerHTML = '검색어를 입력해주세요.';
     }else{
         $.ajax({
             type: "post",
