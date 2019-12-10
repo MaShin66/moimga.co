@@ -35,11 +35,13 @@ class Program extends MY_Controller {
             'level' =>$level,
             'alarm' =>$alarm_cnt
         );
-
+        $meta_title = '프로그램 - 모임가';
+        $meta_desc = '모임가 프로그램 목록';
 
         $at_url = $this->uri->segment(1); //@가 붙은 url
         $search = $this->uri->segment(4);
         $team_id = null; //initiate
+        $sort_search = null; //initiate
         $team_info = array();
         if($at_url!='program'){ //첫번째 segment가 program이 아니면 team으로 구분한다.
             $team_id = get_team_id($at_url);
@@ -115,12 +117,30 @@ class Program extends MY_Controller {
                 $as_member = $this->team_model-> as_member($team_id, $user_data['user_id']);
                 if($team_info['status']=='on' ||($team_info['status']=='off' && $as_member) || $level==9){
                     //관리자는 프로그램이 닫혀있어도 접근 가능
-                }else{
+                    if(($sort_search!=null || $sort_search !='')&&!is_null($team_id)){
+                        $meta_title = '팀 프로그램 > '.$team_info['name'].' > '.$sort_search.' - 모임가';
+                    }else{//팀 이름만
+                        $meta_title = '팀 프로그램 > '.$team_info['name'].' - 모임가';
+
+                    }
+                }else{ //팀이 닫혀있는 경우
+
+                    alert($this->lang->line('hidden_alert'),'/program');
                     $team_info = array();
                 }
             }
-
+        }else{ //팀에 국한되지 않은경우 -> 모든 프로그램 검색한다
+            if(($sort_search!=null || $sort_search !='')){
+                $meta_title = '프로그램 검색 > '.$sort_search.' - 모임가';
+            }
         }
+        $meta_array = array(
+            'location' => 'program',
+            'section' => 'upload',
+            'title' => $meta_title,
+            'desc' => $meta_desc,
+        );
+
 
         $this->layout->view('program/list', array('user'=>$user_data,'data'=>$data,'search_query'=>$search_query,'team_info'=>$team_info,'meta_array'=>$meta_array));
     }
@@ -156,10 +176,11 @@ class Program extends MY_Controller {
             $real_content = str_replace("&nbsp;", "", $content);
 
             $meta_array = array(
-                'location' => 'after',
+                'location' => 'program',
                 'section' => 'view',
                 'title' => $program_info['title'].' - 모임가',
                 'desc' => $real_content,
+                'img' => $team_info['thumb_url']
             );
 
             $this->layout->view('/program/view', array('user'=>$user_data,'program_info'=>$program_info,'team_info'=>$team_info,
@@ -386,6 +407,8 @@ class Program extends MY_Controller {
                         $qna_info = $this->program_model->load_program_qna_info_by_p_id($program_id);
                         $qualify_info = $this->program_model->load_program_qualify_info_by_p_id($program_id); //이것도 중복될 수 없으니까 unique 임
 
+                        $meta_title = '프로그램 수정 - '.$data['title'].' - 모임가';
+                        $meta_desc = '모임가 프로그램 수정';
                     }else{
 
                         if(is_null($team_id)) alert('프로그램을 올릴 팀을 선택해주세요.'.$team_id);
@@ -410,13 +433,15 @@ class Program extends MY_Controller {
                         $date_info = array();
                         $qna_info = array();
                         $qualify_info = array();
+                        $meta_title = '프로그램 등록 - 모임가';
+                        $meta_desc = '모임가 프로그램 등록';
                     }
 
                     $meta_array = array(
-                        'location' => 'after',
-                        'section' => 'view',
-                        'title' => $program_info['title'].' - 모임가',
-                        'desc' => $real_content,
+                        'location' => 'program',
+                        'section' => 'upload',
+                        'title' => $meta_title,
+                        'desc' => $meta_desc,
                     );
 
 

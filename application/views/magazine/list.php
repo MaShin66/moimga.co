@@ -6,6 +6,27 @@
 		Magazine
 	</h1>
 
+    <?php if(!is_null($search_query['search'])&&$search_query['search']!=''){?>
+
+        <div class="">
+            <?=$search_query['search']?>의 검색 결과
+        </div>
+        <!---여기에 검색창도 있으면 ux 에 더 좋겟지요.. -->
+    <?php }?>
+    <div class="sorting">
+        <div class="btn-toolbar justify-content-between" role="toolbar">
+
+            <form action="/magazine/lists/1/q" method="get">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="search" class="form-control" placeholder="검색어를 입력해주세요"  value="<?=$search_query['search']?>">
+
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit">검색</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 	<div class="mp_form_list">
 		<?php
          if(count($data['result'])==0){?>

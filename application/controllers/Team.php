@@ -274,6 +274,7 @@ class Team extends MY_Controller {
                 'section' => 'view',
                 'title' => $team_info['title'].' - 모임가',
                 'desc' => $real_content,
+                'img' => $team_info['thumb_url']
             );
 
 

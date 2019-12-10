@@ -1,13 +1,5 @@
 <?php
-if ($use_username) {
-	$username = array(
-		'name'	=> 'username',
-		'id'	=> 'username',
-		'value' => set_value('username'),
-		'maxlength'	=> $this->config->item('username_max_length', 'tank_auth'),
-		'size'	=> 30,
-	);
-}
+
 $realname = array(
     'name'	=> 'realname',
     'id'	=> 'realname',

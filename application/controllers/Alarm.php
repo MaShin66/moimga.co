@@ -47,7 +47,15 @@ class Alarm extends Mypage_Controller
         //7일까지의 내용만 가져온다는거 있어야함
         //알람 기본입니다..
         //알람이 트위터식으로 보이는게 좋을까요 아니면 작은 모달로? 저는 트위터식을 추천합니다.. 그게 만들기 쉬우니까 ㅎ
-        $this->layout->view('alarm/list', array('alarms' => $alarm_result, 'user' => $user_data));
+
+        $meta_array = array(
+            'location' => 'alarm',
+            'section' => 'basic', //list여도 search 와 같은 기능 함
+            'title' => '알람 - 모임가',
+            'desc' => '모임가 알람',
+        );
+
+        $this->layout->view('alarm/list', array('alarms' => $alarm_result, 'user' => $user_data,'meta_array'=>$meta_array));
     }
 
 }

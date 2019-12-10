@@ -36,6 +36,9 @@ class Magazine extends MY_Controller {
         );
 
         $search = $this->uri->segment(4);
+        $meta_title = '매거진 - 모임가';
+        $meta_desc = '모임가 매거진 목록';
+        $sort_search = null;
 
         if($search==null){
             $search_query = array(
@@ -88,8 +91,17 @@ class Magazine extends MY_Controller {
 		$data['result'] = $this->magazine_model->load_magazine('', $start, $limit, $search_query);
 		$data['total']=$config['total_rows'];
 
+        if(($sort_search!=null || $sort_search !='')){
+            $meta_title = '매거진 검색 > '.$sort_search.' - 모임가';
+        }
 
-		$this->layout->view('magazine/list', array('user'=>$user_data, 'data'=>$data));
+        $meta_array = array(
+            'location' => 'magazine',
+            'section' => 'lists',
+            'title' => $meta_title,
+            'desc' => $meta_desc,
+        );
+		$this->layout->view('magazine/list', array('user'=>$user_data, 'data'=>$data,'search_query'=>$search_query,'meta_array'=>$meta_array));
 	}
 
     function view($magazine_id=''){
@@ -110,7 +122,21 @@ class Magazine extends MY_Controller {
 		if($result['status']=='on' || ($result['status']=='off' && $level==9 )){
 
             $this->magazine_model->update_magazine_hit($magazine_id);
-            $this->layout->view('magazine/view', array('user'=>$user_data,'result'=>$result));
+
+            $text = substr($result['contents'], 0, 500);
+            $text = addslashes($text);
+            $content = strip_tags($text);
+            $real_content = str_replace("&nbsp;", "", $content);
+
+            $meta_array = array(
+                'location' => 'magazine',
+                'section' => 'view',
+                'title' => $result['title'].' - 모임가',
+                'desc' => $real_content,
+                'img' => $result['thumb_url']
+            );
+
+            $this->layout->view('magazine/view', array('user'=>$user_data,'result'=>$result,'meta_array'=>$meta_array));
         }else{
 
             alert($this->lang->line('hidden_alert'),'/magazine');
@@ -134,11 +160,11 @@ class Magazine extends MY_Controller {
 		if($level!=9) alert('접근할 수 없습니다');
 
 		$write_type=$this->input->get('write');
+        $title = $this->input->post('title');
 
-		if($this->input->post('title')!=null){
+        if($title){ //입력
 			//새로 쓰는거
 
-			$title = $this->input->post('title');
 			$user_id = $this->input->post('user_id');
 			$contents = $this->input->post('contents');
 			$status = $this->input->post('status');
@@ -159,32 +185,50 @@ class Magazine extends MY_Controller {
 
 				$magazine_id = $this->input->post('magazine_id');
 				$this->magazine_model->update_magazine($magazine_id, $data);
-				alert('수정되었습니다.','/magazine/view/'.$magazine_id);
 
 			}else{
 
-
+                $data['thumb_url'] = '/www/thumbs/magazine/basic.jpg'; //새로쓸때는 이렇게..
                 $data['crt_date']= date("Y-m-d H:i:s");
-				$new_magazine_id = $this->magazine_model->insert_magazine($data);
-				alert('글이 입력 되었습니다.','/magazine/view/'.$new_magazine_id);
+                $magazine_id = $this->magazine_model->insert_magazine($data);
 
 			}
-		}else{
+
+            //thumb 지정.. thumbs_helper 이용한다..
+            $thumbs['thumb_url'] = thumbs_upload('magazine', $magazine_id); // 바로 업데이트
+            if(!is_null($thumbs['thumb_url'] )){
+                $this->magazine_model->update_magazine($magazine_id,$thumbs);
+            }
+
+            redirect('/magazine/view/'.$magazine_id);
+        }else{
 			if($write_type=='modify'){
 
 				$magazine_id=$this->input->get('id');
 				$result = $this->magazine_model->get_magazine_info($magazine_id);
+
+                $meta_title = '매거진 수정 - '.$result['title'].' - 모임가';
+                $meta_desc = '모임가 매거진 수정';
 
 				if($result['user_id']!=$user_id){
 					redirect('/');
 				}
 
 			}else{
+                $meta_title = '매거진 등록 - 모임가';
+                $meta_desc = '모임가 매거진 등록';
 				$result = array();
 
 			}
 
-			$this->layout->view('magazine/upload', array('user'=>$user_data,'result'=>$result));
+            $meta_array = array(
+                'location' => 'magazine',
+                'section' => 'upload',
+                'title' => $meta_title,
+                'desc' => $meta_desc,
+            );
+
+			$this->layout->view('magazine/upload', array('user'=>$user_data,'result'=>$result,'meta_array'=>$meta_array));
 		}
 
 

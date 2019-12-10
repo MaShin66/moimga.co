@@ -7,13 +7,7 @@ $login = array(
     'size'	=> 30,
     'class'=>'form-control'
 );
-if ($login_by_username AND $login_by_email) {
-    $login_label = '닉네임';
-} else if ($login_by_username) {
-    $login_label = 'Login';
-} else {
-    $login_label = 'Email';
-}
+
 $password = array(
     'name'	=> 'password',
     'id'	=> 'password',

@@ -37,6 +37,14 @@ class Mypage extends Mypage_Controller {
         );
         $my_info = $this->user_model->get_user_basic_info($user_id);
         $verify = $this->verify_model->get_verify_by_user_id($user_id);
+
+        $meta_array = array(
+            'location' => 'mypage',
+            'section' => 'main',
+            'title' => '마이페이지 - 모임가',
+            'desc' => '모임가 마이페이지',
+        );
+
         $this->layout->view('mypage/main', array('user'=>$user_data,'my_info'=>$my_info,'verify'=>$verify,'meta_array'=>$meta_array));
     }
     function after($type='lists', $after_id=null){ //내가 쓴 후기
@@ -134,6 +142,13 @@ class Mypage extends Mypage_Controller {
         $data['result'] = $this->after_model->load_after('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
+        $meta_array = array(
+            'location' => 'mypage',
+            'section' => 'lists',
+            'title' => '내 후기 - 모임가',
+            'desc' => '모임가 내 후기',
+        );
+
         $this->layout->view('mypage/after/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'meta_array'=>$meta_array));
 
     }
@@ -146,6 +161,14 @@ class Mypage extends Mypage_Controller {
         $auth = $this->_is_my_after($after_id, $user_data['user_id']); //권한 확인하는 함수
 
         if($auth){  //내 후기만 볼 수있음
+
+            $meta_array = array(
+                'location' => 'mypage',
+                'section' => 'main',
+                'title' => '후기 관리 > '.$after_info['title'].' - 모임가',
+                'desc' => '모임가 내 후기 관리',
+            );
+
             $this->layout->view('mypage/after/detail', array('user'=>$user_data,'after_info'=>$after_info,'meta_array'=>$meta_array));
 
         }else{
@@ -252,6 +275,13 @@ class Mypage extends Mypage_Controller {
         $data['result'] = $this->subscribe_model->load_subscribe_by_user_id($user_data['user_id'],$start,$limit,'');
         $data['total']=$config['total_rows'];
 
+        $meta_array = array(
+            'location' => 'mypage',
+            'section' => 'subscribe',
+            'title' => '내 구독함 - 모임가',
+            'desc' => '모임가 내 구독 관리',
+        );
+
         $this->layout->view('mypage/subscribe/lists', array('user' => $user_data, 'data' => $data,'meta_array'=>$meta_array));
 
     }
@@ -314,7 +344,12 @@ class Mypage extends Mypage_Controller {
             'level' =>$level,
             'alarm' =>$alarm_cnt
         );
-
+        $meta_array = array(
+            'location' => 'mypage',
+            'section' => 'verify',
+            'title' => '본인인증 - 모임가',
+            'desc' => '모임가 본인인증',
+        );
         switch ($type){
             case 'error':
                 $this->layout->view('mypage/verify/error', array('user'=>$user_data,'meta_array'=>$meta_array));

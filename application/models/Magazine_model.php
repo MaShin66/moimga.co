@@ -59,7 +59,7 @@ class Magazine_model extends CI_Model
 
         if($search_query['search']!=null){
 
-            $name_query = '(magazine.title like "%'.$search_query['search'].'%" or magazine.user_id ='.$search_query['search'].' or magazine.contents like "%'.$search_query['search'].'%"")';
+            $name_query = '(magazine.title like "%'.$search_query['search'].'%" or magazine.contents like "%'.$search_query['search'].'%")';
             $this->db->where($name_query);
 
         }

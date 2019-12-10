@@ -99,7 +99,14 @@ class Auth extends MY_Controller
 				}
 			}
 			$data['show_captcha'] = FALSE;
-			$this->layout->view('auth/login_form', $data);
+
+            $meta_array = array(
+                'location' => 'auth',
+                'section' => 'login',
+                'title' => '로그인 - 모임가',
+                'desc' => '모임가 로그인',
+            );
+			$this->layout->view('auth/login_form', array('data'=>$data,'meta_array'=>$meta_array));
 		}
 	}
     function login_by_id()
@@ -257,7 +264,16 @@ class Auth extends MY_Controller
 			$data['use_username'] = $use_username;
 			$data['captcha_registration'] = $captcha_registration;
 			$data['use_recaptcha'] = $use_recaptcha;
-			$this->layout->view('auth/register_form', $data);
+
+            $meta_array = array(
+                'location' => 'auth',
+                'section' => 'basic', //login이 아닌 auth는 모두 basic 사용
+                'title' => '회원가입 - 모임가',
+                'desc' => '모임가 회원가입',
+            );
+
+            $this->layout->view('auth/register_form', array('data'=>$data,'meta_array'=>$meta_array));
+
 		}
 	}
 
@@ -300,7 +316,16 @@ class Auth extends MY_Controller
 
         //받은 정보 이메일, 아이디 받아서 처리하는거..
         $this->layout->setLayout("layouts/auth_layout");
-        $this->layout->view('auth/naver_login');
+
+        $meta_array = array(
+            'location' => 'auth',
+            'section' => 'login', //login이 아닌 auth는 모두 basic 사용
+            'title' => '로그인 중입니다 - 모임가',
+            'desc' => '모임가 로그인',
+        );
+
+
+        $this->layout->view('auth/naver_login', array('meta_array'=>$meta_array));
     }
     function google_login(){
 
@@ -450,7 +475,14 @@ class Auth extends MY_Controller
 					foreach ($errors as $k => $v)	$data['errors'][$k] = $this->lang->line($v);
 				}
 			}
-			$this->layout->view('auth/forgot_password_form', $data);
+            $meta_array = array(
+                'location' => 'auth',
+                'section' => 'basic', //login이 아닌 auth는 모두 basic 사용
+                'title' => '비밀번호 찾기 - 모임가',
+                'desc' => '모임가 비밀번호 찾기',
+            );
+
+            $this->layout->view('auth/forgot_password_form', array('data'=>$data,'meta_array'=>$meta_array));
 		}
 	}
 
@@ -498,7 +530,15 @@ class Auth extends MY_Controller
 				$this->_show_message($this->lang->line('auth_message_new_password_failed'));
 			}*/
 		}
-		$this->layout->view('auth/reset_password_form', $data);
+        $meta_array = array(
+            'location' => 'auth',
+            'section' => 'basic', //login이 아닌 auth는 모두 basic 사용
+            'title' => '비밀번호 재설정 - 모임가',
+            'desc' => '모임가 비밀번호 재설정',
+        );
+
+        $this->layout->view('auth/reset_password_form', array('data'=>$data,'meta_array'=>$meta_array));
+
 	}
 
 	/**
@@ -540,8 +580,16 @@ class Auth extends MY_Controller
 					foreach ($errors as $k => $v)	$data['errors'][$k] = $this->lang->line($v);
 				}
 			}
+            $meta_array = array(
+                'location' => 'auth',
+                'section' => 'basic', //login이 아닌 auth는 모두 basic 사용
+                'title' => '비밀번호 변경 - 모임가',
+                'desc' => '모임가 비밀번호 변경',
+            );
+
             $this->layout->setLayout("layouts/default");
-			$this->layout->view('auth/change_password_form', array('data'=>$data, 'user'=>$user_data));
+            $this->layout->view('auth/change_password_form', array('data'=>$data, 'user'=>$user_data, 'meta_array'=>$meta_array));
+
 		}
 	}
 
@@ -593,8 +641,17 @@ class Auth extends MY_Controller
 					foreach ($errors as $k => $v)	$data['errors'][$k] = $this->lang->line($v);
 				}
 			}
+            $meta_array = array(
+                'location' => 'auth',
+                'section' => 'basic', //login이 아닌 auth는 모두 basic 사용
+                'title' => '이메일 변경 - 모임가',
+                'desc' => '모임가 이메일 변경',
+            );
+
             $this->layout->setLayout("layouts/default");
-            $this->layout->view('auth/change_email_form', array('data'=>$data, 'user'=>$user_data));
+            $this->layout->view('auth/change_email_form', array('data'=>$data, 'user'=>$user_data,'meta_array'=>$meta_array));
+
+
 		}
 	}
 
@@ -668,7 +725,16 @@ class Auth extends MY_Controller
             }else{ // 확인받는 곳
 
                 $this->layout->setLayout("layouts/default");
-                $this->layout->view('auth/unregister_confirm', array('user'=>$user_data, 'count'=>$count));
+
+                $meta_array = array(
+                    'location' => 'auth',
+                    'section' => 'basic', //login이 아닌 auth는 모두 basic 사용
+                    'title' => '탈퇴 - 모임가',
+                    'desc' => '모임가 탈퇴',
+                );
+
+                $this->layout->view('auth/unregister_confirm', array('user'=>$user_data,'meta_array'=>$meta_array));
+
             }
 //            if($prod_count==0&&$demand_count==0&&$import_count==0){
 //                //$this->do_unregister($user_data);

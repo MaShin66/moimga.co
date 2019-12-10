@@ -75,6 +75,9 @@ function thumbs_upload($type='team', $unique_id){
         }
 
         $thumbs_url =  '/www/thumbs/'.$type.'/'.$data['upload_data']['file_name'];
+        unlink($config_gd_crop['source_image']);   //이 resize폴더에있는거 지우기..
+
+
 
     }else{
         $thumbs_url = null;

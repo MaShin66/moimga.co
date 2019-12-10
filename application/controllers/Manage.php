@@ -106,7 +106,14 @@ class Manage extends Manage_Controller {
         $data['result'] = $this->team_model->load_assigned_team('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
-        $this->layout->view('manage/team/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+        $meta_array = array(
+            'location' => 'manage',
+            'section' => 'team',
+            'title' => '팀 관리 - 모임가',
+            'desc' => '모임가 팀 관리',
+        );
+
+        $this->layout->view('manage/team/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'meta_array'=>$meta_array));
 
     }
 
@@ -130,8 +137,16 @@ class Manage extends Manage_Controller {
             $program_list =  $this->program_model->load_program('','','',$search_query);
             $blog_list =  $this->team_model->load_team_blog('','','',$search_query);
             $after_list =  $this->after_model->load_after('','','',$search_query);
+
+            $meta_array = array(
+                'location' => 'manage',
+                'section' => 'team',
+                'title' => '팀 관리 > '.$team_info['name'].' - 모임가',
+                'desc' => '모임가 팀 상세 관리',
+            );
+
             $this->layout->view('manage/team/detail', array('user'=>$user_data,'team_info'=>$team_info,
-                'blog_list'=>$blog_list,'member_list'=>$member_list,'program_list'=>$program_list,'after_list'=>$after_list));
+                'blog_list'=>$blog_list,'member_list'=>$member_list,'program_list'=>$program_list,'after_list'=>$after_list,'meta_array'=>$meta_array));
 
         }else{
             alert('권한이 없습니다. [MD01]');
@@ -263,18 +278,7 @@ class Manage extends Manage_Controller {
         );
 
 
-        switch ($type){
-            case 'upload':
-                $this->_after_upload($after_id,$user_data); //nl2br
-                break;
-
-            case 'detail': //view
-                $this->_after_detail($after_id,$user_data);
-                break;
-
-            case 'delete':
-                $this->_after_delete($after_id,$user_data);
-                break;
+        switch ($type){ //after는 list만 있어도됨
             default:
             case 'lists':
                 $this->_after_lists($user_data);
@@ -287,7 +291,14 @@ class Manage extends Manage_Controller {
         $team_id = $this->uri->segment(4);
         if(is_null($team_id) || $team_id==''){
 
-            $this->layout->view('manage/empty', array('user' => $user_data));
+            $meta_array = array(
+                'location' => 'manage',
+                'section' => 'basic',
+                'title' => '팀을 찾을 수 없어요! - 모임가',
+                'desc' => '모임가 팀 후기 관리',
+            );
+
+            $this->layout->view('manage/empty', array('user' => $user_data,'meta_array'=>$meta_array));
 
         }else{
 
@@ -344,100 +355,17 @@ class Manage extends Manage_Controller {
             $data['result'] = $this->after_model->load_after('', $start, $limit, $search_query);
             $data['total']=$config['total_rows'];
 
-            $this->layout->view('manage/after/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
-
-        }
-
-    }
-
-    function _after_upload($after_id = null,$user_data){
-        //업로드 합시다..
-        $application_id = $this->input->get('app_id');
-        if($this->input->post()){
-
-            $form_data = $this->input->post();
-            if($form_data['title']){ //제목 입력하면 됨
-
-                $after_data = array(
-                    'user_id'=>$user_data['user_id'],
-                    'application_id'=>$form_data['application_id'],
-                    'title'=>$form_data['title'],
-                    'contents'=>nl2br($form_data['contents']),
-
-                );
-
-                //날짜 정보...
-
-                if($after_id){ //수정
-
-                    $redirect_url = '/manage/after/detail/'.$after_id;
-
-                    $this->after_model->update_after($after_id,$after_data);
-                    //
-                    alert('후기가 수정되었습니다.',$redirect_url);
-                }else{//등록
-                    $after_data['crt_date'] = date('Y-m-d H:i:s');
-                    $after_id = $this->after_model->insert_after($after_data);
-                    $redirect_url = '/manage/after/detail/'.$after_id;
-                    alert('후기가 입력되었습니다.',$redirect_url);
-                }
-            }else{ // team_id 없으면 생성 불가능함
-                alert('제목을 입력하세요.');
-            }
-        }else{
-
-            $app_info = null; //일단 null로 지정한다..
-            if($application_id!=null){
-                $app_info = $this->application_model->get_application_info($application_id);
-            }
-
-            $after_info = array(
-                'title'=>null,
-                'contents'=>null,
-                'application_id'=>$application_id,
-
+            $team_info = $this->team_model->get_team_info($team_id);
+            $meta_array = array(
+                'location' => 'manage',
+                'section' => 'after',
+                'title' => '후기 목록 > '.$team_info['name'].' - 모임가',
+                'desc' => '모임가 후기 관리',
             );
-            if($after_id){//이거면 수정
-                $after_info =   $this->after_model->get_after_info($after_id);
-            }
-            $this->layout->view('/manage/after/upload', array('user' => $user_data,'after_info'=>$after_info,'app_info'=>$app_info));
+
+            $this->layout->view('manage/after/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'meta_array'=>$meta_array));
+
         }
-
-    }
-
-    function _after_detail($after_id,$user_data){ //detail - 정보
-
-        $after_info = $this->after_model->get_after_info($after_id);
-
-        if($after_info['user_id']!=$user_data['user_id']||$user_data['level']<9){ //관리자이거나 본인만 지울 수 있다.
-
-            if($after_info!=null){
-                $this->layout->view('manage/after/detail', array('user'=>$user_data,'after_info'=>$after_info));
-            }else{
-                alert('후기가 없습니다.');
-            }
-
-
-        }else{
-            alert('권한이 없습니다. [MD01]');
-        }
-    }
-
-    function _after_delete($after_id,$user_data){ //unique_id!=moin_id
-
-        $after_info = $this->after_model->get_after_info($after_id);
-
-        //이 전에 조건을 걸어둬야겠지.. 제출된 게 있으면 절대 못함
-        if($after_info['user_id']!=$user_data['user_id']||$user_data['level']<9){ //관리자이거나 본인만 지울 수 있다.
-
-            $this->after_model->delete_after($after_id);
-
-            alert('후기가 삭제되었습니다. 지원서 페이지로 이동합니다.','/manage/application/detail/'.$after_info['application_id']);
-
-        }else{
-            alert('권한이 없습니다. [MD02]');
-        }
-
 
     }
 
@@ -478,7 +406,15 @@ class Manage extends Manage_Controller {
 
         $team_id =$this->uri->segment(4);
         if(is_null($team_id) || $team_id==''){
-            $this->layout->view('manage/empty', array('user' => $user_data));
+
+            $meta_array = array(
+                'location' => 'manage',
+                'section' => 'basic',
+                'title' => '팀을 찾을 수 없어요! - 모임가',
+                'desc' => '모임가 팀 후기 관리',
+            );
+
+            $this->layout->view('manage/empty', array('user' => $user_data,'meta_array'=>$meta_array));
 
         }else{
 
@@ -541,7 +477,15 @@ class Manage extends Manage_Controller {
             $data['total']=$config['total_rows'];
 
             $team_info = $this->team_model-> get_team_info($team_id);
-            $this->layout->view('manage/program/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'team_info'=>$team_info));
+
+            $meta_array = array(
+                'location' => 'manage',
+                'section' => 'program',
+                'title' => '프로그램 관리 > '.$team_info['name'].' - 모임가',
+                'desc' => '모임가 프로그램 관리',
+            );
+
+            $this->layout->view('manage/program/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'team_info'=>$team_info,'meta_array'=>$meta_array));
 
         }
 
@@ -557,7 +501,14 @@ class Manage extends Manage_Controller {
             $program_info['auth_code'] = $auth;
 
             if($program_info!=null){
-                $this->layout->view('manage/program/detail', array('user'=>$user_data,'program_info'=>$program_info,'team_info'=>$team_info));
+
+                $meta_array = array(
+                    'location' => 'manage',
+                    'section' => 'program',
+                    'title' => '프로그램 관리 > '.$program_info['title'].'('.$team_info['name'].') - 모임가',
+                    'desc' => '프로그램 관리 > '.$program_info['title'].'('.$team_info['name'].') - 모임가',
+                );
+                $this->layout->view('manage/program/detail', array('user'=>$user_data,'program_info'=>$program_info,'team_info'=>$team_info,'meta_array'=>$meta_array));
             }else{
                 alert('후기가 없습니다.');
             }
@@ -676,7 +627,13 @@ class Manage extends Manage_Controller {
 
         if(is_null($team_id) || $team_id==''){
 
-            $this->layout->view('manage/empty', array('user' => $user_data));
+            $meta_array = array(
+                'location' => 'manage',
+                'section' => 'basic',
+                'title' => '팀을 찾을 수 없어요! - 모임가',
+                'desc' => '모임가 팀 후기 관리',
+            );
+            $this->layout->view('manage/empty', array('user' => $user_data,'meta_array'=>$meta_array));
 
         }else{
             $search = $this->uri->segment(6);
@@ -736,7 +693,14 @@ class Manage extends Manage_Controller {
             $data['total']=$config['total_rows'];
 
             $team_info = $this->team_model->get_team_info($team_id);
-            $this->layout->view('manage/blog/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'team_info'=>$team_info));
+
+            $meta_array = array(
+                'location' => 'manage',
+                'section' => 'team_blog',
+                'title' => '팀 블로그 관리 > '.$team_info['name'].' - 모임가',
+                'desc' =>  '팀 블로그 관리 > '.$team_info['name'].' - 모임가',
+            );
+            $this->layout->view('manage/blog/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'team_info'=>$team_info,'meta_array'=>$meta_array));
 
         }
     }
@@ -766,7 +730,13 @@ class Manage extends Manage_Controller {
         $blog_info = $this->team_model->get_team_blog_info($blog_id);
         $blog_info['auth_code'] = $this->_get_auth_code('team',$blog_info['team_id'], $user_data['user_id']);
         if($blog_info['auth_code']<3){
-            $this->layout->view('manage/blog/detail', array('user'=>$user_data,'blog_info'=>$blog_info));
+            $meta_array = array(
+                'location' => 'manage',
+                'section' => 'team_blog',
+                'title' => '팀 블로그 관리 > 상세 > '.$blog_info['title'].' - 모임가',
+                'desc' =>  '팀 블로그 관리 > 상세 > '.$blog_info['title'].' - 모임가',
+            );
+            $this->layout->view('manage/blog/detail', array('user'=>$user_data,'blog_info'=>$blog_info,'meta_array'=>$meta_array));
         }else{
             alert('권한이 없습니다. [MD02]');
         }
@@ -829,7 +799,13 @@ class Manage extends Manage_Controller {
         $team_id = $this->uri->segment(4);
         if(is_null($team_id)||$team_id==''){ //아무것도 없는 경우 먼저 팀 구성해야됨
 
-            $this->layout->view('manage/empty', array('user' => $user_data));
+            $meta_array = array(
+                'location' => 'manage',
+                'section' => 'basic',
+                'title' => '팀을 찾을 수 없어요! - 모임가',
+                'desc' => '모임가 팀 후기 관리',
+            );
+            $this->layout->view('manage/empty', array('user' => $user_data,'meta_array'=>$meta_array));
 
         }else{
             $search = $this->uri->segment(6);
@@ -886,7 +862,15 @@ class Manage extends Manage_Controller {
             $data['total']=$config['total_rows'];
 
             $team_info =   $this->team_model->get_team_info($team_id);
-            $this->layout->view('manage/member/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'team_info'=>$team_info));
+
+            $meta_array = array(
+                'location' => 'manage',
+                'section' => 'member',
+                'title' => '팀 멤버 목록 - '.$team_info['name'].' - 모임가',
+                'desc' => '모임가 팀 멤버 목록',
+            );
+
+            $this->layout->view('manage/member/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'team_info'=>$team_info,'meta_array'=>$meta_array));
 
         }
 
@@ -957,7 +941,15 @@ class Manage extends Manage_Controller {
         }else{
 
             $team_info =   $this->team_model->get_team_info($team_id);
-            $this->layout->view('/manage/member/upload', array('user' => $user_data,'team_info'=>$team_info));
+
+            $meta_array = array(
+                'location' => 'manage',
+                'section' => 'member',
+                'title' => '팀 멤버 지정 - '.$team_info['name'].' - 모임가',
+                'desc' => '모임가 팀 멤버 지정',
+            );
+
+            $this->layout->view('/manage/member/upload', array('user' => $user_data,'team_info'=>$team_info,'meta_array'=>$meta_array));
         }
 
     }
@@ -1008,7 +1000,14 @@ class Manage extends Manage_Controller {
         $auth = $this->_get_auth_code('team',$member_info['team_id'], $user_data['user_id']);
 
         if($auth<3) { //권한이 있으면 삭제 (admin, boss)
-            $this->layout->view('manage/member/detail', array('user'=>$user_data,'member_info'=>$member_info,'team_info'=>$team_info));
+            $meta_array = array(
+                'location' => 'manage',
+                'section' => 'member',
+                'title' => '팀 멤버 관리 > '.$member_info['realname'].' - 모임가',
+                'desc' => '모임가 팀 멤버 관리',
+            );
+
+            $this->layout->view('manage/member/detail', array('user'=>$user_data,'member_info'=>$member_info,'team_info'=>$team_info,'meta_array'=>$meta_array));
         }else{
             alert('권한이 없습니다. [MD01]');
         }
