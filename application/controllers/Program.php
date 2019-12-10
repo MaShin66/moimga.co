@@ -136,7 +136,7 @@ class Program extends MY_Controller {
         }
         $meta_array = array(
             'location' => 'program',
-            'section' => 'upload',
+            'section' => 'lists',
             'title' => $meta_title,
             'desc' => $meta_desc,
         );
