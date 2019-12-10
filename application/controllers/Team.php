@@ -34,6 +34,10 @@ class Team extends MY_Controller {
             'alarm' =>$alarm_cnt
         );
 
+
+        $meta_title = '팀 - 모임가';
+        $meta_desc = '모임가 팀 목록';
+
         $search = $this->uri->segment(4);
 
         if($search==null){
@@ -55,12 +59,16 @@ class Team extends MY_Controller {
             $search_query = array(
                 'crt_date' => $sort_date,
                 'search' => $sort_search,
-
                 'user_id'=>null,
                 'status'=>'on', //무조건 공개
                 'after'=>$sort_after,
                 'subscribe'=>$sort_subscribe,
             );
+
+            if($sort_search!=null || $sort_search !=''){
+                $meta_title = '팀 검색 > '.$sort_search.' - 모임가';
+                $meta_desc = $meta_title;
+            }
 
         }
         $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&after='.$search_query['after'].'&subscribe='.$search_query['subscribe'];
@@ -95,8 +103,14 @@ class Team extends MY_Controller {
         $data['result'] = $this->team_model->load_team('', $start, $limit,$search_query);
         $data['total']=$config['total_rows'];
 
+        $meta_array = array(
+            'location' => 'team',
+            'section' => 'lists', //list여도 search 와 같은 기능 함
+            'title' => $meta_title,
+            'desc' => $meta_desc,
+        );
 
-        $this->layout->view('team/list', array('user'=>$user_data,'result'=>$data,'search_query'=>$search_query));
+        $this->layout->view('team/list', array('user'=>$user_data,'result'=>$data,'search_query'=>$search_query,'meta_array'=>$meta_array));
     }
 
     function upload(){
@@ -111,6 +125,13 @@ class Team extends MY_Controller {
             'username' =>$this->data['username'],
             'level' =>$level,
             'alarm' =>$alarm_cnt
+        );
+
+        $meta_array = array(
+            'location' => 'team',
+            'section' => 'upload', //list여도 search 와 같은 기능 함
+            'title' => '팀 등록 - 모임가',
+            'desc' => '모임가 팀 등록',
         );
 
         $title = $this->input->post('title');
@@ -204,7 +225,7 @@ class Team extends MY_Controller {
                 );
             }
 
-            $this->layout->view('team/upload', array('user'=>$user_data,'result'=>$data));
+            $this->layout->view('team/upload', array('user'=>$user_data,'result'=>$data,'meta_array'=>$meta_array));
         }
 
     }
@@ -242,8 +263,22 @@ class Team extends MY_Controller {
             $team_blog = $this->team_model->load_team_blog('','',4,$search_query);
             $after_list =  $this->after_model->load_after('','',4,$search_query);
             $this->team_model->update_team_hit($team_info['team_id']);
+
+            $text = substr($team_info['contents'], 0, 500);
+            $text = addslashes($text);
+            $content = strip_tags($text);
+            $real_content = str_replace("&nbsp;", "", $content);
+
+            $meta_array = array(
+                'location' => 'team',
+                'section' => 'view',
+                'title' => $team_info['title'].' - 모임가',
+                'desc' => $real_content,
+            );
+
+
             $this->layout->view('/team/view', array('user'=>$user_data,'team_info'=>$team_info,'after_list'=>$after_list,
-                'team_blog'=>$team_blog,'programs'=>$programs,'at_url'=>$at_url,'as_member'=>$as_member));
+                'team_blog'=>$team_blog,'programs'=>$programs,'at_url'=>$at_url,'as_member'=>$as_member,'meta_array'=>$meta_array));
 
         }else{
             alert($this->lang->line('hidden_alert'),'/team');
@@ -313,19 +348,22 @@ class Team extends MY_Controller {
                 break;
             case 'lists':
             default:
-                $this->_blog_list($user_data,$team_id);
+                $this->_blog_lists($user_data,$team_id);
                 break;
         }
 
     }
 
-    function _blog_list($user_data,$team_id){
+    function _blog_lists($user_data,$team_id){
 
-        $at_url = $this->uri->segment(1); //@가 붙은 url
-        $search = $this->uri->segment(4);
+        $search = $this->uri->segment(5);
 
         $team_info = $this->team_model->get_team_info($team_id); //이것도 중복될 수 없으니까 unique 임
+        if(!$team_info) alert('해당 팀을 찾을 수 없습니다.');
         $as_member = $this->team_model-> as_member($team_id, $user_data['user_id']);
+
+        $meta_title = '팀 블로그 - '.$team_info['name'].' - 모임가';
+        $meta_desc = $meta_title;
 
         if($team_info['status']=='on' ||($team_info['status']!='on' && $as_member)|| $user_data['level']==9 ){
             if($search==null){
@@ -339,6 +377,9 @@ class Team extends MY_Controller {
             }else{
                 $sort_date = $this->input->get('crt_date');
                 $sort_search = $this->input->get('search');
+                if($this->input->get('team_id')!=null){
+                    $team_id = $this->input->get('team_id');
+                }
 
                 $search_query = array(
                     'crt_date' => $sort_date,
@@ -346,6 +387,10 @@ class Team extends MY_Controller {
                     'status'=>'on', //무조건 공개
                     'team_id'=>$team_id,
                 );
+
+                if($sort_search!=null || $sort_search !=''){
+                    $meta_title = '팀 블로그 > '.$team_info['name'].' >'.$sort_search.' - 모임가';
+                }
 
             }
             $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'];
@@ -356,7 +401,7 @@ class Team extends MY_Controller {
             $config['total_rows'] = $this -> team_model->load_team_blog('count','','',$search_query); // 게시물 전체 개수
 
             $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
-            $config['uri_segment'] = 3; // 페이지 번호가 위치한 세그먼트
+            $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
             $config['first_url'] = $config['base_url'].'/1'; // 첫페이지에 query string 에러나서..
             $config = pagination_config($config);
             // 페이지네이션 초기화
@@ -365,7 +410,7 @@ class Team extends MY_Controller {
             $data['pagination'] = $this -> pagination -> create_links();
 
             // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
-            $page = $this -> uri -> segment(3);
+            $page = $this -> uri -> segment(4);
 
 
             if($page==null){
@@ -380,10 +425,15 @@ class Team extends MY_Controller {
             $data['result'] = $this->team_model->load_team_blog('', $start, $limit,$search_query);
             $data['total']=$config['total_rows'];
 
-            $as_member = $this->team_model-> as_member($team_id, $user_data['user_id']);
-            //as_member
+            $meta_array = array(
+                'location' => 'team_blog',
+                'section' => 'lists', //list여도 search 와 같은 기능 함
+                'title' => $meta_title,
+                'desc' => $meta_desc,
+            );
 
-            $this->layout->view('team/blog/list', array('user'=>$user_data,'data'=>$data,'as_member'=>$as_member,'at_url'=>$at_url));
+            $this->layout->view('team/blog/list', array('user'=>$user_data,'data'=>$data,'as_member'=>$as_member,
+                'search_query'=>$search_query,'team_info'=>$team_info,'meta_array'=>$meta_array));
 
         }else{
 
@@ -413,12 +463,27 @@ class Team extends MY_Controller {
             }
         }
 
-        $this->layout->view('/team/blog/view', array('user'=>$user_data,'post_info'=>$post_info,'team_info'=>$team_info,'at_url'=>$at_url));
+        $text = substr($post_info['contents'], 0, 500);
+        $text = addslashes($text);
+        $content = strip_tags($text);
+        $real_content = str_replace("&nbsp;", "", $content);
+
+        $meta_array = array(
+            'location' => 'team_blog',
+            'section' => 'view', //list여도 search 와 같은 기능 함
+            'title' => $post_info['title'],
+            'desc' => $real_content,
+        );
+
+
+        $this->layout->view('/team/blog/view', array('user'=>$user_data,'post_info'=>$post_info,'team_info'=>$team_info,'at_url'=>$at_url,'meta_array'=>$meta_array));
     }
 
     function _blog_upload($user_data,$team_id){
         $at_url = $this->uri->segment(1); //@가 붙은 url
         $as_member = $this->team_model-> as_member($team_id, $user_data['user_id']);
+
+
         //내 정보가 team 장, 팀 멤버에 등록돼있는지 확인
         if($as_member){ //멤버 임
 
@@ -495,10 +560,14 @@ class Team extends MY_Controller {
                 redirect($at_url.'/blog/'.$team_blog_id);
             }else{ //없으면 글쓰기 화면
 
+                $team_info = $this->team_model->get_team_info($team_id);
+
                 if($type=='modify'){
 
                     $team_blog_id = $this->uri->segment(4);
                     $data = $this->team_model->get_team_blog_info($team_blog_id); //이것도 중복될 수 없으니까 unique 임
+                    $meta_title = '포스트 수정 - '.$data['title'].' - 모임가';
+                    $meta_desc = '모임가 팀 포스트 수정';
 
                 }else{
 
@@ -508,9 +577,19 @@ class Team extends MY_Controller {
                         'status'=>'on',
                         'type'=>'new' //새로 글쓰기
                     );
+                    $meta_title = '포스트 등록 - '.$team_info['name'].' - 모임가';
+                    $meta_desc = '모임가 팀 포스트 등록';
+
                 }
 
-                $this->layout->view('team/blog/upload', array('user'=>$user_data,'result'=>$data,'at_url'=>$at_url));
+                $meta_array = array(
+                    'location' => 'team_blog',
+                    'section' => 'upload', //list여도 search 와 같은 기능 함
+                    'title' => $meta_title,
+                    'desc' => $meta_desc,
+                );
+
+                $this->layout->view('team/blog/upload', array('user'=>$user_data,'result'=>$data,'at_url'=>$at_url,'meta_array'=>$meta_array));
             }
 
         }else{ //멤버 아님

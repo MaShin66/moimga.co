@@ -49,3 +49,18 @@
         <?php }?>
     </ul>
 <?php }?>
+
+
+<h2><a href="/team/blog/lists/1/q?search=<?=$search_query['search']?>">팀 블로그</a></h2>
+
+
+<?php if(count($team_blog_list)==0){?>
+    검색 결과가 없습니다.
+<?php }else{?>
+
+    <ul>
+        <?php foreach ($team_blog_list as $tb_key=>$tb_item){?>
+            <li><?=$tb_item['title']?></li>
+        <?php }?>
+    </ul>
+<?php }?>

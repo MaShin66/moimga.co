@@ -53,9 +53,17 @@ if(!is_null($search_query['after'])){
         </div>
     </div>
 <div class="prod_list">
-    <div class="row">
-        <?php $this->load->view('team/thumbs', array('team'=>$result['result'])); ?>
-    </div>
+    <?php if(count($result['result'])==0){ ?>
+
+        <div class="result_empty">
+            아직 팀이 없습니다.
+        </div>
+    <?php }else{ ?>
+        <div class="row">
+            <?php $this->load->view('team/thumbs', array('team'=>$result['result'])); ?>
+        </div>
+
+    <?php }?>
 
 </div>
     <nav class="page-navigation">

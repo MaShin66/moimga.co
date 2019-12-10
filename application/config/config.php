@@ -36,7 +36,7 @@ $config['base_url'] = (is_https() ? 'https://' : 'http://').$_SERVER['HTTP_HOST'
 | variable so that it is blank.
 |
 */
-$config['index_page'] = '/';
+$config['index_page'] = '';
 
 /*
 |--------------------------------------------------------------------------

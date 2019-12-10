@@ -34,10 +34,15 @@ class After extends MY_Controller
         );
 
         $search = $this->uri->segment(4);
+        $team_id = null;
+        $team_info = array();
+
+        $meta_title = '후기 - 모임가';
+        $meta_desc = '모임가 후기 목록';
 
         if($search==null){
             $search_query = array(
-                'crt_date' => '',
+                'crt_date' => null,
                 'search'=>null,
                 'team_id'=>null,
                 'status'=>'on',
@@ -47,15 +52,16 @@ class After extends MY_Controller
         }else{
             $sort_date = $this->input->get('crt_date');
             $sort_search = $this->input->get('search');
-            $sort_team_id = $this->input->get('team_id');
+            $team_id = $this->input->get('team_id');
 
             $search_query = array(
                 'crt_date' => $sort_date,
                 'search' => $sort_search,
-                'team_id'=>$sort_team_id,
+                'team_id'=>$team_id,
                 'status'=>'on',
                 'user_id'=>null,
             );
+
 
         }
         $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&team_id='.$search_query['team_id'];
@@ -90,7 +96,39 @@ class After extends MY_Controller
         $data['result'] = $this->after_model->load_after('', $start, $limit,$search_query);
         $data['total']=$config['total_rows'];
 
-        $this->layout->view('after/list', array('user'=>$user_data,'result'=>$data,'search_query'=>$search_query));
+        if(!is_null($team_id)){
+            $team_info = $this->team_model->get_team_info($team_id);
+            if(!$team_info){ //입력한 팀 id 가 없는 경우
+                alert('해당 팀을 찾을 수 없습니다.');
+            }else{
+                $as_member = $this->team_model-> as_member($team_id, $user_data['user_id']);
+                if($team_info['status']=='on' ||($team_info['status']=='off' && $as_member) || $level==9){
+                    //관리자는 프로그램이 닫혀있어도 접근 가능
+
+                    if(($sort_search!=null || $sort_search !='')&&!is_null($team_id)){
+                        $meta_title = '팀 후기 > '.$team_info['name'].' > '.$sort_search.' - 모임가';
+
+                    }else if(!is_null($team_id)){//팀 이름만
+                        $meta_title = '팀 후기 > '.$team_info['name'].' - 모임가';
+
+                    }else{//query만 있는 경우
+                        $meta_title = '후기 검색 > '.$sort_search.' - 모임가';
+                    }
+                    $meta_desc = $meta_title;
+                }else{
+                    $team_info = array();
+                }
+            }
+
+        }
+        $meta_array = array(
+            'location' => 'after',
+            'section' => 'lists', //list여도 search 와 같은 기능 함
+            'title' => $meta_title,
+            'desc' => $meta_desc,
+        );
+        $this->layout->view('after/list', array('user'=>$user_data,'result'=>$data,'search_query'=>$search_query,
+            'team_info'=>$team_info,'meta_array'=>$meta_array));
     }
 
     function view($after_id){
@@ -108,9 +146,22 @@ class After extends MY_Controller
         );
 
         $after_info = $this->after_model->get_after_info($after_id);
+
+        $text = substr($after_info['contents'], 0, 500);
+        $text = addslashes($text);
+        $content = strip_tags($text);
+        $real_content = str_replace("&nbsp;", "", $content);
+
+        $meta_array = array(
+            'location' => 'after',
+            'section' => 'view',
+            'title' => $after_info['title'].' - 모임가',
+            'desc' => $real_content,
+        );
+
         if($after_info['status']=='on' || ($after_info['status']=='off' && ($after_info['user_id']==$user_id))){
             $this->after_model->update_after_hit($after_id); //후기 hit
-            $this->layout->view('after/view', array('user'=>$user_data,'after_info'=>$after_info));
+            $this->layout->view('after/view', array('user'=>$user_data,'after_info'=>$after_info,'meta_array'=>$meta_array));
             }else{
             alert($this->lang->line('hidden_alert'),'/after');
 
@@ -134,6 +185,14 @@ class After extends MY_Controller
 
         $title = $this->input->post('title');
         $type = $this->input->get('type'); //type get으로 받는다... url 에 있음
+
+
+        $meta_array = array(
+            'location' => 'after',
+            'section' => 'upload',
+            'title' => '후기 등록  - 모임가	',
+            'desc' => '모임가 후기 등록',
+        );
 
         if($title){ //입력
 
@@ -230,7 +289,7 @@ class After extends MY_Controller
                 );
             }
 
-            $this->layout->view('after/upload', array('user'=>$user_data,'result'=>$data));
+            $this->layout->view('after/upload', array('user'=>$user_data,'result'=>$data,'meta_array'=>$meta_array));
         }
 
     }

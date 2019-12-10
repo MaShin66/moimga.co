@@ -12,7 +12,11 @@ if($search_query['event']=='on'){
 
 <div class="cont-padding">
     <div class="header_box header_space"></div>
-    <h1 class="top_title">프로그램</h1>
+    <h1 class="top_title">
+        <?php if($team_info){?>
+            팀 <?=$team_info['name']?>의
+        <?php }?> 프로그램</h1>
+
 
     <?php if(!is_null($search_query['search'])&&$search_query['search']!=''){?>
         <div class="">
@@ -50,9 +54,16 @@ if($search_query['event']=='on'){
     </div>
     
     <div class="prod_list">
-        <div class="row">
-            <?php $this->load->view('program/thumbs', array('program'=>$data['result'])); ?>
-        </div>
+        <?php if(count($data['result'])==0){ ?>
+
+            <div class="result_empty">
+                아직 프로그램이 없습니다.
+            </div>
+        <?php }else{ ?>
+            <div class="row">
+                <?php $this->load->view('program/thumbs', array('program'=>$data['result'])); ?>
+            </div>
+        <?php }?>
 
     </div>
     <nav class="page-navigation">

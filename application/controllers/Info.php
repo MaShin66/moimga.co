@@ -35,7 +35,7 @@ class Info extends MY_Controller {
             'alarm' =>$alarm_cnt,
             'username' =>$this->data['username'],
         );
-        $this->layout->view('info/terms', array('user'=>$user_data));
+        $this->layout->view('info/terms', array('user'=>$user_data,'meta_array'=>$meta_array));
 
     }
 
@@ -52,7 +52,7 @@ class Info extends MY_Controller {
             'alarm' =>$alarm_cnt,
             'username' =>$this->data['username'],
         );
-        $this->layout->view('info/privacy', array('user'=>$user_data));
+        $this->layout->view('info/privacy', array('user'=>$user_data,'meta_array'=>$meta_array));
 
     }
 
@@ -115,7 +115,7 @@ class Info extends MY_Controller {
         }
 
         $this->layout->view('info/faq/'.$file, array('user'=>$user_data,'cate_list'=>$cate_list,'result'=>$result,'cate_cont'=>$cate_cont,'category'=>$category,
-            'search'=>$search,'cate_info'=>$cate_info,'faq_order'=>$faq_order));
+            'search'=>$search,'cate_info'=>$cate_info,'faq_order'=>$faq_order,'meta_array'=>$meta_array));
     }
 
 

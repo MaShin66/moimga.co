@@ -59,3 +59,6 @@
     <div id="map" style="width:500px;height:400px;" data-role="content" ></div>
 
 </div>
+
+<a href="/program/lists/1/q?team_id=<?=$team_info['team_id']?>">이 팀의 모든 프로그램 보기</a>
+

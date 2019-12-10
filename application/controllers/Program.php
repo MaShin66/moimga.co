@@ -36,19 +36,14 @@ class Program extends MY_Controller {
             'alarm' =>$alarm_cnt
         );
 
+
         $at_url = $this->uri->segment(1); //@가 붙은 url
+        $search = $this->uri->segment(4);
         $team_id = null; //initiate
+        $team_info = array();
         if($at_url!='program'){ //첫번째 segment가 program이 아니면 team으로 구분한다.
-
             $team_id = get_team_id($at_url);
-            $search = $this->uri->segment(5);
-            $page_segment = 4;
-        }else{//기본으로
-            $search = $this->uri->segment(4);
-            $page_segment = 3;
-
         }
-
         if($search==null){
             $search_query = array(
                 'crt_date' => null,
@@ -65,6 +60,9 @@ class Program extends MY_Controller {
             $sort_search = $this->input->get('search');
             $sort_price = $this->input->get('price');
             $sort_event = $this->input->get('event');
+            if($this->input->get('team_id')!=null){
+                $team_id = $this->input->get('team_id');
+            }
 
             $search_query = array(
                 'crt_date' => $sort_date,
@@ -85,7 +83,7 @@ class Program extends MY_Controller {
         $config['total_rows'] = $this -> program_model->load_program('count','','',$search_query); // 게시물 전체 개수
 
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
-        $config['uri_segment'] = $page_segment; // 페이지 번호가 위치한 세그먼트
+        $config['uri_segment'] = 3; // 페이지 번호가 위치한 세그먼트
         $config['first_url'] = $config['base_url'].'/1'; // 첫페이지에 query string 에러나서..
         $config = pagination_config($config);
         // 페이지네이션 초기화
@@ -94,7 +92,7 @@ class Program extends MY_Controller {
         $data['pagination'] = $this -> pagination -> create_links();
 
         // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
-        $page = $this -> uri -> segment($page_segment);
+        $page = $this -> uri -> segment(3);
 
 
         if($page==null){
@@ -109,9 +107,22 @@ class Program extends MY_Controller {
         $data['result'] = $this->program_model->load_program('', $start, $limit,$search_query);
         $data['total']=$config['total_rows'];
 
-//        print_r($data['result'] );
+        if(!is_null($team_id)){
+            $team_info = $this->team_model->get_team_info($team_id);
+            if(!$team_info){ //입력한 팀 id 가 없는 경우
+                alert('해당 팀을 찾을 수 없습니다.');
+            }else{
+                $as_member = $this->team_model-> as_member($team_id, $user_data['user_id']);
+                if($team_info['status']=='on' ||($team_info['status']=='off' && $as_member) || $level==9){
+                    //관리자는 프로그램이 닫혀있어도 접근 가능
+                }else{
+                    $team_info = array();
+                }
+            }
 
-        $this->layout->view('program/list', array('user'=>$user_data,'data'=>$data,'search_query'=>$search_query));
+        }
+
+        $this->layout->view('program/list', array('user'=>$user_data,'data'=>$data,'search_query'=>$search_query,'team_info'=>$team_info,'meta_array'=>$meta_array));
     }
 
     function view(){ //route때문에 .. 무조건 3으로 들어와야함
@@ -138,8 +149,21 @@ class Program extends MY_Controller {
             $qualify_info = $this->program_model->load_program_qualify_info_by_p_id($program_id); //이것도 중복될 수 없으니까 unique 임
 
             $this->program_model->update_program_hit($program_id); // 조회수
+
+            $text = substr($program_info['contents'], 0, 500);
+            $text = addslashes($text);
+            $content = strip_tags($text);
+            $real_content = str_replace("&nbsp;", "", $content);
+
+            $meta_array = array(
+                'location' => 'after',
+                'section' => 'view',
+                'title' => $program_info['title'].' - 모임가',
+                'desc' => $real_content,
+            );
+
             $this->layout->view('/program/view', array('user'=>$user_data,'program_info'=>$program_info,'team_info'=>$team_info,
-                'date_info'=>$date_info,'qna_info'=>$qna_info,'qualify_info'=>$qualify_info,'as_member'=>$as_member));
+                'date_info'=>$date_info,'qna_info'=>$qna_info,'qualify_info'=>$qualify_info,'as_member'=>$as_member,'meta_array'=>$meta_array));
         }else{ //hidden
             alert($this->lang->line('hidden_alert'),'/program');
         }
@@ -388,8 +412,16 @@ class Program extends MY_Controller {
                         $qualify_info = array();
                     }
 
+                    $meta_array = array(
+                        'location' => 'after',
+                        'section' => 'view',
+                        'title' => $program_info['title'].' - 모임가',
+                        'desc' => $real_content,
+                    );
+
+
                     $this->layout->view('program/upload', array('user'=>$user_data,'result'=>$data, 'team_info'=>$team_info,
-                        'date_info'=>$date_info,'qna_info'=>$qna_info,'qualify_info'=>$qualify_info));
+                        'date_info'=>$date_info,'qna_info'=>$qna_info,'qualify_info'=>$qualify_info,'meta_array'=>$meta_array));
                 }
             }
 

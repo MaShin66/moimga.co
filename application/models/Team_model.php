@@ -170,7 +170,7 @@ GROUP BY A.team_id
 
     function load_team_blog($type = '', $offset = '', $limit = '', $search_query){
 
-        $this->db->select('team_blog.*, team.name as team_name');
+        $this->db->select('team_blog.*, team.name as team_name, team.url as url');
         $this->db->join('team','team.team_id = team_blog.team_id');
         if(!is_null($search_query['team_id'])){
             $this->db->where('team_blog.team_id',$search_query['team_id']); //무조건 이 팀에만 걸린것으로 가져온다.
@@ -189,7 +189,7 @@ GROUP BY A.team_id
         }
         if($search_query['search']!=null){
 
-            $name_query = '(team_blog.name title "%'.$search_query['search'].'%" or team_blog.contents like "%'.$search_query['search'].'%")';
+            $name_query = '(team_blog.title like "%'.$search_query['search'].'%" or team_blog.contents like "%'.$search_query['search'].'%")';
             $this->db->where($name_query);
 
         }
@@ -271,10 +271,10 @@ GROUP BY A.team_id
 
     //내가 멤버로 있는것과 동시에 출력하기..
     function load_assigned_team($type = '', $offset = '', $limit = '', $search_query){
-//        //감동적 ㅠㅠㅠ
-//        $this->db->select('team.*, ANY_VALUE(team.team_id),users.nickname, ANY_VALUE(team_member.user_id) as member_user_id'); // 맥에서는 이렇게 함
-
-        $this->db->select('team.*, users.nickname, team_member.user_id as member_user_id, team_member.type as type');
+//        //감동적 ㅠㅠㅠ //아래는 mac
+        $this->db->select('team.*, ANY_VALUE(team.team_id),users.nickname, ANY_VALUE(team_member.user_id) as member_user_id,  ANY_VALUE(team_member.type) as type'); // 맥에서는 이렇게 함
+//본서버 and pc
+//        $this->db->select('team.*, users.nickname, team_member.user_id as member_user_id, team_member.type as type');
         $this->db->join('team','team.team_id = team_member.team_id');
         $this->db->join('users','users.id = team.user_id');
 

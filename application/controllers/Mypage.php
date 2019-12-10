@@ -37,7 +37,7 @@ class Mypage extends Mypage_Controller {
         );
         $my_info = $this->user_model->get_user_basic_info($user_id);
         $verify = $this->verify_model->get_verify_by_user_id($user_id);
-        $this->layout->view('mypage/main', array('user'=>$user_data,'my_info'=>$my_info,'verify'=>$verify));
+        $this->layout->view('mypage/main', array('user'=>$user_data,'my_info'=>$my_info,'verify'=>$verify,'meta_array'=>$meta_array));
     }
     function after($type='lists', $after_id=null){ //내가 쓴 후기
 
@@ -134,7 +134,7 @@ class Mypage extends Mypage_Controller {
         $data['result'] = $this->after_model->load_after('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
-        $this->layout->view('mypage/after/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+        $this->layout->view('mypage/after/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'meta_array'=>$meta_array));
 
     }
 
@@ -146,7 +146,7 @@ class Mypage extends Mypage_Controller {
         $auth = $this->_is_my_after($after_id, $user_data['user_id']); //권한 확인하는 함수
 
         if($auth){  //내 후기만 볼 수있음
-            $this->layout->view('mypage/after/detail', array('user'=>$user_data,'after_info'=>$after_info));
+            $this->layout->view('mypage/after/detail', array('user'=>$user_data,'after_info'=>$after_info,'meta_array'=>$meta_array));
 
         }else{
             alert('권한이 없습니다. [MD01]');
@@ -252,7 +252,7 @@ class Mypage extends Mypage_Controller {
         $data['result'] = $this->subscribe_model->load_subscribe_by_user_id($user_data['user_id'],$start,$limit,'');
         $data['total']=$config['total_rows'];
 
-        $this->layout->view('mypage/subscribe/lists', array('user' => $user_data, 'data' => $data));
+        $this->layout->view('mypage/subscribe/lists', array('user' => $user_data, 'data' => $data,'meta_array'=>$meta_array));
 
     }
 
@@ -317,7 +317,7 @@ class Mypage extends Mypage_Controller {
 
         switch ($type){
             case 'error':
-                $this->layout->view('mypage/verify/error', array('user'=>$user_data));
+                $this->layout->view('mypage/verify/error', array('user'=>$user_data,'meta_array'=>$meta_array));
                 break;
             case 'success':
                 alert($this->lang->line('verify_done'),'/mypage');
@@ -416,7 +416,7 @@ class Mypage extends Mypage_Controller {
 
                         $this->_issue_coupon($user_id,15); //발급
 
-                        $this->layout->view('mypage/verify/cgi', array('user'=>$user_data,'_POST'=>$_POST, 'TransR'=>$TransR,'Res'=>$Res));
+                        $this->layout->view('mypage/verify/cgi', array('user'=>$user_data,'_POST'=>$_POST, 'TransR'=>$TransR,'Res'=>$Res,'meta_array'=>$meta_array));
 
                     }
 
@@ -433,7 +433,7 @@ class Mypage extends Mypage_Controller {
                     $BackURL = $_POST["BackURL"];
                     $BgColor = $_POST["BgColor"];
 
-                    $this->layout->view('mypage/verify/error', array('user' => $user_data, 'Res' => $Res));
+                    $this->layout->view('mypage/verify/error', array('user' => $user_data, 'Res' => $Res,'meta_array'=>$meta_array));
                 }
                 break;
             case 'back':
@@ -488,7 +488,7 @@ class Mypage extends Mypage_Controller {
                 $Res = CallTrans( $TransR,false );
 
                 if( $Res["RETURNCODE"] == "0000" ) {
-                    $this->layout->view('mypage/verify/ready', array('user'=>$user_data, 'TransR'=>$TransR, 'ByPassValue'=>$ByPassValue,'Res'=>$Res));
+                    $this->layout->view('mypage/verify/ready', array('user'=>$user_data, 'TransR'=>$TransR, 'ByPassValue'=>$ByPassValue,'Res'=>$Res,'meta_array'=>$meta_array));
                 }else{
 
                     $Result		= $Res["RETURNCODE"];
@@ -497,7 +497,7 @@ class Mypage extends Mypage_Controller {
                     $BackURL	= $ByPassValue["BackURL"];
                     $BgColor 	= $ByPassValue["BgColor"];
 
-                    $this->layout->view('mypage/verify/error', array('user'=>$user_data, 'Res'=>$Res));
+                    $this->layout->view('mypage/verify/error', array('user'=>$user_data, 'Res'=>$Res,'meta_array'=>$meta_array));
                 }
                 break;
         }

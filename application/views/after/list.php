@@ -1,6 +1,10 @@
 <div class="cont-padding">
     <div class="header_box header_space"></div>
-    <h1 class="top_title">후기</h1>
+    <h1 class="top_title">
+        <?php if($team_info){?>
+            팀 <?=$team_info['name']?>의
+        <?php }?> 후기</h1>
+
     <?php if(!is_null($search_query['search'])&&$search_query['search']!=''){?>
 
         <div class="">
@@ -26,13 +30,22 @@
             </form>
         </div>
     </div>
-    
-<div class="prod_list">
-    <div class="row">
-        <?php $this->load->view('after/thumbs', array('after'=>$result['result'])); ?>
-    </div>
 
-</div>
+
+    <div class="prod_list">
+        <?php if(count($result['result'])==0){ ?>
+
+            <div class="result_empty">
+                아직 후기가 없습니다.
+            </div>
+        <?php }else{ ?>
+            <div class="row">
+                <?php $this->load->view('after/thumbs', array('after'=>$result['result'])); ?>
+            </div>
+
+        <?php }?>
+
+    </div>
 
     <nav class="page-navigation">
         <ul class="pagination justify-content-center">
@@ -42,7 +55,7 @@
 </div>
 <?php if($user['status']==='yes'){?>
     <div class="">
-        <a href="<?=$this->uri->segment(1)?>/upload" class="btn btn-primary">쓰기 </a>
+        <a href="/<?=$this->uri->segment(1)?>/upload" class="btn btn-primary">쓰기 </a>
     </div>
 
 <?php } ?>

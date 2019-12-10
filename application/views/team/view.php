@@ -36,7 +36,7 @@
 <?php if(count($programs)==0){?>
     아직 프로그램이 없습니다.
 <?php }else{?>
-    <a href="">검색</a>
+    <a href="/program/lists/1/q?team_id=<?=$team_info['team_id']?>">검색</a>
     <ol>
         <?php foreach ($programs as $key=>$item){?>
             <li>  <a href="/<?=$at_url?>/program/<?=$item['program_id']?>"><?=$item['title']?></a></li>
@@ -45,11 +45,12 @@
 <?php }?>
 
 
-<h2>블로그</h2>
+<h2><a href="/<?=$at_url?>/blog/lists">블로그</a></h2>
 
 <?php if(count($team_blog)==0){?>
     아직 포스트가 없습니다.
 <?php }else{?>
+    <a href="/<?=$at_url?>/blog/lists">검색</a>
     <ol>
         <?php foreach ($team_blog as $b_key=>$b_item){?>
             <li>  <a href="/<?=$at_url?>/blog/<?=$b_item['team_blog_id']?>"><?=$b_item['title']?></a></li>
@@ -62,6 +63,8 @@
 <?php if(count($after_list)==0){?>
     아직 후기가 없습니다.
 <?php }else{?>
+
+    <a href="/after/lists/1/q?team_id=<?=$team_info['team_id']?>">검색</a>
     <ol>
         <?php foreach ($after_list as $a_key=>$a_item){?>
             <li>  <a href="/after/view/<?=$a_item['after_id']?>"><?=$a_item['title']?></a></li>

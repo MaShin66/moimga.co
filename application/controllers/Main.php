@@ -30,7 +30,14 @@ class Main extends MY_Controller {
             'alarm' => $alarm_cnt
         );
 
-        $this->layout->view('main', array('user'=>$user_data));
+        $meta_array = array(
+            'location' => 'main',
+            'section' => 'lists',
+            'title' => '모임가',
+            'desc' => '모임가는 어쩌구 저쩌구',
+        );
+
+        $this->layout->view('main', array('user'=>$user_data,'meta_array'=>$meta_array));
     }
 
 

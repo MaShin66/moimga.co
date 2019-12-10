@@ -53,9 +53,17 @@ class Search extends MY_Controller { //통합검색
             $team_list =  $this->team_model->load_team('',0,8,$search_query);
             $program_list =  $this->program_model->load_program('',0,8,$search_query);
             $after_list =  $this->after_model->load_after('',0,8,$search_query);
+            $team_blog_list =  $this->team_model->load_team_blog('',0,8,$search_query);
 
-            $this->layout->view('search/main', array('user'=>$user_data, 'team_list'=>$team_list,
-                'program_list'=>$program_list,'after_list'=>$after_list,'search_query'=>$search_query));
+            $meta_array = array(
+                'location' => 'search',
+                'section' => 'lists',
+                'title' => '통합검색 > '.$search.' - 모임가',
+                'desc' => '통합검색 > '.$search.' - 모임가',
+            );
+
+            $this->layout->view('search/main', array('user'=>$user_data, 'team_list'=>$team_list,'team_blog_list'=>$team_blog_list,
+                'program_list'=>$program_list,'after_list'=>$after_list,'search_query'=>$search_query,'meta_array'=>$meta_array));
         }
 
     }
@@ -84,6 +92,9 @@ class Search extends MY_Controller { //통합검색
                     $search_query['price']=null;
                     $search_query['event']=null;
                     $result = $this->program_model->load_program('', '', '',$search_query);
+                    break;
+                case 'team_blog':
+                    $result =  $this->team_model->load_team_blog('','','',$search_query);
                     break;
                 default:
                 case 'team':
