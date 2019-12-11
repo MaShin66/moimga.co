@@ -41,10 +41,8 @@ function check_dup_email(){
         data: {email: email},
         success: function (data) {
             if(data!=0) { //있는 경우
-                console.log(data);
                 document.getElementById('email_dup_error').innerHTML = data+'는 이미 가입 된 이메일입니다. 다른 이메일 주소를 입력해주세요.';
                 result ='dup';
-                console.log(data);
             }else{ //중복 없음. 가입 가능
 
                 document.getElementById('email_dup_error').innerHTML = '';

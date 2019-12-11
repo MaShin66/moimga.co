@@ -133,10 +133,11 @@ class Manage extends Manage_Controller {
                 'event'=>null,
                 'price'=>null,
             );
-            $member_list = $this->member_model->load_team_member('','','',$search_query);
-            $program_list =  $this->program_model->load_program('','','',$search_query);
-            $blog_list =  $this->team_model->load_team_blog('','','',$search_query);
-            $after_list =  $this->after_model->load_after('','','',$search_query);
+            $member_list = $this->member_model->load_team_member('',0,8,$search_query);
+            $program_list =  $this->program_model->load_program('',0,8,$search_query);
+            $blog_list =  $this->team_model->load_team_blog('',0,8,$search_query);
+            $after_list =  $this->after_model->load_after('',0,8,$search_query);
+            $subs_list =  $this->subscribe_model->load_subscribe('',0,8,$search_query);
 
             $meta_array = array(
                 'location' => 'manage',
@@ -145,7 +146,7 @@ class Manage extends Manage_Controller {
                 'desc' => '모임가 팀 상세 관리',
             );
 
-            $this->layout->view('manage/team/detail', array('user'=>$user_data,'team_info'=>$team_info,
+            $this->layout->view('manage/team/detail', array('user'=>$user_data,'team_info'=>$team_info,'subs_list'=>$subs_list,
                 'blog_list'=>$blog_list,'member_list'=>$member_list,'program_list'=>$program_list,'after_list'=>$after_list,'meta_array'=>$meta_array));
 
         }else{
@@ -364,6 +365,110 @@ class Manage extends Manage_Controller {
             );
 
             $this->layout->view('manage/after/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'meta_array'=>$meta_array));
+
+        }
+
+    }
+
+    function subscribe($type='lists'){
+
+        $status = $this->data['status'];
+        $user_id = $this->data['user_id'];
+        $level = $this->data['level'];
+        $alarm_cnt = $this->data['alarm'];
+        $user_data = array(
+            'username' => $this->data['username'],
+            'status' => $status,
+            'user_id' => $user_id,
+            'level' => $level,
+            'alarm' => $alarm_cnt
+        );
+
+
+        switch ($type){ //subscribe는 list만 있어도됨
+            default:
+            case 'lists':
+                $this->_subscribe_lists($user_data);
+                break;
+        }
+    }
+
+    function _subscribe_lists($user_data){
+
+        $team_id = $this->uri->segment(4);
+        if(is_null($team_id) || $team_id==''){
+
+            $meta_array = array(
+                'location' => 'manage',
+                'section' => 'basic',
+                'title' => '팀을 찾을 수 없어요! - 모임가',
+                'desc' => '모임가 팀 후기 관리',
+            );
+
+            $this->layout->view('manage/empty', array('user' => $user_data,'meta_array'=>$meta_array));
+
+        }else{
+
+            $search = $this->uri->segment(6);
+            if($search==null){
+                $search_query = array(
+                    'crt_date' => null,
+                    'search' => null,
+                    'team_id'=>$team_id, //기본은 team_id임 로 남긴다..
+                    'user_id'=>null,
+                );
+
+            }else{
+                $sort_date = $this->input->get('crt_date');
+                $sort_search = $this->input->get('search');
+
+                $search_query = array(
+                    'crt_date' => $sort_date,
+                    'search' => $sort_search,
+                    'team_id'=>$team_id,
+                    'user_id'=>null,
+                );
+
+            }
+            $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'];
+
+            $this->load->library('pagination');
+            $config['suffix'] = $q_string;
+            $config['base_url'] = '/manage/subscribe/lists'; // 페이징 주소
+            $config['total_rows'] = $this -> subscribe_model -> load_subscribe('count','','',$search_query); // 게시물 전체 개수
+
+            $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
+            $config['uri_segment'] = 5; // 페이지 번호가 위치한 세그먼트
+            $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
+            $config = pagination_config($config);
+            // 페이지네이션 초기화
+            $this->pagination->initialize($config);
+            // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
+            $data['pagination'] = $this->pagination->create_links();
+
+            // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
+            $page = $this->uri->segment(5);
+            if($page==null){
+                $start=0;
+            }else{
+
+                $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
+            }
+
+            $limit = $config['per_page'];
+
+            $data['result'] = $this->subscribe_model->load_subscribe('', $start, $limit, $search_query);
+            $data['total']=$config['total_rows'];
+
+            $team_info = $this->team_model->get_team_info($team_id);
+            $meta_array = array(
+                'location' => 'manage',
+                'section' => 'subscribe',
+                'title' => '구독 목록 > '.$team_info['name'].' - 모임가',
+                'desc' => '모임가 구독자 관리',
+            );
+
+            $this->layout->view('manage/subscribe/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query,'meta_array'=>$meta_array));
 
         }
 
@@ -960,17 +1065,13 @@ class Manage extends Manage_Controller {
 
         $auth = $this->_get_auth_code('team',$team_id, $user_data['user_id']); //지정하는 사람이 지정할 수 있는지 확인
 
-        if($auth<3) { //권한이 있으면 삭제 (admin, boss)
-            $member_info = array(
-                'type'=>$type, //일반 멤버는 type:2, 대표는 1
-            );
-            $this->member_model->update_team_member($member_id, $member_info);
-            //이 사람한테만 바꾼다..
+        if($auth<3) { //권한이 있으면 변경 (admin, boss)
 
             $alarm_type = 'T8'; //멤버
             if($type=='1'){
                 $alarm_type = 'T9'; //대표
             }
+
             $this_user_info = $this->member_model->get_team_member_info($member_id);
             $my_alarm_data = array(
                 'type'=>$alarm_type,
@@ -982,8 +1083,27 @@ class Manage extends Manage_Controller {
                 'crt_date'=>date('Y-m-d H:i:s')
             );
 
-            $this->alarm_model->insert_alarm($my_alarm_data);
+            $member_info = array(
+                'type'=>$type, //일반 멤버는 type:2, 대표는 1
+            );
+            $this->member_model->update_team_member($member_id, $member_info);
+            //이 사람한테만 바꾼다..
+            $my_team_info = $this->member_model->get_team_member_by_user_id($team_id, $user_data['user_id']);//내 type 가져오기
 
+            if($my_team_info['type']=='1'&&$type=='1'){  //만약 내가 대표이고 post 값이 type1 (대표)면
+                // 지정한 사람이 대표가 되고 (위에서 했음)
+                $my_info = array(
+                    'type'=>2,  //내가 type2가 된다.
+                );
+                $this->member_model->update_team_member($my_team_info['team_member_id'], $my_info);
+                //내가 팀 멤버가 되었다는 알람 넣음
+                $my_alarm_data['type'] = 'T8';
+                $my_alarm_data['user_id'] = $my_team_info['user_id'];
+
+                $this->alarm_model->insert_alarm($my_alarm_data);
+            }
+
+            $this->alarm_model->insert_alarm($my_alarm_data);
 
             alert('선택하신 회원이 '.$this->lang->line('member_'.$type).'로 지정되었습니다.','/manage/member/detail/'.$member_id);
 
@@ -996,6 +1116,7 @@ class Manage extends Manage_Controller {
 
         $member_info = $this->member_model->get_team_member_info($member_id);
         $team_info =   $this->team_model->get_team_info($member_info['team_id']);
+        $my_info = $this->member_model->get_team_member_by_user_id($member_info['team_id'], $user_data['user_id']);
 
         $auth = $this->_get_auth_code('team',$member_info['team_id'], $user_data['user_id']);
 
@@ -1007,7 +1128,8 @@ class Manage extends Manage_Controller {
                 'desc' => '모임가 팀 멤버 관리',
             );
 
-            $this->layout->view('manage/member/detail', array('user'=>$user_data,'member_info'=>$member_info,'team_info'=>$team_info,'meta_array'=>$meta_array));
+            $this->layout->view('manage/member/detail', array('user'=>$user_data,'member_info'=>$member_info,
+                'my_info'=>$my_info,'team_info'=>$team_info,'meta_array'=>$meta_array));
         }else{
             alert('권한이 없습니다. [MD01]');
         }

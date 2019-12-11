@@ -11,10 +11,6 @@
         gtag('config', 'UA-153793050-1');
     </script>
 
-    <?php
-    $location = $this->uri->segment(1);
-    $section = $this->uri->segment(2);
-    ?>
     <meta name="google-site-verification" content="HPAFve_ihMdRMey6ZqxxPNC4CRleSf_LT6xFaWF7cLU" />
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -30,18 +26,8 @@
     <link rel="icon" type="image/x-icon" href="/www/img/favicon.ico" />
 
     <meta name="twitter:card" content="summary_large_image">
-    <?php  switch ($section){
-        case 'forgot_password':
-            $meta_title = '비밀번호 찾기 - moimga';
-            break;
-        case 'register':
-            $meta_title = '회원가입 - moimga';
-            break;
-        default:
-            $meta_title = '로그인 - moimga';
-            break;
-    }?>
-    <title><?=$meta_title?></title>
+
+    <title><?=$meta_array['title']?></title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:400,700" rel="stylesheet">
 
@@ -135,11 +121,6 @@
 
                 <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo">
             </a>
-            <li class="nav-item">
-                <a class="nav-link  <?php if(($location == 'prod')&&($section != 'search'))  {
-                    echo 'active';
-                } ?>" href="/prod" style="padding: 0.85rem 1rem;"><?=$this->lang->line('product')?></a>
-            </li>
         </ul>
         <ul class="nav justify-content-center">
             <li class="nav-item">
@@ -147,7 +128,7 @@
             </li>
             <li class="nav-item">
 
-                <form action="/prod/search/1/q?" class="form-inline" style="margin-top: 8px;">
+                <form action="/search/lists/1/q?" class="form-inline" style="margin-top: 8px;">
 
                     <div class="input-group">
                         <input class="form-control nav-search" type="search" placeholder="<?=$this->lang->line('search')?>" aria-label="Search" name="search" >
@@ -230,18 +211,16 @@
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 <script src="https://apis.google.com/js/api:client.js"></script>
 <script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
-<?php if($section=='register'){ ?>
-    <script src="/www/js/auth.js"></script>
-<?php } ?>
-<?php if($section=='naver_login'){ ?>
-    <script>
-        var error_param = '<?=$this->input->get('error')?>';
-    </script>
-<?php } ?>
 
+<?php if($meta_array['section']=='register'){ ?>
+    <script src="/www/js/register.js"></script>
+<?php } ?>
 <script type="text/javascript" src="/www/js/basic.js"></script>
 <script type="text/javascript" src="/www/js/overlay.js"></script>
-<script type="text/javascript" src="/www/js/login.js"></script>
+
+<?php if($meta_array['section']=='login'){ ?>
+    <script type="text/javascript" src="/www/js/login.js"></script>
+<?php } ?>
 
 
 </body>

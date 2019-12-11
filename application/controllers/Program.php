@@ -257,6 +257,7 @@ class Program extends MY_Controller {
                     if($type=='modify'){
 
                         $program_id = $this->input->post('program_id');
+                        $program_info = $this->program_model->get_program_info($program_id);
                         $this->program_model->update_program($program_id,$data);
 
                         //ajax로 이미 데이터 추가했고, 대괄호 안에 고유 id보관해서 가져옴
@@ -390,8 +391,17 @@ class Program extends MY_Controller {
 
                     $thumbs['thumb_url'] = thumbs_upload('program', $program_id); // 바로 업데이트
                     if(!is_null($thumbs['thumb_url'] )){
+
+                    }
+
+                    if(!is_null($thumbs['thumb_url'] )){ //파일을 업로드 했다는 뜻
+
+                        if($type=='modify'){  //만약 type== modify 면 이전의 파일을 지운다.
+                            unlink(FCPATH . $program_info['thumb_url']);
+                        }
                         $this->program_model->update_program($program_id,$thumbs);
                     }
+
 
 
                     //다 끝나면 redirect

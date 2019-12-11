@@ -267,7 +267,7 @@ class Auth extends MY_Controller
 
             $meta_array = array(
                 'location' => 'auth',
-                'section' => 'basic', //login이 아닌 auth는 모두 basic 사용
+                'section' => 'register', //login이 아닌 auth는 모두 basic 사용
                 'title' => '회원가입 - 모임가',
                 'desc' => '모임가 회원가입',
             );
@@ -532,7 +532,7 @@ class Auth extends MY_Controller
 		}
         $meta_array = array(
             'location' => 'auth',
-            'section' => 'basic', //login이 아닌 auth는 모두 basic 사용
+            'section' => 'register', //login이 아닌 auth는 모두 basic 사용
             'title' => '비밀번호 재설정 - 모임가',
             'desc' => '모임가 비밀번호 재설정',
         );
@@ -565,7 +565,7 @@ class Auth extends MY_Controller
             );
 			$this->form_validation->set_rules('old_password', '현재 비밀번호', 'trim|required|xss_clean');
 			$this->form_validation->set_rules('new_password', '새 비밀번호', 'trim|required|xss_clean|min_length['.$this->config->item('password_min_length', 'tank_auth').']|max_length['.$this->config->item('password_max_length', 'tank_auth').']');
-			$this->form_validation->set_rules('confirm_new_password', '비밀번호 재입력', 'trim|required|xss_clean|matches[new_password]');
+			$this->form_validation->set_rules('confirm_new_password', '새 비밀번호 확인', 'trim|required|xss_clean|matches[new_password]');
 
 			$data['errors'] = array();
 
@@ -582,7 +582,7 @@ class Auth extends MY_Controller
 			}
             $meta_array = array(
                 'location' => 'auth',
-                'section' => 'basic', //login이 아닌 auth는 모두 basic 사용
+                'section' => 'register',
                 'title' => '비밀번호 변경 - 모임가',
                 'desc' => '모임가 비밀번호 변경',
             );
@@ -643,7 +643,7 @@ class Auth extends MY_Controller
 			}
             $meta_array = array(
                 'location' => 'auth',
-                'section' => 'basic', //login이 아닌 auth는 모두 basic 사용
+                'section' => 'register', //login이 아닌 auth는 모두 basic 사용
                 'title' => '이메일 변경 - 모임가',
                 'desc' => '모임가 이메일 변경',
             );

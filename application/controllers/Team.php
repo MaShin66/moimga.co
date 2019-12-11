@@ -160,8 +160,8 @@ class Team extends MY_Controller {
             //print_r($data);
 
             if($type=='modify'){
-
                 $team_id = $this->input->post('team_id');
+                $team_info = $this->team_model->get_team_info($team_id);
                 $this->team_model->update_team($team_id,$data);
 
             }else{ //새로 쓰기
@@ -192,7 +192,11 @@ class Team extends MY_Controller {
             //thumb 지정.. thumbs_helper 이용한다..
 
             $thumbs['thumb_url'] = thumbs_upload('team', $team_id); // 바로 업데이트
-            if(!is_null($thumbs['thumb_url'] )){
+            if(!is_null($thumbs['thumb_url'] )){ //파일을 업로드 했다는 뜻
+
+                if($type=='modify'){  //만약 type== modify 면 이전의 파일을 지운다.
+                    unlink(FCPATH . $team_info['thumb_url']);
+                }
                  $this->team_model->update_team($team_id,$thumbs);
             }
 

@@ -216,13 +216,29 @@
 <script type="text/javascript" src="/www/js/overlay.js"></script>
 <script type="text/javascript" src="/www/js/basic.js"></script>
 
-<?php if(($meta_array['location']=='program'||$meta_array['location']=='team')){?>
+<!--js정리-->
+
+<?php if($meta_array['location']=='program'&&$meta_array['section']=='view'){?>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b96a3667e5757f2d026734edddb51d5e&autoload=false"></script>
-    <script type="text/javascript" src="/www/js/heart.js"></script>
 
 <?php }?>
-<?php if($meta_array['section']=='upload'){ ?>
-
+<?php
+switch ($meta_array['location']){
+    //아래 3개는 section에 따라 불러오는 js 가 다르다.
+    case 'team':
+    case 'team_blog':
+    case 'after':
+    case 'program':
+        switch ($meta_array['section']){
+            case 'lists': ?>
+    <script type="text/javascript" src="/www/js/<?=$meta_array['section']?>.js"></script>
+                <?php break;
+            case 'view': ?>
+    <script type="text/javascript" src="/www/js/<?=$meta_array['location']?>.js"></script>
+    <script type="text/javascript" src="/www/js/<?=$meta_array['section']?>.js"></script>
+    <script type="text/javascript" src="/www/js/heart.js"></script> <!--after, team_blog제외-->
+                <?php break;
+            case 'upload':?>
     <script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>
     <script type="text/javascript" src="/www/js/moment-with-locales.min.js"></script>
     <script type="text/javascript" src="/www/js/jquery-asDatepicker.js"></script>
@@ -231,15 +247,13 @@
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script type="text/javascript" src="/www/js/upload/editor.js"></script>
     <script type="text/javascript" src="/www/js/upload/<?= $meta_array['location'] ?>.js"></script>
-<?php }else{ ?>
-
-    <script type="text/javascript" src="/www/js/<?= $meta_array['location'] ?>.js"></script>
-    <script type="text/javascript" src="/www/js/<?= $meta_array['section'] ?>.js"></script>
-<?php }?>
-
-<?php if($meta_array['location']=='manage'){?>
-    <script type="text/javascript" src="/www/js/<?= $meta_array['section'] ?>.js"></script>
-<?php }?>
+                <?php break;
+        }
+        break;
+    default: // 나머지는 location ?>
+        <script type="text/javascript" src="/www/js/<?=$meta_array['location']?>.js"></script>
+        <?php break;
+}?>
 
 </body>
 </html>

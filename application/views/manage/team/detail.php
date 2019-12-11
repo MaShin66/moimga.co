@@ -88,6 +88,19 @@
     <?php }?>
 
 </ol>
+
+<h3>구독자</h3>
+
+<ol>
+    <a href="/manage/subscribe/lists/<?=$team_info['team_id']?>">구독자 목록</a>
+
+    <?php foreach ($subs_list as $sc_key=>$sc_item){?>
+        <li><?=$sc_item['nickname']?> (<?=$sc_item['realname']?>)</li>
+
+    <?php }?>
+
+</ol>
+
 <h3>사용자 후기</h3>
 
 <ul>

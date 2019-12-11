@@ -136,6 +136,14 @@ class Member_model extends CI_Model
         }
     }
 
+    function get_team_member_by_user_id($team_id, $user_id){
+        $this->db->where('user_id' ,$user_id);
+        $this->db->where('team_id' ,$team_id);
+        $query = $this->db->get('team_member');
+        $result = $query -> row_array();
+        return $result; //대표 1, 일반 멤버 2
+
+    }
     function delete_team_member_by_team_id($team_id){
 
         $this->db->where('team_id', $team_id);

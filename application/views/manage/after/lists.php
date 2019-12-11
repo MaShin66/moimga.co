@@ -40,7 +40,7 @@
 
         <?php if($data['total']==0){?>
             <tr>
-                <td colspan="9" class="form_empty">아직 남겨진 후기가 없습니다.</td>
+                <td colspan="2" class="form_empty">아직 남겨진 후기가 없습니다.</td>
             </tr>
 
         <?php }?>
