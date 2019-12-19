@@ -3,8 +3,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
-    <title>Welcome to CodeIgniter</title>
+    <title>모임가</title>
+    <meta name="description" content="12.24, 크리스마스 이브에 다시 열립니다">
 
     <style type="text/css">
 
@@ -67,7 +70,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </head>
 <body>
 <div style="text-align: center">
-    <img src="https://1.bp.blogspot.com/-LlYXmrpaQus/XfraVJmEJNI/AAAAAAAAWrs/NEGyxY_F2L0pBbQ06rSfd9yfOyY1ol7cACK4BGAYYCw/s1600/191120%2B2%25EC%2595%2588.png" >
+    <img src="https://3.bp.blogspot.com/-2OyaWKEhQXQ/XfrbWYsJVbI/AAAAAAAAWr4/EUJCleRlQEw34RUT5HbRlnMqBlSNBbl2ACK4BGAYYCw/s1600/KakaoTalk_20191219_104157777.jpg" >
 
 </div>
 
