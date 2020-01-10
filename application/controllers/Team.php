@@ -48,6 +48,7 @@ class Team extends MY_Controller {
                 'status'=>'on',
                 'after'=>null,
                 'subscribe'=>null,
+                'login_user'=>$user_id,
             );
 
         }else{
@@ -55,6 +56,7 @@ class Team extends MY_Controller {
             $sort_search = $this->input->get('search');
             $sort_after = $this->input->get('after');
             $sort_subscribe = $this->input->get('subscribe');
+            $sort_login_user = $this->input->get('login_user');
 
             $search_query = array(
                 'crt_date' => $sort_date,
@@ -63,6 +65,7 @@ class Team extends MY_Controller {
                 'status'=>'on', //무조건 공개
                 'after'=>$sort_after,
                 'subscribe'=>$sort_subscribe,
+                'login_user'=>$sort_login_user,
             );
 
             if($sort_search!=null || $sort_search !=''){
@@ -110,6 +113,14 @@ class Team extends MY_Controller {
             'desc' => $meta_desc,
         );
 
+        foreach ($data['result'] as $d_key => $d_item){ //desc 가져오기
+
+            $text = substr($d_item['contents'], 0, 500);
+            $text = addslashes($text);
+            $content = strip_tags($text);
+            $data['result'] [$d_key]['contents'] = str_replace("&nbsp;", "", $content);
+        }
+
         $this->layout->view('team/list', array('user'=>$user_data,'result'=>$data,'search_query'=>$search_query,'meta_array'=>$meta_array));
     }
 
@@ -144,6 +155,7 @@ class Team extends MY_Controller {
             $title = $this->input->post('title');
             $contents = $this->input->post('contents');
             $status = $this->input->post('status');
+            $external_link = $this->input->post('external_link');
 
             if($status!='on'){
                 $status = 'off';
@@ -154,6 +166,7 @@ class Team extends MY_Controller {
                 'title'=>$title,
                 'name'=>$name,
                 'contents'=>$contents,
+                'external_link'=>$external_link,
                 'status'=>$status, //공개 여부
             );
 
@@ -224,6 +237,7 @@ class Team extends MY_Controller {
                     'title'=>null,
                     'contents'=>null,
                     'status'=>'on',
+                    'external_link'=>null,
                     'thumbs_url'=>null,//기본 섬네일 지정,
                     'type'=>'new' //새로 글쓰기
                 );

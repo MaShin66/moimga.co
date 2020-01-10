@@ -27,6 +27,14 @@
 <h1>팀 정보</h1>
 <h2><?=$team_info['title']?></h2>
 <h3><?=$team_info['name']?></h3>
+
+<?php if($team_info['external_link']!=null || $team_info['external_link']!=''){?>
+
+    <div class="">
+        <a href="<?=$team_info['external_link']?>" target="_blank" rel="noopener" class="">공식채널로 가기</a>
+    </div>
+
+<?php } ?>
 <div class="">
     <?=$team_info['contents']?>
 </div>

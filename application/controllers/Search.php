@@ -48,7 +48,8 @@ class Search extends MY_Controller { //통합검색
                 'subscribe'=>null, //team
                 'after'=>null, //team
                 'price'=>null,//program
-                'event'=>null,//program
+                'event'=>null,//program,
+                'login_user'=>null, //team
             );
             $team_list =  $this->team_model->load_team('',0,8,$search_query);
             $program_list =  $this->program_model->load_program('',0,8,$search_query);
@@ -98,6 +99,7 @@ class Search extends MY_Controller { //통합검색
                     break;
                 default:
                 case 'team':
+                    $search_query['login_user']=null;
                     $result =  $this -> team_model->load_team('','','',$search_query);
                     break;
             }

@@ -232,6 +232,7 @@ class Program extends MY_Controller {
                     $status = $this->input->post('status');
                     $latitude = $this->input->post('latitude');
                     $longitude= $this->input->post('longitude');
+                    $external_link = $this->input->post('external_link');
 
                     //array
 
@@ -250,6 +251,7 @@ class Program extends MY_Controller {
                         'price'=>$price,
                         'address'=>$address,
                         'contents'=>$contents,
+                        'external_link'=>$external_link,
                         'latitude'=>$latitude,
                         'longitude'=>$longitude,
                         'status'=>$status,
@@ -431,7 +433,7 @@ class Program extends MY_Controller {
                             'district'=>null,
                             'venue'=>null,
                             'price'=>null,
-
+                            'external_link'=>null,
                             'address'=>null,
                             'latitude'=>null, //지도용 위도
                             'longitude'=>null, //지도용 경도

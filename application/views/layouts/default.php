@@ -4,15 +4,6 @@
     <?php
     $og_url = '/www/img/og_logo.jpg';
     $meta_title = 'moimga';
-    $location = $this->uri->segment(1);
-    $section = $this->uri->segment(2);
-    $detail = $this->uri->segment(3);
-    $query = $this->uri->segment(4);
-    //team 구하기 위해서..
-    //explode 계속하면 너무 귀찮을텐데..ㅠㅠ 흑흑..
-    if($location[0]=='@'){
-        $location = 'team';
-    }
     ?>
     <!-- ga-->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -57,6 +48,7 @@
     <meta name="image" content="<?=$og_url?>">
     <meta property="og:image" content="<?=$og_url?>">
     <meta name="twitter:image" content="<?=$og_url?>">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:200,400,600,700" rel="stylesheet">
     <!-- IE -->
     <link rel="shortcut icon" type="image/x-icon" href="/www/img/favicon.ico" />
     <!-- other browsers -->
@@ -65,7 +57,7 @@
     <link rel="stylesheet" href="/www/css/bootstrap.css">
     <link rel="stylesheet" href="/www/css/basic.css">
     <link rel="stylesheet" href="/www/css/quill.css"> <!--wzwg--->
-    <?php if($section=='upload'||$detail=='upload'){?>
+    <?php if($meta_array['section']=='upload'){?>
         <link rel="stylesheet" href="/www/css/asDatepicker.css">
     <?php }?>
     <link rel="stylesheet" href="/www/css/<?=$meta_array['location']?>.css">
@@ -74,7 +66,7 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-md fixed-top bg-light">
+<nav class="navbar navbar-expand-md fixed-top bg-light moimga_top">
     <div class="container hidden-md-up">
 
         <div class="row" style="width: 100%;">
@@ -136,50 +128,72 @@
                 <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo" >
             </a>
             <li class="nav-item">
-                <a class="nav-link  <?php if ($location== 'team') {
+                <a class="nav-link menu_padding  <?php if ($meta_array['location']== 'team') {
                     echo 'active';
-                } ?>" href="/team" style="padding: 0.85rem 1rem;">팀</a>
+                } ?>" href="/team">팀</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link  <?php if ($location== 'program') {
+                <a class="nav-link menu_padding <?php if ($meta_array['location']== 'program') {
                     echo 'active';
-                } ?>" href="/program" style="padding: 0.85rem 1rem;">프로그램</a>
+                } ?>" href="/program" >프로그램</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link  <?php if ($location== 'after') {
+                <a class="nav-link menu_padding <?php if ($meta_array['location']== 'after') {
                     echo 'active';
-                } ?>" href="/after" style="padding: 0.85rem 1rem;">후기</a>
+                } ?>" href="/after" >후기</a>
             </li>
-            <form action="/search" method="get">
-                <input type="text" name="search">
-                <input type="submit" value="검색">
-            </form>
+
         </ul>
         <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link menu_padding  <?php if ($meta_array['location']== 'magazine') {
+                    echo 'active';
+                } ?>" href="/magazine">Magazine</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link menu_padding <?php if ($meta_array['location']== 'shop') {
+                    echo 'active';
+                } ?>" href="/shop" >Shop</a>
+            </li>
+
+        </ul>
+        <ul class="nav">
+            <li class="nav-item">
+                <form action="/search?" method="get">
+                    <div class="input-group input-group-sm">
+                        <input type="text" name="search" class="form-control" placeholder="검색">
+
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+
+            </li>
             <?php if($user['status']=='no'){?>
                 <li class="nav-item">
-                    <a class="nav-link alarm-nav <?php if ($location == 'auth') {
+                    <a class="nav-link menu_padding <?php if ($meta_array['location'] == 'auth') {
                         echo 'active';
                     } ?>" href="/auth">로그인</a>
                 </li>
             <?php }else{//로그인 후 ?>
                 <li class="nav-item">
-                    <a class="nav-link alarm-nav <?php if ($location == 'alarm') {
+                    <a class="nav-link menu_padding <?php if ($meta_array['location'] == 'alarm') {
                         echo 'active';
-                    } ?>" href="/alarm">알람</a>
+                    } ?>" href="/alarm"><i class="fas fa-bell"></i></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link alarm-nav <?php if ($location == 'mypage') {
+                    <a class="nav-link menu_padding <?php if ($meta_array['location'] == 'mypage') {
                         echo 'active';
                     } ?>" href="/mypage">마이페이지</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link alarm-nav <?php if ($location == 'manage') {
+                    <a class="nav-link menu_padding <?php if ($meta_array['location'] == 'manage') {
                         echo 'active';
                     } ?>" href="/manage/team">관리</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link alarm-nav" href="/auth/logout">로그아웃</a>
+                    <a class="nav-link menu_padding" href="/auth/logout">로그아웃</a>
                 </li>
             <?php }?>
 
@@ -228,6 +242,8 @@ switch ($meta_array['location']){
     case 'team':
     case 'team_blog':
     case 'after':
+    case 'magazine':
+    case 'shop':
     case 'program':
         switch ($meta_array['section']){
             case 'lists': ?>

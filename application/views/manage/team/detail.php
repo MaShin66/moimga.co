@@ -47,6 +47,18 @@
 </div>
 
 
+
+<div class="">
+    외부 소개 링크:
+
+    <?php if($team_info['external_link']!=null || $team_info['external_link']!=''){?>
+        링크가 없습니다.
+    <?php }else{?>
+
+        <span><?=$team_info['external_link']?></span>
+        <a href="<?=$team_info['external_link']?>" target="_blank" rel="noopener" class="">이동</a>
+    <?php } ?>
+</div>
 <h3>프로그램</h3>
 <a href="/@<?=$team_info['url']?>/program/upload" class="btn btn-outline-primary">프로그램 만들기</a>
 

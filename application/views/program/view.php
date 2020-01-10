@@ -29,6 +29,16 @@
 <div class="">장소: <?=$program_info['venue']?></div>
 <div class="">주소: <?=$program_info['address']?></div>
 <div class="">내용: <?=$program_info['contents']?></div>
+
+<?php if($program_info['external_link']!=null || $program_info['external_link']!=''){?>
+
+    <div class="">
+        <a href="<?=$program_info['external_link']?>" target="_blank" rel="noopener" class="">신청하기</a>
+    </div>
+
+<?php } ?>
+
+
 <h2>행사 날짜, 시간</h2>
 
 <ol>

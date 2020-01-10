@@ -1,7 +1,60 @@
+:root {
+    --white: #ffffff;
+    --black-85: rgba(0, 0, 0, 0.85);
+    --black-40: rgba(0, 0, 0, 0.4);
+    --white-two: #e8e8e8;
+    --white-zero: #e0e0e0;
+    --main: #e2d4c9;
+}
+
+a {
+    color: var(--greenblue);
+    text-decoration: none;
+    background-color: transparent;
+    -webkit-text-decoration-skip: objects;
+
+}
+
+a:hover{
+
+    -webkit-transition: all 0.25s ease;
+    -moz-transition: all 0.25s ease;
+    -ms-transition: all 0.25s ease;
+    -o-transition: all 0.25s ease;
+    transition: all 0.25s ease;
+    color: var(--hovergreen);
+}
+
+body{
+    letter-spacing: -1px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+}
 .cont-padding{
     padding-top: 80px;
 }
 
+.moimga_top{
+    padding: 0 !important;
+    background-color: #fff !important;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.menu_padding{
+    padding: 0.85rem 1rem;
+}
+.nav-logo{
+    width: 60px;
+    margin-bottom: 2px;
+}
+.nav-item > .active,
+.nav-item > a:hover{
+    color: var(--black-85);
+    border-bottom: 2px solid var(--black-85);
+}
+.nav-item > a{
+    color: var(--black-40);
+}
 .open .dropdown-menu{
     display: block;
 }
@@ -15,6 +68,20 @@
     text-decoration: none;
     background-color: var(--greenblue);
 }
+
+/*buttons*/
+.btn-outline-search {
+    color: var(--gray-d);
+    font-size: 0.85rem;
+    background-color: #fff;
+    border-right: 1px solid var(--gray-d);
+    border-top: 1px solid var(--gray-d);
+    border-bottom: 1px solid var(--gray-d);
+    border-left: none;
+    border-top-right-radius: 10rem;
+    border-bottom-right-radius: 10rem;
+}
+
 
 
 /* Breakpoint XS */

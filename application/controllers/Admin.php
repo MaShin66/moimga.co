@@ -424,6 +424,7 @@ class Admin extends Admin_Controller
                 'user_id' => null,
                 'subscribe'=>null,
                 'after'=>null,
+                'login_user'=>null,
             );
 
         }else{
@@ -441,7 +442,7 @@ class Admin extends Admin_Controller
                 'user_id' => $sort_user_id,
                 'subscribe'=>$sort_subscribe,
                 'after'=>$sort_after,
-
+                'login_user'=>null,
             );
 
         }
@@ -579,8 +580,6 @@ class Admin extends Admin_Controller
 
         }
     }
-
-
     function _magazine_list($user_data){
 
         $search = $this->uri->segment(5);
@@ -645,6 +644,109 @@ class Admin extends Admin_Controller
         alert('포스트가 삭제되었습니다.','/admin/magazine');
 
     }
+
+    function shop($type = 'list')
+    {
+        $status = $this->data['status'];
+        $user_id = $this->data['user_id'];
+        $level = $this->data['level'];
+        $user_data = array(
+            'status' => $status,
+            'user_id' => $user_id,
+            'level' => $level
+        );
+
+        if (!$this->tank_auth->is_logged_in()) {
+
+            show_error('접근이 불가능합니다.');
+        } else {
+            if ($user_data['level'] != 9) {
+
+                show_error('접근이 불가능합니다.');
+            } else {
+
+                switch ($type){
+                    case 'list':
+                        $this->_shop_list($user_data);
+                        break;
+                    case 'delete':
+                        $shop_id = $this->input->post('shop_id');
+                        $this->_shop_delete($shop_id);
+                        break;
+                    default:
+                        $this->_shop_list($user_data);
+                        break;
+                }
+
+            }
+
+        }
+    }
+    function _shop_list($user_data){
+
+        $search = $this->uri->segment(5);
+
+        if($search==null){
+            $search_query = array(
+                'search' => null,
+                'status' =>null,
+                'crt_date' =>null,
+            );
+
+        }else{
+            $sort_date = $this->input->get('crt_date');
+            $sort_search = $this->input->get('search');
+            $sort_status = $this->input->get('status');
+
+            $search_query = array(
+                'search' => $sort_search,
+                'status' => $sort_status,
+                'crt_date' => $sort_date,
+            );
+
+        }
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'];
+
+        $this->load->library('pagination');
+        $config['suffix'] = $q_string;
+        $config['base_url'] = '/admin/shop/lists'; // 페이징 주소
+        $config['total_rows'] = $this -> shop_model -> load_shop('count','','',$search_query); // 게시물 전체 개수
+
+        $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
+        $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
+        $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
+        $config = pagination_config($config);
+        // 페이지네이션 초기화
+        $this->pagination->initialize($config);
+        // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
+        $data['pagination'] = $this->pagination->create_links();
+
+        // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
+        $page = $this->uri->segment(4);
+
+
+        if($page==null){
+            $start=0;
+        }else{
+            $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
+        }
+
+        $limit = $config['per_page'];
+
+        $data['result'] = $this->shop_model->load_shop('', $start, $limit, $search_query);
+        $data['total']=$config['total_rows'];
+
+        $this->layout->view('admin/shop/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+
+    }
+
+    function _shop_delete($shop_id){
+        $this->shop_model->delete_shop($shop_id); //진짜 삭제
+
+        alert('포스트가 삭제되었습니다.','/admin/shop');
+
+    }
+    
     function team_blog($type = 'list',$team_blog_id=null)
     {
         $status = $this->data['status'];
@@ -1808,6 +1910,9 @@ class Admin extends Admin_Controller
             case 'magazine':
                 $this->magazine_model->update_magazine($unique_id,$status_data);
                 break;
+            case 'shop':
+                $this->shop_model->update_shop($unique_id,$status_data);
+                break;
             default:
             case 'team':
                 $this->team_model->update_team($unique_id,$status_data);
@@ -1835,8 +1940,8 @@ class Admin extends Admin_Controller
             'protocol' => "smtp",
             'smtp_host' => "ssl://smtp.gmail.com",
             'smtp_port' => "465",//"587", // 465 나 587 중 하나를 사용
-            'smtp_user' => "admin@takemm.com",
-            'smtp_pass' => "fortis53",
+            'smtp_user' => "admin@moimga.co",
+            'smtp_pass' => "--",
             'charset' => "utf-8",
             'newline' => "\r\n",
             'mailtype' => "html",

@@ -25,6 +25,17 @@
 </div>
 
 <div class="">
+    신청 링크:
+
+<?php if($program_info['external_link']!=null || $program_info['external_link']!=''){?>
+링크가 없습니다.
+<?php }else{?>
+
+    <span><?=$program_info['external_link']?></span>
+    <a href="<?=$program_info['external_link']?>" target="_blank" rel="noopener" class="">이동</a>
+<?php } ?>
+</div>
+<div class="">
     프로그램을 삭제하시면 ..
     신중하게 사용해라 어ㅉㅓ구 저쩌구..
 </div>

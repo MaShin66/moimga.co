@@ -36,6 +36,12 @@ if($result['status']=='on'){
         <div id="url_dup_error"></div>
     </div>
 
+    <div class="">
+        외부링크
+
+        <input type="text" name="external_link" value="<?=$result['external_link']?>" class="form-control" id="team_external_link">
+        <span class="editor_desc">팀을 설명하는 웹페이지가 있다면 적어주세요.</>
+    </div>
 
     <div class="">
         내용

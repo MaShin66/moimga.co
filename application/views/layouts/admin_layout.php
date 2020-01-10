@@ -101,6 +101,9 @@
                 <li class="nav-item">
                     <a class="nav-link <?php if($location=='magazine'){echo 'active';}?>" href="/admin/magazine">매거진</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php if($location=='shop'){echo 'active';}?>" href="/admin/shop">샵</a>
+                </li>
             </ul>
 
         </div>

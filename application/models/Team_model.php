@@ -10,7 +10,7 @@ class Team_model extends CI_Model
     //load, get, update, delete
 
     function load_team($type = '', $offset = '', $limit = '', $search_query){
-        $this->db->select('team.*, users.nickname');
+        $this->db->select('team.*, users.nickname, \'off\' as heart_on'); //heart 클릭돼있는지 확인하기위해 heart_on을 넣음. 기본값은 off임
         $this->db->join('users','users.id = team.user_id');
 
         if(!is_null($search_query['user_id'])){
@@ -73,10 +73,30 @@ GROUP BY A.team_id
             $result = $query -> num_rows();
         } else {
             $result = $query -> result_array();
-        }
-        //내 포지션도 써야하는데..
+            //team_heart는 전체 출력 후에 내가 누른것만 봐야하기 때문에 join 못함
+            if($search_query['login_user']!='0'){ //로그인 돼있으면 리스트에 하트 출력해야함
+                foreach ($result as $key=>$value){
+                    $result[$key]['heart_on'] = $this->is_heart_on($value['team_id'], $search_query['login_user']);
+                }
 
+            }
+
+        }
         return $result;
+    }
+
+    function is_heart_on($team_id, $user_id){
+        $value = 'off';
+        $this->db->where('team_id' ,$team_id);
+        $this->db->where('user_id' ,$user_id);
+
+        $query = $this->db->get('team_heart');
+        $result = $query -> num_rows();
+        if($result>0){
+            $value = 'on';
+        }
+
+        return $value;
     }
 
     function get_team_info($team_id)

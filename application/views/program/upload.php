@@ -25,6 +25,12 @@ if($result['status']=='on'){
         <input type="text" name="title" value="<?=$result['title']?>" class="form-control" id="program_title">
     </div>
     <div class="">
+        신청링크
+
+        <input type="text" name="external_link" value="<?=$result['external_link']?>" class="form-control" id="external_link">
+        <span class="editor_desc">프로그램 참여 신청페이지가 있다면 적어주세요. 입력하지 않으면 출력되지 않습니다.</span>
+    </div>
+    <div class="">
         참가인원
 
         <input type="number" min="0" max="999" name="participant" value="<?=$result['participant']?>" class="form-control" id="participant">

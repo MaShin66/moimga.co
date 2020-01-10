@@ -17,7 +17,7 @@ class MY_Controller extends CI_Controller{
             $this->data['status'] = 'yes';
 
         } else{
-            if($this->uri->segment(1)!='auth'){
+            if($this->uri->segment(1)!='auth'&&$this->uri->segment(1)!='heart'&&$this->uri->segment(1)!='subscribe'){
                 $this->session->set_userdata('login_before', current_url());
             }
             $this->data['user_id'] = 0;
@@ -60,7 +60,7 @@ class Admin_Controller extends CI_Controller{
     {
         parent::__construct();
         $this->load->library('tank_auth');
-        $this->load->model(array('user_model','team_model','form_model','program_model','after_model','heart_model',
+        $this->load->model(array('user_model','team_model','form_model','program_model','after_model','heart_model','shop_model',
             'subscribe_model','alarm_model','member_model','magazine_model','admin_model','verify_model'));
         //redirect('/welcome'); //업데이트
         if ($this->tank_auth->is_logged_in()) {									// logged in
@@ -103,35 +103,6 @@ class Manage_Controller extends CI_Controller{
             $unique_id = $this->uri->segment(4);
 
             $basic_info = $this->team_model->get_team_info($unique_id);
-//            switch ($location){
-//                //unique 로 얘만 moim_id를 사용
-//                case 'team':
-//                    $basic_info = $this->team_model->get_team_info($unique_id);
-//                    break;
-//
-//                case 'program':
-//                    $basic_info = $this->team_model->get_team_info($unique_id);
-//                    break;
-//
-//                case 'team_member':
-//                    $basic_info = $this->team_model->get_team_info($unique_id);
-//                    break;
-//                case 'blog':
-//                    $basic_info = $this->team_model->get_team_info($unique_id);
-//                    break;
-//                case 'after':
-//                    $basic_info = $this->team_model->get_team_info($unique_id);
-//                    break;
-//
-//                //unique 로 모두 application_id 을 쓴다
-//                default:
-////                case 'application':
-////                case 'after':
-////                case 'deposit':
-////                $basic_info = $this->program_model->get_application_info($unique_id);
-//
-//                    break;
-//            }
 
             if($location!=null&&$section!='upload'){
                 //redirect 하기
