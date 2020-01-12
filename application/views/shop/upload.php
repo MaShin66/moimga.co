@@ -16,6 +16,16 @@ $write_type=$this->input->get('write');
 
 			<input type="text" class="form-control" value="<?php if($write_type=='modify'){echo $result['title'];} ?>" name="title">
 		</div>
+        <div class="">
+
+            <h2 class="form_p_title">카테고리</h2>
+            <select name="category_id" class="form-control">
+                <?php foreach ($cate_list as $key=>$item){?>
+                    <option value="<?=$item['shop_category_id']?>" <?php if($write_type=='modify'&&($result['category_id']==$item['shop_category_id'])){echo 'selected';} ?> ><?=$item['title']?></option>
+                <?php }?>
+
+            </select>
+        </div>
 		<div class="">
 			<hr>
 			<h2 class="form_p_title">내용</h2>
@@ -52,12 +62,12 @@ $write_type=$this->input->get('write');
                 <div class="col-lg-3 col-md-3 col-sm-12">
                     <?php if($write_type=='modify'){
                         if($result['thumb_url']!=null){?>
-                            <img  class="upload_thumbs_sm" src="../../<?=$result['thumb_url']?>" alt="매거진 섬네일">
+                            <img  class="upload_thumbs_sm" src="../../<?=$result['thumb_url']?>" alt="콘텐츠 섬네일">
                         <?php }else{ ?>
-                            <img class="upload_thumbs_sm" src="/www/thumbs/shop/basic.jpg" alt="매거진 섬네일">
+                            <img class="upload_thumbs_sm" src="/www/thumbs/shop/basic.jpg" alt="콘텐츠 섬네일">
                         <?php }
                     }else{?>
-                        <img class="upload_thumbs_sm" src="/www/thumbs/shop/basic.jpg" alt="매거진 섬네일">
+                        <img class="upload_thumbs_sm" src="/www/thumbs/shop/basic.jpg" alt="콘텐츠 섬네일">
                     <?php }?>
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-12">
@@ -80,7 +90,7 @@ $write_type=$this->input->get('write');
         </div>
         
 		<input type="hidden" value="<?=$user['user_id']?>" name="user_id">
-		<input type="submit" value="등록하기" class="btn  btn-lg btn-full btn-primary upload_ok">
+		<input type="submit" value="등록하기" class="btn  btn-lg btn-full btn-action upload_ok">
 	</form>
 </div>
 

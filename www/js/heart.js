@@ -12,12 +12,14 @@ function heart(type, unique_id) {
             switch (result){
 
                 case 'done':
-                    $('.btn-heart').addClass('btn-heart-active').removeClass('btn-heart');
+
+                    $('.heart_btn').html('<i class="fas fa-heart heart_active"></i>');
+
                     $('#heart_cnt').text(heart_cnt+1);
                     break;
                 case 'cancel':
 
-                    $('.btn-heart-active').addClass('btn-heart').removeClass('btn-heart-active');
+                    $('.heart_btn').html('<i class="far fa-heart"></i>');
                     $('#heart_cnt').text(heart_cnt-1);
                     alert('추천이 취소되었습니다.');
                     break;

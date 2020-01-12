@@ -45,6 +45,6 @@ $write_type=$this->input->get('write');
 		<?php } ?>
 
 		<input type="hidden" value="<?=$user['user_id']?>" name="user_id">
-		<input type="submit" value="등록하기" class="btn  btn-lg btn-full btn-primary upload_ok">
+		<input type="submit" value="등록하기" class="btn  btn-lg btn-full btn-action upload_ok">
 	</form>
 </div>

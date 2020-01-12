@@ -1,4 +1,8 @@
 <?php
+
+$blog_count = count($team_blog);
+$program_count = count($programs);
+
 /**
  * Created by PhpStorm.
  * User: USER
@@ -9,74 +13,173 @@
 
 <?php if($as_member){?>
     <div class="">
-        <a href="/manage/team/detail/<?=$team_info['team_id']?>" class="btn btn-outline-primary">관리</a>
+        <a href="/manage/team/detail/<?=$team_info['team_id']?>" class="btn btn-outline-action">관리</a>
         <a href="/team/upload/<?=$team_info['team_id']?>?type=modify" class="btn btn-outline-secondary">수정</a>
     </div>
 <?php }?>
 
-<div class="subscribe" onclick="set_subscribe(<?=$team_info['team_id']?>)">
-북마크
-</div>
+<div class="list_top">
 
-    <div class="btn-heart" onclick="heart('team',<?=$team_info['team_id']?>)">하트
-        <span id="heart_cnt"><?=$team_info['heart_count']?></span>
+    <h1 class="top_title"><?=$team_info['name']?></h1>
+    <h2 class="top_desc"><?=$team_info['title']?></h2>
+</div>
+<div class="team_top">
+    <div class="tt_item">
+        <span class="tt_title">구독하기</span>
+        <span class="tt_cont subscribe_btn" onclick="set_subscribe(<?=$team_info['team_id']?>)">
+            <?php if(!is_null($check_bookmark)){?>
+                <i class="fas fa-bookmark subscribe_active"></i>
+            <?php }else{?>
+                <i class="far fa-bookmark"></i>
+            <?php }?>
+
+        </span>
     </div>
 
+    <div class="tt_item">
+        <span class="tt_title">하트로 응원</span>
 
-
-<h1>팀 정보</h1>
-<h2><?=$team_info['title']?></h2>
-<h3><?=$team_info['name']?></h3>
-
-<?php if($team_info['external_link']!=null || $team_info['external_link']!=''){?>
-
-    <div class="">
-        <a href="<?=$team_info['external_link']?>" target="_blank" rel="noopener" class="">공식채널로 가기</a>
+        <span class="tt_cont heart_btn"  onclick="heart('team',<?=$team_info['team_id']?>)">
+            <?php if(!is_null($check_heart)){?>
+                <i class="fas fa-heart heart_active"></i>
+            <?php }else{?>
+                <i class="far fa-heart"></i>
+            <?php }?>
+        </span>
+        <span class="team_heart_count" id="heart_cnt"><?=$team_info['heart_count']?></span>
     </div>
 
-<?php } ?>
-<div class="">
-    <?=$team_info['contents']?>
+    <?php if($team_info['external_link']!=null || $team_info['external_link']!=''){?>
+        <div class="tt_item">
+            <span class="tt_title">공식 채널</span>
+            <a href="<?=$team_info['external_link']?>" target="_blank" rel="noopener" class="tt_cont"><i class="fas fa-link"></i></a>
+        </div>
+    <?php } ?>
+
 </div>
 
-<h2>프로그램</h2>
+<div class="row">
+    <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="team_img">
+            <img src="<?=$team_info['thumb_url']?>">
+        </div>
+    </div>
+    <div class="col-lg-8 col-md-6 col-sm-12">
+        <div class="team_box">
+            <h3 class="sub_title">
+                <a href="/program/lists/1/q?team_id=<?=$team_info['team_id']?>">프로그램</a>
+            </h3>
+            <?php
+            if($program_count==0){?>
+                <div class="team_box_empty">
+                    아직 프로그램이 없습니다.
+                </div>
+            <?php }else{?>
+                <div class="team_box_sub">
+                    <div class="team_count">
+                        총 <?=$program_count?>개의 모임
+                    </div>
+                    <div class="team_view_more">
+                        <a href="/program/lists/1/q?team_id=<?=$team_info['team_id']?>">모두 보기 <i class="fas fa-chevron-right"></i></a>
+                    </div>
+                </div>
+                <div class="team_box">
+                    <div class="row">
+                        <?php foreach ($programs as $key=>$item){?>
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <a class="team_program_item" href="/<?=$at_url?>/program/<?=$item['program_id']?>">
+                                    <span class="tpi_title"><?=$item['title']?></span>
+                                    <span class="tpi_info">
+                                    <span class="tpi_cont">
+                                        <span class="tpi_desc"><?=$item['contents']?></span>
+                                        <span class="il_info">
+                                            <span class="ili_box">
 
-<?php if(count($programs)==0){?>
-    아직 프로그램이 없습니다.
-<?php }else{?>
-    <a href="/program/lists/1/q?team_id=<?=$team_info['team_id']?>">검색</a>
-    <ol>
-        <?php foreach ($programs as $key=>$item){?>
-            <li>  <a href="/<?=$at_url?>/program/<?=$item['program_id']?>"><?=$item['title']?></a></li>
-        <?php }?>
-    </ol>
-<?php }?>
+                                            </span>
+                                            <span class="ili_date">
+                                                <?=$item['event_date']?> <?=$item['time']?>:00  (<?=$item['weekday']?>)
+                                            </span>
+                                            <span class="ili_price">
+                                                <?=number_format($item['price'])?>won
+                                            </span>
+                                        </span>
+                                        <span class="tpi_venue">@<?=$item['venue']?></span>
+                                    </span>
+                                    <span class="tpi_img">
+                                        <img src="<?=$item['thumb_url']?>">
+                                    </span>
+                                </span>
+                                </a>
+                            </div>
+                        <?php }?>
+                    </div>
+                </div>
 
+            <?php }?>
+        </div>
+    </div>
 
-<h2><a href="/<?=$at_url?>/blog/lists">블로그</a></h2>
+</div>
+<div class="row">
+    <div class="col-lg-8 col-md-6 col-sm-12">
+        <div class="team_box"><?=$team_info['contents']?></div>
 
-<?php if(count($team_blog)==0){?>
-    아직 포스트가 없습니다.
-<?php }else{?>
-    <a href="/<?=$at_url?>/blog/lists">검색</a>
-    <ol>
-        <?php foreach ($team_blog as $b_key=>$b_item){?>
-            <li>  <a href="/<?=$at_url?>/blog/<?=$b_item['team_blog_id']?>"><?=$b_item['title']?></a></li>
-        <?php }?>
-    </ol>
-<?php }?>
+        <div class="team_box">
+            <h3 class="sub_title">
+                <a href="/<?=$at_url?>/blog/lists"><?=$team_info['name']?>가 만든 콘텐츠</a>
+            </h3>
+            <?php  if($blog_count==0){?>
+                <div class="team_box_empty">
+                    아직 콘텐츠가 없습니다.
+                </div>
+            <?php }else{?>
+                <div class="team_box_sub">
+                    <div class="team_count">
+                        총 <?=$blog_count?>개의 콘텐츠
+                    </div>
+                    <div class="team_view_more">
+                        <a href="/<?=$at_url?>/blog/lists">모두 보기 <i class="fas fa-chevron-right"></i></a>
+                    </div>
+                </div>
 
-<h2>후기</h2>
+                <div class="team_box">
+                    <?php foreach ($team_blog as $b_key=>$b_item){?>
+                        <li>  <a href="/<?=$at_url?>/blog/<?=$b_item['team_blog_id']?>"><?=$b_item['title']?></a></li>
+                    <?php }?>
+                </div>
 
-<?php if(count($after_list)==0){?>
-    아직 후기가 없습니다.
-<?php }else{?>
+            <?php }?>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="team_box team_box_border">
 
-    <a href="/after/lists/1/q?team_id=<?=$team_info['team_id']?>">검색</a>
-    <ol>
-        <?php foreach ($after_list as $a_key=>$a_item){?>
-            <li>  <a href="/after/view/<?=$a_item['after_id']?>"><?=$a_item['title']?></a></li>
-        <?php }?>
-    </ol>
-<?php }?>
+            <h3 class="sub_title">
+                <a href="/after/lists/1/q?team_id=<?=$team_info['team_id']?>">후기</a>
+            </h3>
+            <?php
 
+            $after_count = count($after_list);
+            if($after_count==0){?>
+                <div class="team_box_empty">
+                    아직 후기가 없습니다.
+                </div>
+
+            <?php }else{?>
+                <div class="team_box_sub">
+                    <div class="team_count">
+                        총 <?=$after_count?>개의 콘텐츠
+                    </div>
+                    <div class="team_view_more">
+                        <a href="/after/lists/1/q?team_id=<?=$team_info['team_id']?>">모두 보기 <i class="fas fa-chevron-right"></i></a>
+                    </div>
+                </div>
+
+                <ol class="team_box_list">
+                    <?php  $this->load->view('/after/list_thumbs', array('after_list'=>$after_list)); ?>
+                </ol>
+            <?php }?>
+        </div>
+    </div>
+
+</div>

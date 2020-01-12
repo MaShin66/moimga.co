@@ -173,7 +173,7 @@ if($result['status']=='on'){
     </div>
     <!--여러개 있는 경우에는foreach-->
     <div class="add_btn_wrap">
-        <div class="btn  btn-outline-primary" onclick="javascript:add_qualify();">+ 추가</div>
+        <div class="btn  btn-outline-action" onclick="javascript:add_qualify();">+ 추가</div>
     </div>
 
     <hr>
@@ -233,7 +233,7 @@ if($result['status']=='on'){
     </div>
     <!--여러개 있는 경우에는foreach-->
     <div class="add_btn_wrap">
-        <div class="btn  btn-outline-primary" onclick="javascript:add_question();">+ 추가</div>
+        <div class="btn  btn-outline-action" onclick="javascript:add_question();">+ 추가</div>
     </div>
     <hr>
     <div class="form_module" style="clear: both;">
@@ -283,7 +283,7 @@ if($result['status']=='on'){
 <?php if(!is_null($write_type)){?>
     <input type="hidden" name="program_id" id="program_id" value="<?=$result['program_id']?>">
     <?php }?>
-    <input type="button" class="btn btn-primary" value="<?=$btn_text?>" onclick="submit_program();">
+    <input type="button" class="btn btn-action" value="<?=$btn_text?>" onclick="submit_program();">
 </form>
 
 

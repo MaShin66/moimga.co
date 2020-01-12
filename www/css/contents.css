@@ -1,0 +1,50 @@
+.cont_item{
+    display: flex;
+}
+.cont_img > img{
+    max-width: 100%;
+}
+.cont_info > *,
+.cont_title > *{
+    display: block;
+}
+.cont_maintitle{
+    font-size: 1.5rem;
+    line-height: 0.67;
+    text-align: left;
+    color: var(--text-black);
+}
+.cont_subtitle{
+    font-size: 1.05rem;
+    color: var(--text-gray);
+}
+
+.csi_num{
+
+    color: var(--text-gray);
+}
+.cont_subitem > a{
+    display: block;
+    color: var(--text-black);
+    font-size: 1.15rem;
+    line-height: 0.84;
+}
+.cont_more:hover,
+.cont_subitem > a:hover{
+    text-decoration: none;
+    color: var(--yellow);
+}
+.cont_more{
+    color: var(--text-black);
+    font-size: 0.85rem;
+}
+
+.cont_more_icon{
+    font-size: 0.5rem;
+    border: 2px solid var(--text-black);
+    border-radius: 4rem;
+    width: 18px;
+    margin-right: 8px;
+    text-align: center;
+    display: inline-block;
+}

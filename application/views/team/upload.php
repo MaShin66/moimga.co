@@ -94,7 +94,7 @@ if($result['status']=='on'){
 <?php if(!is_null($write_type)){?>
     <input type="hidden" name="team_id" value="<?=$result['team_id']?>">
     <?php }?>
-    <input type="button" class="upload_ok btn btn-primary" value="<?=$btn_text?>" onclick="submit_team();">
+    <input type="button" class="upload_ok btn btn-action" value="<?=$btn_text?>" onclick="submit_team();">
 </form>
 
 

@@ -146,9 +146,9 @@
         </ul>
         <ul class="nav">
             <li class="nav-item">
-                <a class="nav-link menu_padding  <?php if ($meta_array['location']== 'magazine') {
+                <a class="nav-link menu_padding  <?php if ($meta_array['location']== 'contents') {
                     echo 'active';
-                } ?>" href="/magazine">Magazine</a>
+                } ?>" href="/contents">Contents</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link menu_padding <?php if ($meta_array['location']== 'shop') {
@@ -211,7 +211,7 @@
             <a href="/info/terms">이용약관</a> |
             <a href="/info/privacy">개인정보보호정책</a> |
             <a href="/info/faq">자주묻는질문</a>  |
-            <a href="/magazine">매거진</a>
+            <a href="/contents">콘텐츠</a>
         </div>
     </div>
 
@@ -242,7 +242,7 @@ switch ($meta_array['location']){
     case 'team':
     case 'team_blog':
     case 'after':
-    case 'magazine':
+    case 'contents':
     case 'shop':
     case 'program':
         switch ($meta_array['section']){

@@ -10,8 +10,8 @@ class Program_model extends CI_Model
     //load, get, update, delete
 
     function load_program($type = '', $offset = '', $limit = '', $search_query){
-        $this->db->select('program.*, team.name as team_name, team.url as team_url,
-         users.realname as realname, users.nickname as nickname, MIN(program_date.date) as event_date'); //제일 가까운 날짜 보여주기 위해 MIN임(any value 아님 )
+        $this->db->select('program.*, team.name as team_name, team.url as team_url, program_date.time as time, \'off\' as heart_on,
+         users.realname as realname, users.nickname as nickname, MIN(program_date.date) as event_date, count(program_date.date) as round'); //제일 가까운 날짜 보여주기 위해 MIN임(any value 아님 )
         $this->db->join('team','team.team_id = program.team_id');
         $this->db->join('program_date','program_date.program_id = program.program_id');
         $this->db->join('users','users.id = program.user_id');
@@ -56,10 +56,32 @@ class Program_model extends CI_Model
             $result = $query -> num_rows();
         } else {
             $result = $query -> result_array();
+            if($search_query['login_user']!='0'){ //로그인 돼있으면 리스트에 하트 출력해야함
+                foreach ($result as $key=>$value){
+                    $result[$key]['heart_on'] = $this->is_heart_on($value['program_id'], $search_query['login_user']);
+                }
+
+            }
 
         }
         return $result;
     }
+
+
+    function is_heart_on($program_id, $user_id){
+        $value = 'off';
+        $this->db->where('program_id' ,$program_id);
+        $this->db->where('user_id' ,$user_id);
+
+        $query = $this->db->get('program_heart');
+        $result = $query -> num_rows();
+        if($result>0){
+            $value = 'on';
+        }
+
+        return $value;
+    }
+
 
     function get_program_info($program_id)
     {

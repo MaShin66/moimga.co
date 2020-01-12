@@ -60,7 +60,7 @@
     <?php } ?>
 </div>
 <h3>프로그램</h3>
-<a href="/@<?=$team_info['url']?>/program/upload" class="btn btn-outline-primary">프로그램 만들기</a>
+<a href="/@<?=$team_info['url']?>/program/upload" class="btn btn-outline-action">프로그램 만들기</a>
 
 <a href="/manage/program/lists/<?=$team_info['team_id']?>">프로그램 목록</a>
 
@@ -71,14 +71,14 @@
 </ol>
 
 <h3>팀 멤버</h3>
-<a href="/manage/member/upload?team=<?=$team_info['team_id']?>" class="btn btn-outline-primary">팀 멤버 지정</a>
+<a href="/manage/member/upload?team=<?=$team_info['team_id']?>" class="btn btn-outline-action">팀 멤버 지정</a>
 
 <ol>
 <a href="/manage/member/lists/<?=$team_info['team_id']?>">팀 멤버 목록</a>
 
     <?php if(count($member_list)==0){?>
         <div class="">팀 멤버가 없습니다.
-            <a href="/manage/member/upload?team=<?=$team_info['team_id']?>" class="btn btn-outline-primary">팀 멤버 지정</a>
+            <a href="/manage/member/upload?team=<?=$team_info['team_id']?>" class="btn btn-outline-action">팀 멤버 지정</a>
         </div>
     <?php }else{
         foreach ($member_list as $key=>$item){?>
@@ -89,7 +89,7 @@
 
 </ol>
 <h3>팀 블로그</h3>
-<a href="/@<?=$team_info['url']?>/blog/upload" class="btn btn-outline-primary">포스트 쓰기</a>
+<a href="/@<?=$team_info['url']?>/blog/upload" class="btn btn-outline-action">포스트 쓰기</a>
 
 <ol>
     <a href="/manage/blog/lists/<?=$team_info['team_id']?>">포스트 목록</a>

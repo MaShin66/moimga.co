@@ -60,7 +60,7 @@
     </form>
     <form action="/admin/deleted/recover/" method="post">
         <input type="hidden" name="team_delete_id" value="<?=$data['team_delete_id']?>">
-        <input type="submit"  class="btn btn-outline-primary" value="복구">
+        <input type="submit"  class="btn btn-outline-action" value="복구">
     </form>
 </div>
 <h4>완전 삭제</h4>

@@ -11,18 +11,17 @@ function set_subscribe(team_id) {
             switch (result){
 
                 case 'done':
-                    $('.subscribe_btn').html('<i class="fas fa-subscribe subscribe_active"></i>');
+                    $('.subscribe_btn').html('<i class="fas fa-bookmark subscribe_active"></i>');
                     //
                     // gtag('event', 'subscribe', {
                     //     'event_category': 'product',
                     //     'event_label': team_id,
                     //     'value': null
                     // });
-
                     alert('구독을 시작했습니다.');
                     break;
                 case 'cancel':
-                    $('.subscribe_btn').html('<i class="far fa-subscribe"></i>');
+                    $('.subscribe_btn').html('<i class="far fa-bookmark"></i>');
                     alert('구독이 취소되었습니다.');
                     break;
                 case 'login':

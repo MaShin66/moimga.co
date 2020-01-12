@@ -37,7 +37,7 @@
     <link rel="stylesheet" href="/www/css/basic.css">
     <link rel="stylesheet" href="/www/css/spinner.css">
 </head>
-<body>
+<body class="auth_back">
 
 <div id="fb-root"></div>
 

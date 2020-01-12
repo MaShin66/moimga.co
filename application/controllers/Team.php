@@ -56,7 +56,6 @@ class Team extends MY_Controller {
             $sort_search = $this->input->get('search');
             $sort_after = $this->input->get('after');
             $sort_subscribe = $this->input->get('subscribe');
-            $sort_login_user = $this->input->get('login_user');
 
             $search_query = array(
                 'crt_date' => $sort_date,
@@ -65,7 +64,7 @@ class Team extends MY_Controller {
                 'status'=>'on', //무조건 공개
                 'after'=>$sort_after,
                 'subscribe'=>$sort_subscribe,
-                'login_user'=>$sort_login_user,
+                'login_user'=>$user_id,
             );
 
             if($sort_search!=null || $sort_search !=''){
@@ -115,10 +114,12 @@ class Team extends MY_Controller {
 
         foreach ($data['result'] as $d_key => $d_item){ //desc 가져오기
 
-            $text = substr($d_item['contents'], 0, 500);
-            $text = addslashes($text);
-            $content = strip_tags($text);
-            $data['result'] [$d_key]['contents'] = str_replace("&nbsp;", "", $content);
+            $data['result'][$d_key]['contents'] = tag_strip($d_item['contents']);
+            if(!is_null($d_item['program'])){
+                $day_array = get_kr_date($data['result'][$d_key]['program']['date']);
+                $data['result'][$d_key]['program']['event_date'] = $day_array['kr_date'];
+                $data['result'][$d_key]['program']['weekday'] = $day_array['weekday'];
+            }
         }
 
         $this->layout->view('team/list', array('user'=>$user_data,'result'=>$data,'search_query'=>$search_query,'meta_array'=>$meta_array));
@@ -274,6 +275,7 @@ class Team extends MY_Controller {
                 'price'=>null, //program
                 'event'=>null, //program
                 'user_id'=>null, //after
+                'login_user'=>null, //program
             );
 
             $at_url = $this->uri->segment(1); //@가 붙은 url
@@ -282,10 +284,19 @@ class Team extends MY_Controller {
             $after_list =  $this->after_model->load_after('','',4,$search_query);
             $this->team_model->update_team_hit($team_info['team_id']);
 
-            $text = substr($team_info['contents'], 0, 500);
-            $text = addslashes($text);
-            $content = strip_tags($text);
-            $real_content = str_replace("&nbsp;", "", $content);
+            $real_content =tag_strip($team_info['contents']);
+            foreach ($programs as $p_key=>$p_item){
+                $programs[$p_key]['contents'] = tag_strip($p_item['contents']);
+                $day_array = get_kr_date($p_item['event_date']);
+
+                $programs[$p_key]['event_date']= $day_array['kr_date'];
+                $programs[$p_key]['weekday']= $day_array['weekday'];
+
+            }
+            foreach ($after_list as $a_key=>$a_item){
+                $after_list[$a_key]['contents'] = tag_strip($a_item['contents']);
+
+            }
 
             $meta_array = array(
                 'location' => 'team',
@@ -295,9 +306,17 @@ class Team extends MY_Controller {
                 'img' => $team_info['thumb_url']
             );
 
+            $check_heart = null;
+            $check_bookmark = null;
+            if($user_data['status']=='yes'){
+                $check_heart = $this->heart_model->get_heart_user('team', $user_id, $team_info['team_id']); //내가 heart하고있는지
+                $check_bookmark = $this->subscribe_model->get_subscribe_info_team_user($user_id, $team_info['team_id']);  //내가 북마크 눌렀는지
+            }
+
 
             $this->layout->view('/team/view', array('user'=>$user_data,'team_info'=>$team_info,'after_list'=>$after_list,
-                'team_blog'=>$team_blog,'programs'=>$programs,'at_url'=>$at_url,'as_member'=>$as_member,'meta_array'=>$meta_array));
+                'team_blog'=>$team_blog,'programs'=>$programs,'at_url'=>$at_url,'as_member'=>$as_member,'meta_array'=>$meta_array,
+                'check_heart'=>$check_heart, 'check_bookmark'=>$check_bookmark));
 
         }else{
             alert($this->lang->line('hidden_alert'),'/team');

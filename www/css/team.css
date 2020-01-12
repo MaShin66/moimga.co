@@ -1,0 +1,6 @@
+.team_box_item{
+    padding: 10px;
+    border-radius: 8px;
+    border: solid 1px var(--white-eight);
+    margin: 10px 0;
+}

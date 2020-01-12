@@ -11,7 +11,7 @@
 
 <?php if($after_info['user_id']==$user['user_id']){?>
     <div class="">
-        <a href="/mypage/after/detail/<?=$after_info['after_id']?>" class="btn btn-outline-primary">관리</a>
+        <a href="/mypage/after/detail/<?=$after_info['after_id']?>" class="btn btn-outline-action">관리</a>
         <a href="/after/upload/<?=$after_info['after_id']?>?type=modify" class="btn btn-outline-secondary">수정</a>
     </div>
     <div class="">

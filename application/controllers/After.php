@@ -267,6 +267,21 @@ class After extends MY_Controller
 
 
             }
+
+            $thumbs['thumb_url'] = thumbs_upload('after', $after_id); // 바로 업데이트
+            if(!is_null($thumbs['thumb_url'] )){
+
+            }
+
+            if(!is_null($thumbs['thumb_url'] )){ //파일을 업로드 했다는 뜻
+
+                if($type=='modify'){  //만약 type== modify 면 이전의 파일을 지운다.
+                    unlink(FCPATH . $before_info['thumb_url']);
+                }
+                $this->after_model->update_after($after_id,$thumbs);
+            }
+
+
             //다 끝나면 redirect
             redirect('/after/view/'.$after_id);
         }else{ //없으면 글쓰기 화면

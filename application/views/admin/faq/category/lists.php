@@ -67,7 +67,7 @@
         </tbody>
     </table>
 </div>
-<a href="/admin/faq_category/upload/" class="btn btn-outline-primary btn-sm">등록</a>
+<a href="/admin/faq_category/upload/" class="btn btn-outline-action btn-sm">등록</a>
 <nav class="page-navigation">
     <ul class="pagination justify-content-center">
         <?php echo $data['pagination'];?>

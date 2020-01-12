@@ -61,5 +61,5 @@
 </div>
 
 <?php if($user['level']==9){?>
-    <a href="/shop/upload" class="btn btn-outline-primary">등록</a>
+    <a href="/shop/upload" class="btn btn-outline-action">등록</a>
 <?php }?>

@@ -60,5 +60,5 @@
     </nav>
 <?php
  if($as_member&&$team_info){?>
-    <a href="/@<?=$team_info['url']?>/blog/upload" class="btn btn-outline-primary">글쓰기</a>
+    <a href="/@<?=$team_info['url']?>/blog/upload" class="btn btn-outline-action">글쓰기</a>
 <?php }?>

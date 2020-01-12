@@ -34,3 +34,31 @@ function generate_random_code($length=6){
     }
     return $return;
 }
+
+function tag_strip($contents){
+    $text = substr($contents, 0, 200);
+    $text = addslashes($text);
+    $content = strip_tags($text);
+    $result = str_replace("&nbsp;", "", $content);
+
+    return $result;
+}
+
+function get_kr_date($date){
+
+    $week = array("일" , "월"  , "화" , "수" , "목" , "금" ,"토") ;
+    $weekday = $week[ date('w'  , strtotime($date)  ) ] ;
+
+    $return = array(
+        'kr_date' => null,
+        'weekday' => $weekday,
+    );
+
+    $date_array = explode('-',$date);
+    $this_year = date('Y');
+    $return['kr_date'] = $date_array[1].'월 '.$date_array[2].'일';
+    if($this_year!==$date_array[0]){
+        $return['kr_date'] = $date_array[0].'년 '.$return['kr_date'];
+    }
+    return $return;
+}

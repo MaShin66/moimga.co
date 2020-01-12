@@ -6,7 +6,7 @@
  * Time: 오후 10:14
  */
 
-function thumbs_upload($type='team', $unique_id){
+function thumbs_upload($type='team', $unique_id, $ratio='basic'){
 
     $CI =& get_instance();
     
@@ -33,19 +33,26 @@ function thumbs_upload($type='team', $unique_id){
         $config_gd2['source_image'] = FCPATH . '/www/thumbs/'.$type.'/'.$data['upload_data']['file_name'];
         $config_gd2['new_image'] = FCPATH . '/www/thumbs/'.$type.'/resize';
         $config_gd2['thumb_marker'] = '';
-        if($width>$height){ //세로 기준으로
+        /*ratio에 따라서*/
 
-            $config_gd2['max_height'] = '240';
-            $config_gd2['height'] = 240;
-            $new_height = 240;
-            $new_width = floor((240*$width)/320);
-        }else{ //가로를 320으로 고정했을때 새로운 height는?
+        if($ratio!='basic'){ //6:4
+            if($width<$height){ //세로 기준으로
 
-            $config_gd2['max_width'] = '320';
-            $config_gd2['width'] = 320;
-            $new_height = floor((240*$height)/320);
-            $new_width = 320;
+                $config_gd2['max_height'] = '240';
+                $config_gd2['height'] = 240;
+            }else{ //가로를 320으로 고정했을때 새로운 height는?
+
+                $config_gd2['max_width'] = '360';
+                $config_gd2['width'] = 360;
+            }
+        }else{ //basic은 1:1
+
+            $config_gd2['max_width'] = '360';
+            $config_gd2['width'] = 360;
+            $config_gd2['max_height'] = '360';
+            $config_gd2['height'] = 360;
         }
+
 
         $CI->image_lib->clear();
         $CI->image_lib->initialize($config_gd2);
@@ -63,9 +70,14 @@ function thumbs_upload($type='team', $unique_id){
         $config_gd_crop['new_image'] = FCPATH . '/www/thumbs/'.$type;
         $config_gd_crop['maintain_ratio'] = FALSE;
         //바뀐 값을 어케 알지?
+        $config_gd_crop['width'] = 360;
 
-        $config_gd_crop['width'] = 320;
-        $config_gd_crop['height'] = 240;
+        if($ratio!='basic'){
+            $config_gd_crop['height'] = 240;
+        }else{ //basic은 1:1
+            $config_gd_crop['height'] = 360;
+        }
+
 
         $CI->image_lib->initialize($config_gd_crop);
 

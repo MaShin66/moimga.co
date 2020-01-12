@@ -73,6 +73,16 @@ GROUP BY A.team_id
             $result = $query -> num_rows();
         } else {
             $result = $query -> result_array();
+            //최신 프로그램 붙이는거 해야함
+            foreach ($result as $key=>$value){
+                $result[$key]['program'] = $this->get_latest_team_program($value['team_id']);
+                if(!is_null($result[$key]['program'])){
+
+                    $result[$key]['program']['contents']  = tag_strip($result[$key]['program']['contents']);
+
+                }
+            }
+
             //team_heart는 전체 출력 후에 내가 누른것만 봐야하기 때문에 join 못함
             if($search_query['login_user']!='0'){ //로그인 돼있으면 리스트에 하트 출력해야함
                 foreach ($result as $key=>$value){
@@ -82,6 +92,18 @@ GROUP BY A.team_id
             }
 
         }
+        return $result;
+    }
+
+    function get_latest_team_program($team_id){
+
+        $this->db->select('program.title,program.contents,program.thumb_url,program.price, program_date.date, program_date.time');
+        $this->db->join('program_date','program_date.program_id = program.program_id');
+        $this->db->order_by('program_date.date','asc');
+        $this->db->where('team_id' ,$team_id);
+
+        $query = $this->db->get('program');
+        $result = $query -> row_array();
         return $result;
     }
 

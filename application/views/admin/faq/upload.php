@@ -39,5 +39,5 @@
 
     <?php }?>
     <input type="hidden" name="write_type" value="<?=$data['write_type']?>">
-    <input type="submit"  class="btn btn-primary" value="<?=$data['submit_txt']?>">
+    <input type="submit"  class="btn btn-action" value="<?=$data['submit_txt']?>">
 </form>

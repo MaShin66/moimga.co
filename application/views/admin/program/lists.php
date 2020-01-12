@@ -80,7 +80,7 @@ if($search_query['event']=='on'){
                     <?php }else{ ?>
 
                         <input type="hidden" name="status" value="on">
-                        <input type="submit"  class="btn btn-outline-primary btn-sm" value="공개로 변경">
+                        <input type="submit"  class="btn btn-outline-action btn-sm" value="공개로 변경">
 
                     <?php }?>
                     </form>

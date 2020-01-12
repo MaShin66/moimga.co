@@ -42,6 +42,6 @@ if($result['status']=='on'){
 
 
     <input type="hidden" name="after_id" value="after_id">
-    <input type="button" class="btn btn-primary" value="<?=$btn_text?>" onclick="submit_after();">
+    <input type="button" class="btn btn-action" value="<?=$btn_text?>" onclick="submit_after();">
 </form>
 

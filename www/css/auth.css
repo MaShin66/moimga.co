@@ -1,3 +1,7 @@
+.auth_back{
+    background-color: var(--background);
+}
+
 .auth_logo_wrap{
     text-align: center;
     padding: 20px 0;
@@ -85,7 +89,14 @@
 .login_bottom{
     margin-top: 40px;
 }
+.login_link{
+    float: right;
+    color: var(--yellow);
+}
+.login_link:hover{
 
+    color: var(--yellow-hover);
+}
 .login_or > div{
     display: inline-block;
 }
@@ -117,7 +128,7 @@
     margin: 10px 0;
 }
 .login_else{
-    margin-bottom: 5px;
+    margin: 5px 0;
 }
 .login_error{
     font-size: 1rem;
@@ -131,12 +142,9 @@
 }
 /*register*/
 .regi_agree{
-    padding: 10px 0;
+    margin-bottom: 20px;
     text-align: center;
-    color: rgba(0,0,0,0.6);
     font-size: 0.85rem;
-    margin: 10px 0;
-
 }
 .regi_title{
     margin-left: 5px;
@@ -150,18 +158,27 @@
 
 .regi_agree_wrap{
     padding: 20px 0;
-    margin: 20px 0;
 }
 .auth_agree_title{
-
+    margin: 20px 0;
     font-size: 1rem;
-    color: rgba(0,0,0,0.8);
     text-align: center;
 }
+.agree_radio{
+    margin-top: 20px;
+}
 .agree_guide{
-
+    margin-bottom: 0;
     font-size: 0.75rem;
-    color: rgba(0,0,0,0.6);
+}
+.agree_cont_wrap{
+    margin: 10px 0;
+    background: #ffffff;
+    padding: 10px;
+    border-radius: 11px;
+}
+.agree_cont_wrap > .row{
+    margin: 10px 0;
 }
 /*auth_naver*/
 .naver_logging_in{
@@ -214,23 +231,18 @@
 .fade_form{
     display: none;
 }
-
-
-.kakao_btn_img{
-    max-height: 17px;
-    margin: 0 10px;
-    margin-top: -4px;
+.social_title{
+    margin-top: 40px;
+    font-size: 1.05rem;
+    color: var(--text-black);
+    text-align: center;
 }
-
-#customGoogleBtn {
-    cursor: pointer;
-    display: inline-block;
-    background: white;
-    width: 100%;
-    height: 35px;
-    border: 1px solid #e0e0e0;
+.social_desc{
+    text-align: center;
+    margin: 20px 0;
+    color: var(--text-black);
+    font-size: 0.85rem;
 }
-
 .social_login_btn{
     text-align: center;
 }
@@ -239,33 +251,57 @@
     padding: 0 10px;
     display: inline-block;
 }
-.btn-kakao-img,
-.btn-facebook-img{
-    max-height: 40px;
-}
-.btn-kakao{
-    font-weight: bold !important;;
-    color: #1e1e1e;
-    background-color: #fae100;
-    font-size: 0.9rem !important;
-}
-.btn-kakao:hover{
-    color: #1e1e1e;
-    background-color: #f0d800;
-}
 
 .buttonText {
     margin-top: 6px;
     display: inline-block;
 }
-
-.btn-facebook{
-    font-weight: bold !important;;
-    color: #fff;
-    background-color: #3b5998;
-    font-size: 0.9rem !important;
+.social_btn_wrap{
+    text-align: center;
 }
-.btn-facebook:hover{
-    color: #fff;
-    background-color: #2f55a4;
+.social_btn_wrap > *{
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.social_btn{
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    padding: 20px;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+}
+.social_btn > img{
+    width: 40px;
+    height: 40px;
+}
+.kakao_btn{
+    border: 2px solid var(--kakao-hover);
+    background-color: var(--kakao);
+}
+.kakao_btn:hover{
+    background-color: var(--kakao-hover);
+}
+.google_btn{
+    border: 2px solid var(--google-hover);
+    background-color: var(--google);
+}
+.google_btn:hover{
+    background-color: var(--google-hover);
+}
+.naver_btn{
+    background-color: var(--naver);
+    border: 2px solid var(--naver-hover);
+}
+.naver_btn:hover{
+    background-color: var(--naver-hover);
+}
+.facebook_btn{
+    border: 2px solid var(--facebook-hover);
+    background-color: var(--facebook);
+}
+.facebook_btn:hover{
+    background-color: var(--facebook-hover);
 }

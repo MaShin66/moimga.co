@@ -98,11 +98,27 @@
 
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <?php if($location=='magazine'){echo 'active';}?>" href="/admin/magazine">매거진</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link " href="#" role="button" id="dropdownTeam" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        콘텐츠
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownTeam">
+                        <a class="dropdown-item <?php if($location=='contents'){echo 'active';}?>" href="/admin/contents">목록</a>
+                        <a class="dropdown-item <?php if($location=='contents_category'){echo 'active';}?>" href="/admin/contents_category">카테고리</a>
+
+                    </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <?php if($location=='shop'){echo 'active';}?>" href="/admin/shop">샵</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link " href="#" role="button" id="dropdownTeam" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        샵
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownTeam">
+                        <a class="dropdown-item <?php if($location=='shop'){echo 'active';}?>" href="/admin/shop">목록</a>
+                        <a class="dropdown-item <?php if($location=='shop_category'){echo 'active';}?>" href="/admin/shop_category">카테고리</a>
+
+                    </div>
                 </li>
             </ul>
 

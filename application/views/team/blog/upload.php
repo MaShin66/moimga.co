@@ -38,7 +38,7 @@ if($result['status']=='on'){
         <input type="checkbox" name="status" checked="<?=$checked?>"> 공개여부 (체크하시면 목록에 공개됩니다.)
     </div>
     <input type="hidden" id="input_mirror" name="contents"/>
-    <input type="button" class="upload_ok btn btn-primary" value="<?=$btn_text?>" onclick="submit_team_blog();">
+    <input type="button" class="upload_ok btn btn-action" value="<?=$btn_text?>" onclick="submit_team_blog();">
 </form>
 
 

@@ -55,6 +55,7 @@ class Program extends MY_Controller {
                 'price'=>null,
                 'user_id'=>null,
                 'event'=>null,
+                'login_user'=>$user_id,
             );
 
         }else{
@@ -74,6 +75,7 @@ class Program extends MY_Controller {
                 'price'=>$sort_price,
                 'user_id'=>null,
                 'event'=>$sort_event,
+                'login_user'=>$user_id,
             );
 
         }
@@ -141,6 +143,14 @@ class Program extends MY_Controller {
             'desc' => $meta_desc,
         );
 
+        foreach ($data['result'] as $d_key => $d_item){ //desc 가져오기
+            $data['result'][$d_key]['contents'] = tag_strip($d_item['contents']);
+
+            $day_array = get_kr_date($data['result'][$d_key]['event_date']);
+            $data['result'][$d_key]['event_date'] =  $day_array['kr_date'];
+            $data['result'][$d_key]['weekday'] =  $day_array['weekday'];
+            //회차 있는지
+        }
 
         $this->layout->view('program/list', array('user'=>$user_data,'data'=>$data,'search_query'=>$search_query,'team_info'=>$team_info,'meta_array'=>$meta_array));
     }
@@ -168,12 +178,18 @@ class Program extends MY_Controller {
             $qna_info = $this->program_model->load_program_qna_info_by_p_id($program_id);
             $qualify_info = $this->program_model->load_program_qualify_info_by_p_id($program_id); //이것도 중복될 수 없으니까 unique 임
 
-            $this->program_model->update_program_hit($program_id); // 조회수
+            $search_query = array(
+                'crt_date' => '',
+                'search'=>null,
+                'status'=>'on',
+                'team_id'=>$team_info['team_id'],
+                'user_id'=>null, //after
+            );
 
-            $text = substr($program_info['contents'], 0, 500);
-            $text = addslashes($text);
-            $content = strip_tags($text);
-            $real_content = str_replace("&nbsp;", "", $content);
+            $after_list =  $this->after_model->load_after('','',4,$search_query);
+
+            $this->program_model->update_program_hit($program_id); // 조회수
+            $real_content =tag_strip($program_info['contents']);
 
             $meta_array = array(
                 'location' => 'program',
@@ -183,8 +199,27 @@ class Program extends MY_Controller {
                 'img' => $team_info['thumb_url']
             );
 
-            $this->layout->view('/program/view', array('user'=>$user_data,'program_info'=>$program_info,'team_info'=>$team_info,
-                'date_info'=>$date_info,'qna_info'=>$qna_info,'qualify_info'=>$qualify_info,'as_member'=>$as_member,'meta_array'=>$meta_array));
+            foreach ($after_list as $a_key=>$a_item){
+                $after_list[$a_key]['contents'] = tag_strip($a_item['contents']);
+            }
+            foreach ($date_info as $d_key=>$d_item){
+                $day_array = get_kr_date($d_item['date']);
+
+                $date_info[$d_key]['date']= $day_array['kr_date'];
+                $date_info[$d_key]['weekday']= $day_array['weekday'];
+
+            }
+
+
+            $check_heart = null;
+
+            if($user_data['status']=='yes'){
+                $check_heart = $this->heart_model->get_heart_user('program', $user_id, $program_id); //내가 heart하고있는지
+            }
+
+            $this->layout->view('/program/view', array('user'=>$user_data,'program_info'=>$program_info,'team_info'=>$team_info,'after_list'=>$after_list,
+                'date_info'=>$date_info,'qna_info'=>$qna_info,'check_heart'=>$check_heart,
+                'qualify_info'=>$qualify_info,'as_member'=>$as_member,'meta_array'=>$meta_array));
         }else{ //hidden
             alert($this->lang->line('hidden_alert'),'/program');
         }

@@ -61,7 +61,7 @@ class Admin_Controller extends CI_Controller{
         parent::__construct();
         $this->load->library('tank_auth');
         $this->load->model(array('user_model','team_model','form_model','program_model','after_model','heart_model','shop_model',
-            'subscribe_model','alarm_model','member_model','magazine_model','admin_model','verify_model'));
+            'subscribe_model','alarm_model','member_model','contents_model','admin_model','verify_model'));
         //redirect('/welcome'); //업데이트
         if ($this->tank_auth->is_logged_in()) {									// logged in
             $this->data['user_id'] = $this->tank_auth->get_user_id();

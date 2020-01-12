@@ -18,6 +18,6 @@
 </div>
 <hr>
 <div class="">
-    <a href="/admin/faq" class="btn btn-outline-primary btn-sm">목록으로</a>
+    <a href="/admin/faq" class="btn btn-outline-action btn-sm">목록으로</a>
 
 </div>

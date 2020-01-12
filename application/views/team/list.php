@@ -10,8 +10,11 @@ if(!is_null($search_query['after'])){
 }
 
 ?>
-    <div class="header_box header_space"></div>
+<div class="list_top">
+
     <h1 class="top_title">팀</h1>
+    <h2 class="top_desc">모임을 함께 만들어가는 사람들</h2>
+</div>
     <?php if(!is_null($search_query['search'])&&$search_query['search']!=''){?>
 
         <div class="">

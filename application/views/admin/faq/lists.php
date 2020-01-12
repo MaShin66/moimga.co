@@ -87,7 +87,7 @@
     </table>
 </div>
 <hr>
-    <a href="/admin/faq/upload" class="btn btn-outline-primary btn-sm">등록</a>
+    <a href="/admin/faq/upload" class="btn btn-outline-action btn-sm">등록</a>
 <hr>
 
 <nav class="page-navigation">

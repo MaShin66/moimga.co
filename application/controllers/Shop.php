@@ -166,7 +166,8 @@ class Shop extends MY_Controller {
 			//새로 쓰는거
 
 			$user_id = $this->input->post('user_id');
-			$contents = $this->input->post('contents');
+            $category_id = $this->input->post('category_id');
+            $contents = $this->input->post('contents');
 			$status = $this->input->post('status');
 
             if($status!='on'){
@@ -176,6 +177,7 @@ class Shop extends MY_Controller {
             $data=array(
                 'title'=>$title,
                 'user_id'=>$user_id,
+                'category_id'=>$category_id,
                 'contents'=>$contents,
                 'status'=>$status,
 
@@ -225,7 +227,9 @@ class Shop extends MY_Controller {
 			}else{
                 $meta_title = '샵 등록 - 모임가';
                 $meta_desc = '모임가 샵 등록';
-				$result = array();
+				$result = array(
+				    'category_id'=>null
+                );
 
 			}
 
@@ -236,7 +240,8 @@ class Shop extends MY_Controller {
                 'desc' => $meta_desc,
             );
 
-			$this->layout->view('shop/upload', array('user'=>$user_data,'result'=>$result,'meta_array'=>$meta_array));
+			$cate_list = $this->shop_model->load_shop_category_plain();
+			$this->layout->view('shop/upload', array('user'=>$user_data,'result'=>$result,'meta_array'=>$meta_array,'cate_list'=>$cate_list));
 		}
 
 

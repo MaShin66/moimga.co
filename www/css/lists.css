@@ -1,14 +1,10 @@
 .header_box{
     width: 64px;
     height: 10px;
-    background-color: var(--main) ;
+    background-color: var(--main);
     margin-bottom: 10px;
 }
 
-.top_title{
-    font-size: 1.75rem;
-    color: var(--black-85);
-}
 .sorting{
     padding: 10px 0;
 }
@@ -16,10 +12,11 @@
     padding: 0 !important;
 }
 .item_link{
+    padding: 12px;
     margin: 5px;
     display: block;
     color: var(--black-85);
-    box-shadow: 2px 2px 4px 0 var(--white-two);
+    box-shadow: 2px 2px 4px 0 var(--white-eight);
 
     -webkit-transition: all 0.25s ease;
     -moz-transition: all 0.25s ease;
@@ -36,63 +33,136 @@
 }
 
 .item_img{
-    padding: 12px 12px 0 12px;
-
-    max-width: 100%;
+    width: 100%;
 }
 .item_info{
-    padding: 0 12px 12px 12px ;
-
 }
 .item_title{
+    font-size: 1.25rem;
+    color: var(--text-black);
+    font-weight: bold;
     margin: 10px 0;
     display: block;
-    font-size: 1.25rem;
 }
 .item_cont{
-    white-space: normal;
-    line-height: 1.2;
-    text-align: left;
+
+    font-size: 1rem;
+    line-height: 1.47;
+    color: var(--text-black);
     overflow: hidden;
     word-wrap: break-word;
     display: -webkit-box;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;
 }
-.item_subinfo{
-    border-top: 1px solid var(--white-two);
+.item_latest{
+    display: flex;
+    border-top: 1px solid var(--white-eight);
     font-size: 0.85rem;
-    margin-top: 10px;
+    padding-top: 10px;
     width: 100%;
+    height: 95px;
 }
-
-.item_subinfo > *{
+.item_sub_info{
+    margin: 10px 0;
+}
+.item_sub_info > *{
 
     display: inline-block;
 }
 .item_team_name{
     font-weight: bold;
-    width: 79%;
+    text-align: right;
+    width: 85%;
     position: relative;
 
 }
 .item_team_name > span{
     display: block;
-    padding-left: 10px;
-    margin-top: -35px;
-    position: absolute;
-    top: 0;
+    text-align: right;
 }
 .item_heart{
-    text-align: center;
-    border-left: 1px solid var(--white-two);
-    width: 19%;
-    padding: 10px;
+    width: 14%;
 }
 .item_heart_off{
 
+    color: var(--text-gray);
 }
 .item_heart_on{
 
-    color:  var(--main);
+    color:  var(--red);
+}
+.item_heart_count{
+    margin-left: 4px;
+}
+
+.list_wrap{
+    list-style: none;
+    padding-left: 0;
+}
+.list_item{
+    border-radius: 8px;
+    padding: 10px 10px 0 10px;
+    margin: 10px 0;
+    border: solid 1px var(--white-eight);
+}
+.list_item:hover{
+
+    border: solid 1px var(--main);
+}
+.list_item:hover > a{
+    -webkit-transition: all 0.25s ease;
+    -moz-transition: all 0.25s ease;
+    -ms-transition: all 0.25s ease;
+    -o-transition: all 0.25s ease;
+    transition: all 0.25s ease;
+    text-decoration: none;
+}
+.list_item > a,
+.list_item > a > span{
+    display: block;
+}
+.list_item_padding{
+    padding: 10px;
+}
+.pi_info{
+    padding-top: 10px;
+    display: flex !important;
+
+}
+
+.pi_title{
+    font-size: 1.25rem;
+    color: var(--black);
+    text-overflow: ellipsis;
+    width: 100%;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.pii_desc{
+    height: 60px;
+    overflow: hidden;
+    word-wrap: break-word;
+    display: -webkit-box;
+    color: var(--text-gray);
+    -webkit-line-clamp: 3;
+    margin-bottom: 10px;
+    -webkit-box-orient: vertical;
+
+}
+.pi_sub_info{
+}
+.pii_cont > span{
+    display: block;
+}
+.pii_cate{
+    margin-right: 10px;
+    width: 40px;
+    display: inline-block;
+    color: var(--text-gray);
+}
+.ati_team_name{
+    float: right;
+    font-weight: bold;
 }

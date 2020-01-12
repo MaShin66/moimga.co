@@ -1,16 +1,19 @@
 <?php foreach ($after as $key=>$item){
     $number = $key+1;
     ?>
-    <div class="col-lg-3 col-md-4 col-sm-6 col-6 item_card">
-        <a href="/after/view/<?=$item['after_id']?>" class="item_link">
-            <img src="" class="item_img" alt="<?=$item['title']?>" >
-            <div class="item_info">
-                <span class="item_title"><?=$item['title']?></span>
-                <span class="item_title"><?=$item['team_name']?></span>
+    <li class="list_item list_item_padding">
+        <a href="/after/view/<?=$item['after_id']?>">
 
-                <span class="item_seller"><?=$item['nickname']?></span> <!--팀 이름-->
-
-            </div>
+            <span class="pi_title"><?=$item['title']?></span>
+            <span class="pi_info">
+                <span class="pii_img">
+                    <img src="<?=$item['thumb_url']?>" alt="<?=$item['title']?>" >
+                </span>
+                <span class="pii_cont">
+                    <span class="pii_desc"><?=$item['contents']?></span>
+                    <span class="ati_team_name"> - <?=$item['team_name']?></span>
+                </span>
+            </span>
         </a>
-    </div>
+    </li>
 <?php }?>

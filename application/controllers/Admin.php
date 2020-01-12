@@ -543,7 +543,7 @@ class Admin extends Admin_Controller
         alert('팀과 하위 프로그램이 삭제되었습니다.','/admin/team');
 
     }
-    function magazine($type = 'list')
+    function contents($type = 'list')
     {
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
@@ -565,14 +565,14 @@ class Admin extends Admin_Controller
 
                 switch ($type){
                     case 'list':
-                        $this->_magazine_list($user_data);
+                        $this->_contents_list($user_data);
                         break;
                     case 'delete':
-                        $magazine_id = $this->input->post('magazine_id');
-                        $this->_magazine_delete($magazine_id);
+                        $contents_id = $this->input->post('contents_id');
+                        $this->_contents_delete($contents_id);
                         break;
                     default:
-                        $this->_magazine_list($user_data);
+                        $this->_contents_list($user_data);
                         break;
                 }
 
@@ -580,7 +580,7 @@ class Admin extends Admin_Controller
 
         }
     }
-    function _magazine_list($user_data){
+    function _contents_list($user_data){
 
         $search = $this->uri->segment(5);
 
@@ -607,8 +607,8 @@ class Admin extends Admin_Controller
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
-        $config['base_url'] = '/admin/magazine/lists'; // 페이징 주소
-        $config['total_rows'] = $this -> magazine_model -> load_magazine('count','','',$search_query); // 게시물 전체 개수
+        $config['base_url'] = '/admin/contents/lists'; // 페이징 주소
+        $config['total_rows'] = $this -> contents_model -> load_contents('count','','',$search_query); // 게시물 전체 개수
 
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
@@ -631,19 +631,170 @@ class Admin extends Admin_Controller
 
         $limit = $config['per_page'];
 
-        $data['result'] = $this->magazine_model->load_magazine('', $start, $limit, $search_query);
+        $data['result'] = $this->contents_model->load_contents('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
-        $this->layout->view('admin/magazine/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+        $this->layout->view('admin/contents/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
 
     }
 
-    function _magazine_delete($magazine_id){
-        $this->magazine_model->delete_magazine($magazine_id); //진짜 삭제
+    function _contents_delete($contents_id){
+        $this->contents_model->delete_contents($contents_id); //진짜 삭제
 
-        alert('포스트가 삭제되었습니다.','/admin/magazine');
+        alert('포스트가 삭제되었습니다.','/admin/contents');
 
     }
+
+    function contents_category($type = 'list',$category_id=null)
+    {
+        $this->load->model(array('contents_model'));
+        $status = $this->data['status'];
+        $user_id = $this->data['user_id'];
+        $level = $this->data['level'];
+        $user_data = array(
+            'status' => $status,
+            'user_id' => $user_id,
+            'level' => $level
+        );
+
+        if (!$this->tank_auth->is_logged_in()) {
+
+            show_error('접근이 불가능합니다.');
+        } else {
+            if ($user_data['level'] != 9) {
+
+                show_error('접근이 불가능합니다.');
+            } else {
+
+                switch ($type){
+                    case 'list':
+                        $this->_contents_category_list($user_data);
+                        break;
+                    case 'upload':
+                        $category_id = $this->uri->segment(4);
+                        $this->_contents_category_upload($category_id,$user_data);
+                        break;
+                    case 'delete':
+                        $category_id = $this->input->post('contents_category_id');
+                        $this->_contents_category_delete($category_id);
+                        break;
+                    default:
+                        $this->_contents_category_list($user_data);
+                        break;
+                }
+
+            }
+
+        }
+    }
+
+    function _contents_category_list($user_data){
+
+        $search = $this->uri->segment(5);
+
+        if($search==null){
+            $search_query = array(
+                'search' => null,
+                'crt_date' =>null,
+                'category'=>null, //category_id
+            );
+
+        }else{
+            $sort_date = $this->input->get('crt_date');
+            $sort_search = $this->input->get('search');
+            $sort_category = $this->input->get('category');
+
+            $search_query = array(
+                'search' => $sort_search,
+                'crt_date' => $sort_date,
+                'category'=>$sort_category,
+            );
+
+        }
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&category='.$search_query['category'];
+
+        $this->load->library('pagination');
+        $config['suffix'] = $q_string;
+        $config['base_url'] = '/admin/contents_category/lists'; // 페이징 주소
+        $config['total_rows'] = $this -> contents_model -> load_contents_category('count','','',$search_query); // 게시물 전체 개수
+
+        $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
+        $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
+        $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
+        $config = pagination_config($config);
+        // 페이지네이션 초기화
+        $this->pagination->initialize($config);
+        // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
+        $data['pagination'] = $this->pagination->create_links();
+
+        // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
+        $page = $this->uri->segment(4);
+
+
+        if($page==null){
+            $start=0;
+        }else{
+            $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
+        }
+
+        $limit = $config['per_page'];
+
+        $data['result'] = $this->contents_model->load_contents_category('', $start, $limit, $search_query);
+        $data['total']=$config['total_rows'];
+
+        $this->layout->view('admin/contents/category/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+
+    }
+    function _contents_category_upload($contents_category_id, $user_data){
+        $title = $this->input->post('title');
+        $write_type = $this->input->post('write_type');
+        if(!is_null($title)){ //쓰기 프로세스
+            $order = $this->input->post('order');
+            $desc = $this->input->post('desc');
+            $cate_data = array(
+                'title'=>$title,
+                'desc'=>$desc,
+                'order'=>$order
+            );
+            if($write_type=='new'){
+                $cate_data['crt_date'] = date('Y-m-d H:i:s');
+                $this->contents_model->insert_contents_category($cate_data);
+                alert('카테고리가 등록되었습니다.','/admin/contents_category');
+            }else{ //modify
+                $this->contents_model->update_contents_category($this->input->post('contents_category_id'), $cate_data);
+                alert('카테고리가 수정되었습니다.','/admin/contents_category');
+            }
+
+
+        }else{ //글쓰기 페이지
+            if(!is_null($contents_category_id)){
+                $data = $this->contents_model->get_contents_category_info($contents_category_id);
+                $data['submit_txt'] = '수정';
+                $data['write_type'] = 'modify';
+            }else{
+                $data  = array(
+                    'contents_category_id'=>null,
+                    'title'=>null,
+                    'desc'=>null,
+                    'order'=>null,
+                    'submit_txt'=>'등록',
+                    'write_type'=>'new',
+                );
+            }
+
+
+            $this->layout->view('admin/contents/category/upload', array('user'=>$user_data,'data'=>$data));
+        }
+
+    }
+
+    function _contents_category_delete($contents_category_id){
+
+        $this->contents_model->delete_contents_category($contents_category_id); //진짜 삭제
+        alert('이 카테고리가 삭제되었습니다.','/admin/contents_category');
+
+    }
+
 
     function shop($type = 'list')
     {
@@ -746,7 +897,157 @@ class Admin extends Admin_Controller
         alert('포스트가 삭제되었습니다.','/admin/shop');
 
     }
-    
+
+    function shop_category($type = 'list',$category_id=null)
+    {
+        $this->load->model(array('shop_model'));
+        $status = $this->data['status'];
+        $user_id = $this->data['user_id'];
+        $level = $this->data['level'];
+        $user_data = array(
+            'status' => $status,
+            'user_id' => $user_id,
+            'level' => $level
+        );
+
+        if (!$this->tank_auth->is_logged_in()) {
+
+            show_error('접근이 불가능합니다.');
+        } else {
+            if ($user_data['level'] != 9) {
+
+                show_error('접근이 불가능합니다.');
+            } else {
+
+                switch ($type){
+                    case 'list':
+                        $this->_shop_category_list($user_data);
+                        break;
+                    case 'upload':
+                        $category_id = $this->uri->segment(4);
+                        $this->_shop_category_upload($category_id,$user_data);
+                        break;
+                    case 'delete':
+                        $category_id = $this->input->post('shop_category_id');
+                        $this->_shop_category_delete($category_id);
+                        break;
+                    default:
+                        $this->_shop_category_list($user_data);
+                        break;
+                }
+
+            }
+
+        }
+    }
+
+    function _shop_category_list($user_data){
+
+        $search = $this->uri->segment(5);
+
+        if($search==null){
+            $search_query = array(
+                'search' => null,
+                'crt_date' =>null,
+                'category'=>null, //category_id
+            );
+
+        }else{
+            $sort_date = $this->input->get('crt_date');
+            $sort_search = $this->input->get('search');
+            $sort_category = $this->input->get('category');
+
+            $search_query = array(
+                'search' => $sort_search,
+                'crt_date' => $sort_date,
+                'category'=>$sort_category,
+            );
+
+        }
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&category='.$search_query['category'];
+
+        $this->load->library('pagination');
+        $config['suffix'] = $q_string;
+        $config['base_url'] = '/admin/shop_category/lists'; // 페이징 주소
+        $config['total_rows'] = $this -> shop_model -> load_shop_category('count','','',$search_query); // 게시물 전체 개수
+
+        $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
+        $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
+        $config['first_url'] = $config['base_url'].'/1/'.$config['suffix']; // 첫페이지에 query string 에러나서..
+        $config = pagination_config($config);
+        // 페이지네이션 초기화
+        $this->pagination->initialize($config);
+        // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
+        $data['pagination'] = $this->pagination->create_links();
+
+        // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
+        $page = $this->uri->segment(4);
+
+
+        if($page==null){
+            $start=0;
+        }else{
+            $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
+        }
+
+        $limit = $config['per_page'];
+
+        $data['result'] = $this->shop_model->load_shop_category('', $start, $limit, $search_query);
+        $data['total']=$config['total_rows'];
+
+        $this->layout->view('admin/shop/category/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+
+    }
+    function _shop_category_upload($shop_category_id, $user_data){
+        $title = $this->input->post('title');
+        $write_type = $this->input->post('write_type');
+        if(!is_null($title)){ //쓰기 프로세스
+            $order = $this->input->post('order');
+            $desc = $this->input->post('desc');
+            $cate_data = array(
+                'title' =>$title,
+                'desc'=>$desc,
+                'order'=>$order
+            );
+            if($write_type=='new'){
+                $cate_data['crt_date'] = date('Y-m-d H:i:s');
+                $this->shop_model->insert_shop_category($cate_data);
+                alert('카테고리가 등록되었습니다.','/admin/shop_category');
+            }else{ //modify
+                $this->shop_model->update_shop_category($this->input->post('shop_category_id'), $cate_data);
+                alert('카테고리가 수정되었습니다.','/admin/shop_category');
+            }
+
+
+        }else{ //글쓰기 페이지
+            if(!is_null($shop_category_id)){
+                $data = $this->shop_model->get_shop_category_info($shop_category_id);
+                $data['submit_txt'] = '수정';
+                $data['write_type'] = 'modify';
+            }else{
+                $data  = array(
+                    'shop_category_id'=>null,
+                    'title'=>null,
+                    'desc'=>null,
+                    'order'=>null,
+                    'submit_txt'=>'등록',
+                    'write_type'=>'new',
+                );
+            }
+
+
+            $this->layout->view('admin/shop/category/upload', array('user'=>$user_data,'data'=>$data));
+        }
+
+    }
+
+    function _shop_category_delete($shop_category_id){
+
+        $this->shop_model->delete_shop_category($shop_category_id); //진짜 삭제
+        alert('이 카테고리가 삭제되었습니다.','/admin/shop_category');
+
+    }
+
     function team_blog($type = 'list',$team_blog_id=null)
     {
         $status = $this->data['status'];
@@ -1907,8 +2208,8 @@ class Admin extends Admin_Controller
             case 'team_blog':
                 $this->team_model->update_team_blog($unique_id,$status_data);
                 break;
-            case 'magazine':
-                $this->magazine_model->update_magazine($unique_id,$status_data);
+            case 'contents':
+                $this->contents_model->update_contents($unique_id,$status_data);
                 break;
             case 'shop':
                 $this->shop_model->update_shop($unique_id,$status_data);

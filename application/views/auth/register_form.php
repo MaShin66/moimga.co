@@ -86,26 +86,24 @@ $captcha = array(
 </div>
 <div class="regi_agree_wrap">
     <h4 class="auth_agree_title">개인정보 수집·이용 동의(필수)</h4>
-    <p class="agree_guide" style="margin-bottom: 10px">모임가 서비스 이용자의 개인정보를 수집하는 목적은 다음과 같습니다. 표가 보이지 않는다면 화면을 옆으로 밀어주세요.</P>
-    <table class="table-bordered table table table-responsive">
-        <thead>
-        <tr>
-            <th width="200px">수집목적</th>
-            <th>수집항목</th>
-            <th width="134px">보유/이용기간</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>회원제 서비스 제공 및<br>유지·관리</td>
-            <td>이메일, 비밀번호, 로그인ID, 이름,<br> 서비스 이용 기록, 접속 로그, 쿠키, 접속 IP 정보, 방문일시</td>
-            <td>회원탈퇴시</td>
-        </tr>
-        </tbody>
-    </table>
+    <p class="agree_guide" style="margin-bottom: 10px">모임가 서비스 이용자의 개인정보를 수집하는 목적은 다음과 같습니다.</P>
+    <div class="agree_cont_wrap">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-12 cont_left">수집목적</div>
+            <div class="col-lg-9 col-md-9 col-sm-12 cont_right">회원제 서비스 제공 및 유지·관리</div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-12 cont_left">수집항목</div>
+            <div class="col-lg-9 col-md-9 col-sm-12 cont_right">이메일, 비밀번호, 로그인ID, 이름, 서비스 이용 기록, 접속 로그, 쿠키, 접속 IP 정보, 방문일시</div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-12 cont_left">보유/이용기간</div>
+            <div class="col-lg-9 col-md-9 col-sm-12 cont_right">회원탈퇴시</div>
+        </div>
+    </div>
     <p class="agree_guide">- 동의를 거부할 권리가 있으나, 동의거부에 따른 서비스 이용에 제한이 있을 수 있습니다.</p>
     <p class="agree_guide">- 당사는 계약 및 서비스 이행을 위해 개인정보 처리업무를 위탁할 수 있으며, 개인정보처리방침에 그 내용을 고지합니다.</p>
-    <div>
+    <div class="agree_radio">
         <label for="agree_ok">
             <input type="radio" name="regi_agree_radio" class="regi_agree" id="agree_ok" value="ok">
             <span>(필수) 개인정보 수집 및 이용에 동의합니다.</span>

@@ -53,7 +53,7 @@
                     }else{ ?>
                         <form action="/admin/deleted/recover/" method="post">
                             <input type="hidden" name="team_delete_id" value="<?=$result['team_delete_id']?>">
-                            <input type="submit"  class="btn btn-outline-primary btn-sm" value="복구">
+                            <input type="submit"  class="btn btn-outline-action btn-sm" value="복구">
                         </form>
                     <?php }?>
                 </td>

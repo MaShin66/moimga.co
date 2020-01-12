@@ -57,7 +57,7 @@
             <tr>
                 <td><?=$result['team_blog_id']?></td>
                 <td><a href="/manage/blog/detail/<?=$result['team_blog_id']?>"><?=$result['title']?></a></td>
-                <td><a href="/@<?=$team_info['url']?>/blog/<?=$result['team_blog_id']?>" class="btn-outline-primary btn" >보기</a></td>
+                <td><a href="/@<?=$team_info['url']?>/blog/<?=$result['team_blog_id']?>" class="btn-outline-action btn" >보기</a></td>
             </tr>
         <?php endforeach;?>
         </tbody>
