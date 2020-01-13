@@ -40,7 +40,7 @@
 //                print_r($data['result']);
              ?>
 
-             <div class="contents_wrap">
+             <div class="row">
                  <?php $this->load->view('contents/thumbs', array('contents'=>$data['result'])); ?>
              </div>
 

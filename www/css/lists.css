@@ -133,12 +133,19 @@
 
 .pi_title{
     font-size: 1.25rem;
-    color: var(--black);
+    color: var(--text-black);
     text-overflow: ellipsis;
     width: 100%;
     display: block;
     overflow: hidden;
     white-space: nowrap;
+}
+
+
+.pi_num{
+    font-size: 1.25rem;
+    color: var(--text-gray);
+    margin-right: 10px;
 }
 .pii_desc{
     height: 60px;
@@ -154,11 +161,12 @@
 .pi_sub_info{
 }
 .pii_cont > span{
+    font-size: 1rem;
     display: block;
 }
 .pii_cate{
     margin-right: 10px;
-    width: 40px;
+    width: 60px;
     display: inline-block;
     color: var(--text-gray);
 }

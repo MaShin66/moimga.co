@@ -111,12 +111,12 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link " href="#" role="button" id="dropdownTeam" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        샵
+                        스토어
                     </a>
 
                     <div class="dropdown-menu" aria-labelledby="dropdownTeam">
-                        <a class="dropdown-item <?php if($location=='shop'){echo 'active';}?>" href="/admin/shop">목록</a>
-                        <a class="dropdown-item <?php if($location=='shop_category'){echo 'active';}?>" href="/admin/shop_category">카테고리</a>
+                        <a class="dropdown-item <?php if($location=='store'){echo 'active';}?>" href="/admin/store">목록</a>
+                        <a class="dropdown-item <?php if($location=='store_category'){echo 'active';}?>" href="/admin/store_category">카테고리</a>
 
                     </div>
                 </li>

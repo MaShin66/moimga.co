@@ -43,8 +43,6 @@ class Contents_model extends CI_Model
 
     
     function load_contents($type = '', $offset = '', $limit = '', $search_query){
-        $this->db->select('contents.*');
-        $this->db->join('users','users.id = contents.user_id');
 
         if($search_query['crt_date']==null){
             $this->db->order_by('crt_date','desc');
@@ -91,7 +89,7 @@ class Contents_model extends CI_Model
         return $contents_id;
     }
 
-    function load_contents_category($type='', $offset='',$limit='',$search_query){
+    function load_contents_category($type='', $offset='',$limit='',$search_query){ //basic listing
 
         $this->db->order_by('contents_category_id','asc');
         if ($limit != '' || $offset != '') {
@@ -171,7 +169,7 @@ class Contents_model extends CI_Model
 
 
     function load_category_contents($category_id){
-        $this->db->select('*, shop.title as title, contents_category.title as cate_name, contents_category.order as cate_order');
+        $this->db->select('*, contents.title as title, contents_category.title as cate_name, contents_category.order as cate_order');
         $this->db->join('contents_category','contents_category.contents_category_id = faq.contents_category_id');
         $this->db->where('contents_category.contents_category_id', $category_id);
         $this->db->order_by('contents.order','asc');
@@ -181,20 +179,14 @@ class Contents_model extends CI_Model
         return $result;
     }
 
+
+
     function load_contents_category_plain(){
         $query = $this->db->get('contents_category');
         $result = $query -> result_array();
         return $result;
     }
 
-    function get_faq_info_by_order($category_id=1, $faq_order=1){
 
-        $this->db->where('contents_category_id', $category_id);
-        $this->db->where('order', $faq_order);
-        $query = $this->db->get('contents');
-        $result = $query -> row_array();
-
-        return $result;
-    }
 
 }

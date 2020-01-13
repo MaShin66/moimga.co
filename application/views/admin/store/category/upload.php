@@ -2,9 +2,9 @@
 
 ?>
 
-<h2>SHOP 카테고리 <?=$data['submit_txt']?></h2>
+<h2>store 카테고리 <?=$data['submit_txt']?></h2>
 
-<form action="/admin/shop_category/upload/" method="post">
+<form action="/admin/store_category/upload/" method="post">
     <div class="form-group row">
         <label for="title" class="col-sm-2 col-form-label">이름</label>
         <div class="col-sm-10">
@@ -24,8 +24,8 @@
         </div>
     </div>
 
-    <?php if(!is_null($data['shop_category_id'])){?>
-        <input type="hidden" name="shop_category_id" value="<?=$data['shop_category_id']?>">
+    <?php if(!is_null($data['store_category_id'])){?>
+        <input type="hidden" name="store_category_id" value="<?=$data['store_category_id']?>">
 
     <?php }?>
     <input type="hidden" name="write_type" value="<?=$data['write_type']?>">

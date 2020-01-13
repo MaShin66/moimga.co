@@ -1,6 +1,4 @@
-<?php foreach ($after as $key=>$item){
-    $number = $key+1;
-    ?>
+<?php foreach ($after as $key=>$item){ ?>
     <li class="list_item list_item_padding">
         <a href="/after/view/<?=$item['after_id']?>">
 

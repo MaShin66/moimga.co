@@ -796,7 +796,7 @@ class Admin extends Admin_Controller
     }
 
 
-    function shop($type = 'list')
+    function store($type = 'list')
     {
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
@@ -818,14 +818,14 @@ class Admin extends Admin_Controller
 
                 switch ($type){
                     case 'list':
-                        $this->_shop_list($user_data);
+                        $this->_store_list($user_data);
                         break;
                     case 'delete':
-                        $shop_id = $this->input->post('shop_id');
-                        $this->_shop_delete($shop_id);
+                        $store_id = $this->input->post('store_id');
+                        $this->_store_delete($store_id);
                         break;
                     default:
-                        $this->_shop_list($user_data);
+                        $this->_store_list($user_data);
                         break;
                 }
 
@@ -833,7 +833,7 @@ class Admin extends Admin_Controller
 
         }
     }
-    function _shop_list($user_data){
+    function _store_list($user_data){
 
         $search = $this->uri->segment(5);
 
@@ -860,8 +860,8 @@ class Admin extends Admin_Controller
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
-        $config['base_url'] = '/admin/shop/lists'; // 페이징 주소
-        $config['total_rows'] = $this -> shop_model -> load_shop('count','','',$search_query); // 게시물 전체 개수
+        $config['base_url'] = '/admin/store/lists'; // 페이징 주소
+        $config['total_rows'] = $this -> store_model -> load_store('count','','',$search_query); // 게시물 전체 개수
 
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
@@ -884,23 +884,23 @@ class Admin extends Admin_Controller
 
         $limit = $config['per_page'];
 
-        $data['result'] = $this->shop_model->load_shop('', $start, $limit, $search_query);
+        $data['result'] = $this->store_model->load_store('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
-        $this->layout->view('admin/shop/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+        $this->layout->view('admin/store/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
 
     }
 
-    function _shop_delete($shop_id){
-        $this->shop_model->delete_shop($shop_id); //진짜 삭제
+    function _store_delete($store_id){
+        $this->store_model->delete_store($store_id); //진짜 삭제
 
-        alert('포스트가 삭제되었습니다.','/admin/shop');
+        alert('포스트가 삭제되었습니다.','/admin/store');
 
     }
 
-    function shop_category($type = 'list',$category_id=null)
+    function store_category($type = 'list',$category_id=null)
     {
-        $this->load->model(array('shop_model'));
+        $this->load->model(array('store_model'));
         $status = $this->data['status'];
         $user_id = $this->data['user_id'];
         $level = $this->data['level'];
@@ -921,18 +921,18 @@ class Admin extends Admin_Controller
 
                 switch ($type){
                     case 'list':
-                        $this->_shop_category_list($user_data);
+                        $this->_store_category_list($user_data);
                         break;
                     case 'upload':
                         $category_id = $this->uri->segment(4);
-                        $this->_shop_category_upload($category_id,$user_data);
+                        $this->_store_category_upload($category_id,$user_data);
                         break;
                     case 'delete':
-                        $category_id = $this->input->post('shop_category_id');
-                        $this->_shop_category_delete($category_id);
+                        $category_id = $this->input->post('store_category_id');
+                        $this->_store_category_delete($category_id);
                         break;
                     default:
-                        $this->_shop_category_list($user_data);
+                        $this->_store_category_list($user_data);
                         break;
                 }
 
@@ -941,7 +941,7 @@ class Admin extends Admin_Controller
         }
     }
 
-    function _shop_category_list($user_data){
+    function _store_category_list($user_data){
 
         $search = $this->uri->segment(5);
 
@@ -968,8 +968,8 @@ class Admin extends Admin_Controller
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
-        $config['base_url'] = '/admin/shop_category/lists'; // 페이징 주소
-        $config['total_rows'] = $this -> shop_model -> load_shop_category('count','','',$search_query); // 게시물 전체 개수
+        $config['base_url'] = '/admin/store_category/lists'; // 페이징 주소
+        $config['total_rows'] = $this -> store_model -> load_store_category('count','','',$search_query); // 게시물 전체 개수
 
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
@@ -992,13 +992,13 @@ class Admin extends Admin_Controller
 
         $limit = $config['per_page'];
 
-        $data['result'] = $this->shop_model->load_shop_category('', $start, $limit, $search_query);
+        $data['result'] = $this->store_model->load_store_category('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
-        $this->layout->view('admin/shop/category/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
+        $this->layout->view('admin/store/category/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));
 
     }
-    function _shop_category_upload($shop_category_id, $user_data){
+    function _store_category_upload($store_category_id, $user_data){
         $title = $this->input->post('title');
         $write_type = $this->input->post('write_type');
         if(!is_null($title)){ //쓰기 프로세스
@@ -1011,22 +1011,22 @@ class Admin extends Admin_Controller
             );
             if($write_type=='new'){
                 $cate_data['crt_date'] = date('Y-m-d H:i:s');
-                $this->shop_model->insert_shop_category($cate_data);
-                alert('카테고리가 등록되었습니다.','/admin/shop_category');
+                $this->store_model->insert_store_category($cate_data);
+                alert('카테고리가 등록되었습니다.','/admin/store_category');
             }else{ //modify
-                $this->shop_model->update_shop_category($this->input->post('shop_category_id'), $cate_data);
-                alert('카테고리가 수정되었습니다.','/admin/shop_category');
+                $this->store_model->update_store_category($this->input->post('store_category_id'), $cate_data);
+                alert('카테고리가 수정되었습니다.','/admin/store_category');
             }
 
 
         }else{ //글쓰기 페이지
-            if(!is_null($shop_category_id)){
-                $data = $this->shop_model->get_shop_category_info($shop_category_id);
+            if(!is_null($store_category_id)){
+                $data = $this->store_model->get_store_category_info($store_category_id);
                 $data['submit_txt'] = '수정';
                 $data['write_type'] = 'modify';
             }else{
                 $data  = array(
-                    'shop_category_id'=>null,
+                    'store_category_id'=>null,
                     'title'=>null,
                     'desc'=>null,
                     'order'=>null,
@@ -1036,15 +1036,15 @@ class Admin extends Admin_Controller
             }
 
 
-            $this->layout->view('admin/shop/category/upload', array('user'=>$user_data,'data'=>$data));
+            $this->layout->view('admin/store/category/upload', array('user'=>$user_data,'data'=>$data));
         }
 
     }
 
-    function _shop_category_delete($shop_category_id){
+    function _store_category_delete($store_category_id){
 
-        $this->shop_model->delete_shop_category($shop_category_id); //진짜 삭제
-        alert('이 카테고리가 삭제되었습니다.','/admin/shop_category');
+        $this->store_model->delete_store_category($store_category_id); //진짜 삭제
+        alert('이 카테고리가 삭제되었습니다.','/admin/store_category');
 
     }
 
@@ -2211,8 +2211,8 @@ class Admin extends Admin_Controller
             case 'contents':
                 $this->contents_model->update_contents($unique_id,$status_data);
                 break;
-            case 'shop':
-                $this->shop_model->update_shop($unique_id,$status_data);
+            case 'store':
+                $this->store_model->update_store($unique_id,$status_data);
                 break;
             default:
             case 'team':

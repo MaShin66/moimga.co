@@ -77,12 +77,37 @@ body{
     margin-bottom: 2px;
 }
 .nav-item > .active,
-.nav-item > a:hover{
+.nav-item > .nav-link:hover{
     color: var(--black-85);
     border-bottom: 2px solid var(--black-85);
 }
-.nav-item > a{
+.nav-item > .nav-link{
+    border-bottom: 2px solid transparent;
     color: var(--black-40);
+}
+
+.nav-store-item > .active,
+.nav-store-item > a:hover{
+    color: var(--main);
+    border-bottom: 2px solid var(--main);
+}
+.nav-store-item > a{
+    border-bottom: 2px solid transparent;
+    color: var(--main);
+}
+
+.nav-btn-link{
+    color: var(--text-gray);
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #f2f2f2;
+    border-radius: 4rem;
+    margin-top: 6px;
+}
+.nav-btn-link:hover{
+    color: #fff;
+    background: var(--yellow);
+    text-decoration: none;
 }
 .open .dropdown-menu{
     display: block;
@@ -97,7 +122,39 @@ body{
     text-decoration: none;
     background-color: var(--greenblue);
 }
+.nav-search{
+    margin-top: 6px;
+}
+.nav-search > div > input{
+    padding: 0.45rem  0.5rem !important;
+    border-top-left-radius: 4rem !important;
+    border-bottom-left-radius: 4rem  !important;
+    border-right-color: #fff;
+}
 
+.nav-search > div > input:focus,
+.nav-search > div > input:active{
+    border-top-left-radius: 4rem !important;
+    border-bottom-left-radius: 4rem  !important;
+    border-right-color: #fff;
+    border-left: 1px solid var(--yellow);
+    border-top: 1px solid var(--yellow);
+    border-bottom: 1px solid var(--yellow);
+
+}
+.nav-search > div > .input-group-append > button{
+
+    border-top-right-radius: 4rem !important;
+    border-bottom-right-radius: 4rem !important;
+    border-left: 1px solid #fff;
+    margin-left: -1px;
+    color: var(--text-gray);
+
+
+    border-bottom: 1px solid #ced4da;
+    border-right: 1px solid #ced4da;
+    border-top: 1px solid #ced4da;
+}
 /*buttons*/
 .btn-outline-search {
     color: var(--gray-d);

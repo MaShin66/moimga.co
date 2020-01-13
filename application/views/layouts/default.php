@@ -76,8 +76,6 @@
                     <span class="bar middle"></span>
                     <span class="bar bottom"></span>
                 </div>
-            </div>
-            <div class="col top_sm_center">
                 <a class="top_sm_logo" href="/">
                     <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo" >
                 </a>
@@ -87,23 +85,12 @@
                 <?php if($user['status']=='no'){?>
 
                     <div class="">
-                        <a class="" href="/login">로그인</a>
+                        <a class="nav-btn-link" href="/login">로그인</a>
                     </div>
 
                 <?php }else{//로그인 후 ?>
                     <div class="">
-                        <a class="" href="/alarm">알람</a>
-                    </div>
-                    <div class="">
-                        <a class="" href="/mypage">마이페이지</a>
-                    </div>
-
-                    <div class="">
-                        <a class="" href="/manage/team">관리</a>
-                    </div>
-
-                    <div class="">
-                        <a class="" href="/logout">로그아웃</a>
+                        <a class="nav-btn-link" href="/logout">로그아웃</a>
                     </div>
 
                 <?php }?>
@@ -111,14 +98,54 @@
         </div>
     </div>
     <div id="full_menu" class="overlay">
+
+
+        <div class="full-item">
+            <form action="/search?" method="get" class="nav-search">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="search" class="form-control" placeholder="검색">
+
+                    <div class="input-group-append">
+                        <button class="btn" type="submit"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
         <div class="full-item">
             <a class="full-link" href="/team">팀</a>
+        </div>
+        <div class="full-item">
+            <a class="full-link" href="/program">프로그램</a>
+        </div>
+        <div class="full-item">
+            <a class="full-link" href="/after">후기</a>
+        </div>
+        <div class="full-line"></div>
+        <div class="full-item">
+            <a class="full-link" href="/contents">Contents</a>
+        </div>
+        <div class="full-item">
+            <a class="full-link" href="/store">Store</a>
         </div>
 
         <div class="full-line"></div>
         <div class="full-item">
             <a class="full-link" href="/mypage">메뉴2</a>
         </div>
+
+        <div class="">
+            <a class="" href="/alarm">알람</a>
+        </div>
+        <div class="">
+            <a class="" href="/mypage">마이페이지</a>
+        </div>
+
+        <div class="">
+            <a class="" href="/manage/team">관리</a>
+        </div>
+
+
 
     </div>
     <div class="container  hidden-sm-down">
@@ -127,6 +154,10 @@
             <a class="navbar-brand" href="/" style="padding: 10px;  z-index: 9;">
                 <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo" >
             </a>
+
+
+        </ul>
+        <ul class="nav">
             <li class="nav-item">
                 <a class="nav-link menu_padding  <?php if ($meta_array['location']== 'team') {
                     echo 'active';
@@ -143,38 +174,32 @@
                 } ?>" href="/after" >후기</a>
             </li>
 
-        </ul>
-        <ul class="nav">
-            <li class="nav-item">
+            <li class="nav-store-item ml-2">
                 <a class="nav-link menu_padding  <?php if ($meta_array['location']== 'contents') {
                     echo 'active';
                 } ?>" href="/contents">Contents</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link menu_padding <?php if ($meta_array['location']== 'shop') {
+            <li class="nav-store-item mr-3">
+                <a class="nav-link menu_padding <?php if ($meta_array['location']== 'store') {
                     echo 'active';
-                } ?>" href="/shop" >Shop</a>
+                } ?>" href="/store" >Store</a>
             </li>
-
-        </ul>
-        <ul class="nav">
-            <li class="nav-item">
-                <form action="/search?" method="get">
+            <li class="nav-item mr-2">
+                <form action="/search?" method="get" class="nav-search">
                     <div class="input-group input-group-sm">
                         <input type="text" name="search" class="form-control" placeholder="검색">
 
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+                            <button class="btn" type="submit"><i class="fas fa-search"></i></button>
                         </div>
                     </div>
                 </form>
 
             </li>
             <?php if($user['status']=='no'){?>
+
                 <li class="nav-item">
-                    <a class="nav-link menu_padding <?php if ($meta_array['location'] == 'auth') {
-                        echo 'active';
-                    } ?>" href="/auth">로그인</a>
+                    <a class="nav-btn-link" href="/auth/login">로그인</a>
                 </li>
             <?php }else{//로그인 후 ?>
                 <li class="nav-item">
@@ -193,7 +218,7 @@
                     } ?>" href="/manage/team">관리</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu_padding" href="/auth/logout">로그아웃</a>
+                    <a class="nav-btn-link" href="/auth/logout">로그아웃</a>
                 </li>
             <?php }?>
 
@@ -243,7 +268,7 @@ switch ($meta_array['location']){
     case 'team_blog':
     case 'after':
     case 'contents':
-    case 'shop':
+    case 'store':
     case 'program':
         switch ($meta_array['section']){
             case 'lists': ?>

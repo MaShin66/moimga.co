@@ -9,7 +9,7 @@ $write_type=$this->input->get('write');
 		글 쓰기
 	</h1>
 
-	<form method="post" action="/shop/upload<?php if($write_type=='modify') {echo '?write=modify&id='.$result['shop_id'];}?>" name="board" id="shop_form" enctype="multipart/form-data">
+	<form method="post" action="/store/upload<?php if($write_type=='modify') {echo '?write=modify&id='.$result['store_id'];}?>" name="board" id="store_form" enctype="multipart/form-data">
 
 		<div class="">
 			<h2 class="form_p_title">제목</h2>
@@ -21,7 +21,7 @@ $write_type=$this->input->get('write');
             <h2 class="form_p_title">카테고리</h2>
             <select name="category_id" class="form-control">
                 <?php foreach ($cate_list as $key=>$item){?>
-                    <option value="<?=$item['shop_category_id']?>" <?php if($write_type=='modify'&&($result['category_id']==$item['shop_category_id'])){echo 'selected';} ?> ><?=$item['title']?></option>
+                    <option value="<?=$item['store_category_id']?>" <?php if($write_type=='modify'&&($result['category_id']==$item['store_category_id'])){echo 'selected';} ?> ><?=$item['title']?></option>
                 <?php }?>
 
             </select>
@@ -51,7 +51,7 @@ $write_type=$this->input->get('write');
 		</div>
 
 		<?php if($write_type=='modify'){?>
-			<input type="hidden" value="<?=$result['shop_id']?>" name="shop_id">
+			<input type="hidden" value="<?=$result['store_id']?>" name="store_id">
 		<?php } ?>
 
 
@@ -64,10 +64,10 @@ $write_type=$this->input->get('write');
                         if($result['thumb_url']!=null){?>
                             <img  class="upload_thumbs_sm" src="../../<?=$result['thumb_url']?>" alt="콘텐츠 섬네일">
                         <?php }else{ ?>
-                            <img class="upload_thumbs_sm" src="/www/thumbs/shop/basic.jpg" alt="콘텐츠 섬네일">
+                            <img class="upload_thumbs_sm" src="/www/thumbs/store/basic.jpg" alt="콘텐츠 섬네일">
                         <?php }
                     }else{?>
-                        <img class="upload_thumbs_sm" src="/www/thumbs/shop/basic.jpg" alt="콘텐츠 섬네일">
+                        <img class="upload_thumbs_sm" src="/www/thumbs/store/basic.jpg" alt="콘텐츠 섬네일">
                     <?php }?>
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-12">

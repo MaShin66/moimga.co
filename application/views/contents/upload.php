@@ -11,11 +11,16 @@ $write_type=$this->input->get('write');
 
 	<form method="post" action="/contents/upload<?php if($write_type=='modify') {echo '?write=modify&id='.$result['contents_id'];}?>" name="board" id="contents_form" enctype="multipart/form-data">
 
-		<div class="">
-			<h2 class="form_p_title">제목</h2>
+        <div class="">
+            <h2 class="form_p_title">제목</h2>
 
-			<input type="text" class="form-control" value="<?php if($write_type=='modify'){echo $result['title'];} ?>" name="title">
-		</div>
+            <input type="text" class="form-control" value="<?php if($write_type=='modify'){echo $result['title'];} ?>" name="title">
+        </div>
+        <div class="">
+            <h2 class="form_p_title">작성자</h2>
+
+            <input type="text" class="form-control" value="<?php if($write_type=='modify'){echo $result['author'];} ?>" name="author">
+        </div>
 
         <div class="">
 

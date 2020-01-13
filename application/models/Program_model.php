@@ -10,7 +10,7 @@ class Program_model extends CI_Model
     //load, get, update, delete
 
     function load_program($type = '', $offset = '', $limit = '', $search_query){
-        $this->db->select('program.*, team.name as team_name, team.url as team_url, program_date.time as time, \'off\' as heart_on,
+        $this->db->select('program.*, team.name as team_name, team.url as team_url, MIN(program_date.time) as time, \'off\' as heart_on,
          users.realname as realname, users.nickname as nickname, MIN(program_date.date) as event_date, count(program_date.date) as round'); //제일 가까운 날짜 보여주기 위해 MIN임(any value 아님 )
         $this->db->join('team','team.team_id = program.team_id');
         $this->db->join('program_date','program_date.program_id = program.program_id');
