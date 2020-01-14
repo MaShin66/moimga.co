@@ -1,11 +1,8 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: USER
- * Date: 2019-11-27
- * Time: 오후 2:59
- */?>
-<h1>통합 검색</h1>
+
+<div class="list_top">
+    <h1 class="top_title">통합 검색</h1>
+</div>
+
 <h2><a href="/team/lists/1/q?search=<?=$search_query['search']?>">팀</a></h2>
 
 <?php if(count($team_list)==0){?>

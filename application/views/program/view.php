@@ -8,7 +8,8 @@ $qna_count = count($qna_info);
  */?>
 <!--내가 멤버면 수정 가능-->
 <?php if($as_member){?>
-    <div class="">
+
+    <div class="cv_manage">
         <a href="/manage/program/detail/<?=$program_info['program_id']?>" class="btn btn-outline-action">관리</a>
         <a href="/@<?=$team_info['url']?>/program/upload/<?=$program_info['program_id']?>?type=modify" class="btn btn-outline-secondary">수정</a>
     </div>

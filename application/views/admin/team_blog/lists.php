@@ -8,7 +8,7 @@
 <h1 class="admin_sec_title"><a href="/admin/team_blog/">팀 포스트  (총 <?=$data['total']?> 개)</a></h1>
 <div class="admin_sort">
 
-    <div class="btn-toolbar justify-content-between" role="toolbar">
+    <div class="btn-toolbar" role="toolbar">
         <div class="btn-group btn-group-sm" role="group" aria-label="sort group">
 
         </div>

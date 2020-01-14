@@ -16,6 +16,7 @@ $write_type=$this->input->get('write');
 
 			<input type="text" class="form-control" value="<?php if($write_type=='modify'){echo $result['title'];} ?>" name="title">
 		</div>
+
         <div class="">
 
             <h2 class="form_p_title">카테고리</h2>
@@ -26,7 +27,13 @@ $write_type=$this->input->get('write');
 
             </select>
         </div>
-		<div class="">
+        <div class="">
+            <h2 class="form_p_title">작성자</h2>
+
+            <input type="text" class="form-control" value="<?php if($write_type=='modify'){echo $result['author'];} ?>" name="author">
+        </div>
+
+        <div class="">
 			<hr>
 			<h2 class="form_p_title">내용</h2>
 			<div class="prod_upload_guide"><i class="fas fa-info-circle"></i> 이미지 추가는 툴바 오른쪽 끝의 '이미지 <i class="far fa-image"></i>' 아이콘을 누르신 후, 이미지 주소를 붙여넣으시면 됩니다. <a href="#" data-toggle="modal" data-target="#GuideModal">이미지 업로드 가이드</a></div>

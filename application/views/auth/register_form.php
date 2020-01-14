@@ -39,9 +39,11 @@ $captcha = array(
 
 //print_r($errors);
 ?>
-<div class="auth_top">
-    <h1 class="page_title"><?=$this->lang->line('registration')?></h1>
+
+<div class="auth_logo_wrap">
+    <h1 class="top_title"><?=$this->lang->line('registration')?></h1>
 </div>
+
 <?php echo form_open($this->uri->uri_string(), array('class'=>'register_form')); ?>
 <div class="login_id_wrap">
     <div class="input-group">

@@ -1,6 +1,6 @@
-<?php foreach ($after as $key=>$item){ ?>
+<?php foreach ($post as $key=>$item){ ?>
     <li class="list_item list_item_padding">
-        <a href="/after/view/<?=$item['after_id']?>">
+        <a href="/@<?=$item['url']?>/blog/<?=$item['team_blog_id']?>">
 
             <span class="pi_title"><?=$item['title']?></span>
             <span class="pi_info">
@@ -9,8 +9,6 @@
                 </span>
                 <span class="pii_cont">
                     <span class="pii_desc"><?=$item['contents']?></span>
-                    <span class="ati_program"><?=$item['program']?></span>
-                    <span class="ati_team_name"><span class="ili_box"></span> <?=$item['team_name']?></span>
                 </span>
             </span>
         </a>

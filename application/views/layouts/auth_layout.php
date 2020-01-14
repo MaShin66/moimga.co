@@ -63,7 +63,7 @@
     }(document, 'script', 'facebook-jssdk'));
 </script>
 
-<nav class="navbar navbar-expand-md fixed-top bg-light">
+<nav class="navbar navbar-expand-md fixed-top bg-light moimga_top">
     <div class="container hidden-md-up">
 
         <div class="row" style="width: 100%;">
@@ -73,79 +73,108 @@
                     <span class="bar middle"></span>
                     <span class="bar bottom"></span>
                 </div>
-            </div>
-            <div class="col top_sm_center">
-
                 <a class="top_sm_logo" href="/">
-
-                    <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo">
+                    <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo" >
                 </a>
             </div>
-            <div class="col top_sm_right">
+            <div class="col top_sm_right ">
                 <div class="">
-                    <a class="" href="/auth/login"><i class="fas fa-power-off"></i></a>
+                    <a class="nav-btn-link" href="/auth/login">로그인</a>
                 </div>
             </div>
         </div>
-
-
     </div>
+    <ul id="full_menu" class="overlay">
 
-    <div id="full_menu" class="overlay">
-        <div class="full-item">
-            <form action="/search/1/q?" class="form-inline mobile_search">
 
-                <div class="input-group">
-                    <input class="form-control" type="search" placeholder="<?=$this->lang->line('search')?>" aria-label="Search" name="search" value="">
-                    <input type="hidden" name="type" value="all">
-                    <input type="hidden" name="crt_date" value="desc">
+        <li class="full-item">
+            <form action="/search?" method="get" class="nav-search mobile-nav-search" style="margin-top: 0">
+                <div class="input-group input-group-sm ">
+                    <input type="text" name="search" class="form-control" placeholder="검색">
+
                     <div class="input-group-append">
-                        <button class="btn btn-outline-search btn-sm" type="submit"><i class="fas fa-search"></i></button>
+                        <button class="btn" type="submit"><i class="fas fa-search"></i></button>
                     </div>
                 </div>
-
             </form>
-        </div>
-        <div class="full-item">
-            <a class="full-link" href="/prod"><?=$this->lang->line('product')?></a>
-        </div>
-        <div class="full-line"></div>
-        <div class="full-item">
-            <a class="full-link" href="/auth/login"><?=$this->lang->line('login')?></a>
-        </div>
+        </li>
 
-    </div>
+        <li class="full-item">
+            <a class="full-link" href="/team">팀</a>
+        </li>
+        <li class="full-item">
+            <a class="full-link" href="/program">프로그램</a>
+        </li>
+        <li class="full-item">
+            <a class="full-link" href="/after">후기</a>
+        </li>
+        <li class="full-line"></li>
+        <li class="full-item">
+            <a class="full-link" href="/contents">Contents</a>
+        </li>
+        <li class="full-item">
+            <a class="full-link" href="/store">Store</a>
+        </li>
+
+
+    </ul>
     <div class="container  hidden-sm-down">
+
         <ul class="nav">
             <a class="navbar-brand" href="/" style="padding: 10px;  z-index: 9;">
-
-                <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo">
+                <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo" >
             </a>
+
+
         </ul>
-        <ul class="nav justify-content-center">
+        <ul class="nav">
             <li class="nav-item">
-                <a class="nav-link" href="/auth/login" style="padding: 0.85rem 1rem;"><?=$this->lang->line('login')?></a>
+                <a class="nav-link menu_padding  <?php if ($meta_array['location']== 'team') {
+                    echo 'active';
+                } ?>" href="/team">팀</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link menu_padding <?php if ($meta_array['location']== 'program') {
+                    echo 'active';
+                } ?>" href="/program" >프로그램</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link menu_padding <?php if ($meta_array['location']== 'after') {
+                    echo 'active';
+                } ?>" href="/after" >후기</a>
+            </li>
 
-                <form action="/search/lists/1/q?" class="form-inline" style="margin-top: 8px;">
+            <li class="nav-store-item ml-2">
+                <a class="nav-link menu_padding  <?php if ($meta_array['location']== 'contents') {
+                    echo 'active';
+                } ?>" href="/contents">Contents</a>
+            </li>
+            <li class="nav-store-item mr-3">
+                <a class="nav-link menu_padding <?php if ($meta_array['location']== 'store') {
+                    echo 'active';
+                } ?>" href="/store" >Store</a>
+            </li>
+            <li class="nav-item mr-2">
+                <form action="/search?" method="get" class="nav-search">
+                    <div class="input-group input-group-sm">
+                        <input type="text" name="search" class="form-control" placeholder="검색">
 
-                    <div class="input-group">
-                        <input class="form-control nav-search" type="search" placeholder="<?=$this->lang->line('search')?>" aria-label="Search" name="search" >
-                        <input type="hidden" name="type" value="all">
-                        <input type="hidden" name="crt_date" value="desc">
                         <div class="input-group-append">
-                            <button class="btn btn-outline-search btn-sm" type="submit"><i class="fas fa-search"></i></button>
+                            <button class="btn" type="submit"><i class="fas fa-search"></i></button>
                         </div>
                     </div>
-
                 </form>
+
             </li>
+
+            <li class="nav-item">
+                <a class="nav-btn-link" href="/auth/login">로그인</a>
+            </li>
+
         </ul>
     </div>
 
 </nav>
-
 <div class="container container-top">
 
     <div class="row justify-content-md-center">

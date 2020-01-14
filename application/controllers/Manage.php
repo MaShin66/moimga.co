@@ -132,6 +132,7 @@ class Manage extends Manage_Controller {
                 'type'=>null, //member_list
                 'event'=>null,
                 'price'=>null,
+                'login_user'=>null,
             );
             $member_list = $this->member_model->load_team_member('',0,8,$search_query);
             $program_list =  $this->program_model->load_program('',0,8,$search_query);
@@ -533,6 +534,7 @@ class Manage extends Manage_Controller {
                     'event'=>null,
                     'price'=>null,
                     'user_id'=>null,
+                    'login_user'=>null,
                 );
 
             }else{

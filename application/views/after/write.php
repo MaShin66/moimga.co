@@ -29,6 +29,12 @@ if($result['status']=='on'){
 
         </div>
     </div>
+
+    <div class="">
+        참여 프로그램
+
+        <input type="text" name="program" value="<?=$result['program']?>">
+    </div>
     <div class="">
         내용
 

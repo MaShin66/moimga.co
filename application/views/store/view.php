@@ -19,7 +19,11 @@ $new_date = $date[0];
 
 				<a href="/store" class="btn btn-round btn-outline-action ">목록</a>
 				<?php if($user['user_id']==$result['user_id']){?>
-					<a href="/store/upload?write=modify&id=<?=$result['store_id']?>" class="btn btn-round btn-outline-action">수정</a>
+
+                    <div class="cv_manage">
+                        <a href="/store/upload?write=modify&id=<?=$result['store_id']?>" class="btn btn-round btn-outline-action">수정</a>
+                    </div>
+
 				<?php }?>
 			</div>
 		</div>

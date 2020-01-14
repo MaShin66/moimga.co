@@ -121,10 +121,10 @@ class Contents_model extends CI_Model
                     'category_id'=>$item['contents_category_id'],
                 );
 
-                $program_result = $this->load_contents('',null, 3, $sub_query);
-                $result[$key]['program'] = $program_result;
-                $result[$key]['program_count'] = $this->load_contents('count',null, '', $sub_query);
-                if($result[$key]['program_count']==0){ //입력된게 없으면 아예 출력 안됨
+                $contents_result = $this->load_contents('',null, 3, $sub_query);
+                $result[$key]['sub_cont'] = $contents_result;
+                $result[$key]['sub_cont_count'] = $this->load_contents('count',null, '', $sub_query);
+                if($result[$key]['sub_cont_count']==0){ //입력된게 없으면 아예 출력 안됨
                     unset( $result[$key]);
                 }
 

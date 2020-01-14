@@ -256,7 +256,7 @@ class Contents extends MY_Controller {
 
 	}
 
-    function category($page=null){
+    function category(){
 
         $category_id = $this->input->get('category');
 

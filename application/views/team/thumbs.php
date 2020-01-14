@@ -29,9 +29,7 @@
                         <div class="il_title"><?=$item['program']['title']?></div>
                         <div class="il_desc"><?=$item['program']['contents']?></div>
                         <div class="il_info">
-                            <span class="ili_box">
-
-                            </span>
+                            <span class="ili_box"></span>
                             <span class="ili_date">
                                 <?=$item['program']['date']?> <?=$item['program']['time']?>:00 (<?=$item['program']['weekday']?>)
                             </span>

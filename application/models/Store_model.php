@@ -45,8 +45,6 @@ class Store_model extends CI_Model
     function load_store($type = '', $offset = '', $limit = '', $search_query){
         $this->db->select('store.*');
 
-        $this->db->join('users','users.id = store.user_id');
-
         if($search_query['crt_date']==null){
             $this->db->order_by('crt_date','desc');
         }else{
@@ -55,6 +53,9 @@ class Store_model extends CI_Model
 
         if(!is_null($search_query['status'])){
             $this->db->where('status',$search_query['status']);
+        }
+        if(!is_null($search_query['category_id'])){
+        $this->db->where('category_id',$search_query['category_id']);
         }
 
         if($search_query['search']!=null){
@@ -91,13 +92,13 @@ class Store_model extends CI_Model
 
     /*category*/
 
-    function load_store_category($type='', $offset='',$limit='',$search_query){
+
+    function load_store_category($type='', $offset='',$limit='',$search_query){ //basic listing
 
         $this->db->order_by('store_category_id','asc');
         if ($limit != '' || $offset != '') {
             $this->db->limit($limit, $offset);
         }
-
         if(!is_null($search_query['category'])){
             $this->db->where('store_category_id', $search_query['category']);
         }
@@ -115,6 +116,24 @@ class Store_model extends CI_Model
             $result = $query -> num_rows();
         }else {
             $result = $query -> result_array();
+            // 이 뒤에 콘텐츠 불러오기
+            foreach ($result as $key => $item){
+                $sub_query = array(
+                    'crt_date'=>null,
+                    'status'=>'on',
+                    'search'=>null,
+                    'category_id'=>$item['store_category_id'],
+                );
+
+                $contents_result = $this->load_store('',null, 3, $sub_query);
+                $result[$key]['sub_cont'] = $contents_result;
+                $result[$key]['sub_cont_count'] = $this->load_store('count',null, '', $sub_query);
+                if($result[$key]['sub_cont_count']==0){ //입력된게 없으면 아예 출력 안됨
+                    unset( $result[$key]);
+                }
+
+            }
+
 
         }
         return $result;

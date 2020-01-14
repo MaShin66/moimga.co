@@ -199,6 +199,7 @@ class After extends MY_Controller
             $team_id = $this->input->post('team_id');
             $contents = $this->input->post('contents');
             $status = $this->input->post('status');
+            $program = $this->input->post('program');
 
             if($status!='on'){
                 $status = 'off';
@@ -209,6 +210,7 @@ class After extends MY_Controller
                 'title'=>$title,
                 'team_id'=>$team_id,
                 'contents'=>$contents,
+                'program'=>$program,
                 'status'=>$status, //공개 여부
             );
 
@@ -298,6 +300,7 @@ class After extends MY_Controller
                     'contents'=>null,
                     'team_title'=>null,
                     'team_name'=>null,
+                    'program'=>null,
                     'after_id'=>null,
                     'status'=>'on',
                     'type'=>'new' //새로 글쓰기

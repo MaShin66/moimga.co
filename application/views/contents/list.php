@@ -5,30 +5,32 @@
 //
 ?>
 <div class="list_top">
+    <h1 class="top_title"><?=$this->lang->line($meta_array['location'])?> 리스트</h1>
+    <?php   if($meta_array['location']=='contents'){?>
 
-    <h1 class="top_title">콘텐츠 리스트</h1>
-    <h2 class="top_desc">모임에 관한, 잘 묶인 이야기들</h2>
+        <h2 class="top_desc">모임에 관한, 잘 묶인 이야기들</h2>
+
+    <?php }?>
+
 </div>
 <?php if(!is_null($search_query['search'])&&$search_query['search']!=''){?>
 
-    <div class="">
-        <?=$search_query['search']?>의 검색 결과
+    <div class="search_top">
+        <span class="search_top_icon"><i class="fas fa-search"></i></span>
+        <span class="search_top_text"><?=$search_query['search']?>의 검색 결과</span>
     </div>
-    <!---여기에 검색창도 있으면 ux 에 더 좋겟지요.. -->
+
 <?php }?>
 <div class="sorting">
-    <div class="btn-toolbar justify-content-between" role="toolbar">
+    <form action="/<?=$meta_array['location']?>/lists/1/q" method="get" class="nav-search sorting_search">
+        <div class="input-group input-group-sm">
+            <input type="text" name="search" class="form-control" placeholder="검색어를 입력해주세요"  value="<?=$search_query['search']?>">
 
-        <form action="/contents/lists/1/q" method="get">
-            <div class="input-group input-group-sm">
-                <input type="text" name="search" class="form-control" placeholder="검색어를 입력해주세요"  value="<?=$search_query['search']?>">
-
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="submit">검색</button>
-                </div>
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 	<div class="mp_form_list">
 		<?php
@@ -41,7 +43,9 @@
              ?>
 
              <div class="row">
+
                  <?php $this->load->view('contents/thumbs', array('contents'=>$data['result'])); ?>
+
              </div>
 
          <?php

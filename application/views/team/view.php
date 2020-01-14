@@ -12,7 +12,8 @@ $program_count = count($programs);
 
 
 <?php if($as_member){?>
-    <div class="">
+
+    <div class="cv_manage">
         <a href="/manage/team/detail/<?=$team_info['team_id']?>" class="btn btn-outline-action">관리</a>
         <a href="/team/upload/<?=$team_info['team_id']?>?type=modify" class="btn btn-outline-secondary">수정</a>
     </div>

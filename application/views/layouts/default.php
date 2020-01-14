@@ -80,29 +80,40 @@
                     <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo" >
                 </a>
             </div>
-            <div class="col top_sm_right">
+            <div class="col top_sm_right ">
 
                 <?php if($user['status']=='no'){?>
 
                     <div class="">
-                        <a class="nav-btn-link" href="/login">로그인</a>
+                        <a class="nav-btn-link" href="/auth/login">로그인</a>
                     </div>
 
                 <?php }else{//로그인 후 ?>
-                    <div class="">
-                        <a class="nav-btn-link" href="/logout">로그아웃</a>
-                    </div>
 
+                    <ul class="mobile_top_menu">
+                        <li>
+                            <a class="mtb_menu" href="/alarm">
+                                <i class="fas fa-bell"></i>
+                                <?php if($user['alarm']>0){?>
+                                    <span class="alarm_count"><?=$user['alarm']?></span>
+
+                                <?php }?>
+                            </a>
+
+                        </li>
+                        <li><a class="mtb_menu" href="/mypage"><i class="fas fa-user"></i></a></li>
+
+                    </ul>
                 <?php }?>
             </div>
         </div>
     </div>
-    <div id="full_menu" class="overlay">
+    <ul id="full_menu" class="overlay">
 
 
-        <div class="full-item">
-            <form action="/search?" method="get" class="nav-search">
-                <div class="input-group input-group-sm">
+        <li class="full-item">
+            <form action="/search?" method="get" class="nav-search mobile-nav-search" style="margin-top: 0">
+                <div class="input-group input-group-sm ">
                     <input type="text" name="search" class="form-control" placeholder="검색">
 
                     <div class="input-group-append">
@@ -110,44 +121,46 @@
                     </div>
                 </div>
             </form>
-        </div>
+        </li>
 
-        <div class="full-item">
+        <li class="full-item">
             <a class="full-link" href="/team">팀</a>
-        </div>
-        <div class="full-item">
+        </li>
+        <li class="full-item">
             <a class="full-link" href="/program">프로그램</a>
-        </div>
-        <div class="full-item">
+        </li>
+        <li class="full-item">
             <a class="full-link" href="/after">후기</a>
-        </div>
-        <div class="full-line"></div>
-        <div class="full-item">
+        </li>
+        <li class="full-line"></li>
+        <li class="full-item">
             <a class="full-link" href="/contents">Contents</a>
-        </div>
-        <div class="full-item">
+        </li>
+        <li class="full-item">
             <a class="full-link" href="/store">Store</a>
-        </div>
-
-        <div class="full-line"></div>
-        <div class="full-item">
-            <a class="full-link" href="/mypage">메뉴2</a>
-        </div>
-
-        <div class="">
-            <a class="" href="/alarm">알람</a>
-        </div>
-        <div class="">
-            <a class="" href="/mypage">마이페이지</a>
-        </div>
-
-        <div class="">
-            <a class="" href="/manage/team">관리</a>
-        </div>
+        </li>
 
 
+        <?php if($user['status']=='yes'){?>
 
-    </div>
+            <li class="full-line"></li>
+            <li class="full-item">
+                <a class="full-link" href="/mypage">마이페이지</a>
+            </li>
+
+            <li class="full-item">
+                <a class="full-link" href="/manage/team">관리</a>
+            </li>
+
+            <li class="full-line"></li>
+            <li class="full-item">
+                <a class="full-link" href="/auth/logout">로그아웃</a>
+            </li>
+
+        <?php }?>
+
+
+    </ul>
     <div class="container  hidden-sm-down">
 
         <ul class="nav">
@@ -201,24 +214,29 @@
                 <li class="nav-item">
                     <a class="nav-btn-link" href="/auth/login">로그인</a>
                 </li>
-            <?php }else{//로그인 후 ?>
+            <?php }else{//로그인 후   ?>
                 <li class="nav-item">
                     <a class="nav-link menu_padding <?php if ($meta_array['location'] == 'alarm') {
                         echo 'active';
-                    } ?>" href="/alarm"><i class="fas fa-bell"></i></a>
+                    } ?>" href="/alarm"><i class="fas fa-bell"></i>
+                        <?php if($user['alarm']>0){?>
+                            <span class="alarm_count"><?=$user['alarm']?></span>
+
+                        <?php }?>
+                    </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link menu_padding <?php if ($meta_array['location'] == 'mypage') {
-                        echo 'active';
+                <li class="nav-item mr-2 ml-2">
+                    <a class="nav-btn-link <?php if ($meta_array['location'] == 'mypage') {
+                        echo 'nav-btn-active';
                     } ?>" href="/mypage">마이페이지</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu_padding <?php if ($meta_array['location'] == 'manage') {
-                        echo 'active';
+                    <a class="nav-btn-link <?php if ($meta_array['location'] == 'manage') {
+                        echo 'nav-btn-active';
                     } ?>" href="/manage/team">관리</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-btn-link" href="/auth/logout">로그아웃</a>
+                    <a class="nav-link menu_padding" href="/auth/logout">로그아웃</a>
                 </li>
             <?php }?>
 

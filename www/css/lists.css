@@ -7,6 +7,23 @@
 
 .sorting{
     padding: 10px 0;
+    display: flex;
+}
+.sorting_search{
+    margin-left: auto;
+    margin-top: 0 !important;
+}
+.sorting_search > div > input {
+    padding: 0.25rem 0.5rem !important;
+
+}
+.search_top{
+    font-size: 1.15rem;
+    color: var(--text-gray);
+}
+.search_top_icon{
+    display: inline-block;
+    margin-right: 10px;
 }
 .item_card{
     padding: 0 !important;
@@ -17,7 +34,6 @@
     display: block;
     color: var(--black-85);
     box-shadow: 2px 2px 4px 0 var(--white-eight);
-
     -webkit-transition: all 0.25s ease;
     -moz-transition: all 0.25s ease;
     -ms-transition: all 0.25s ease;
@@ -27,7 +43,6 @@
 }
 .item_link:hover{
     border: 1px solid var(--main);
-
     text-decoration: none;
     box-shadow: 2px 2px 4px 0 var(--white-zero);
 }
@@ -170,7 +185,7 @@
     display: inline-block;
     color: var(--text-gray);
 }
-.ati_team_name{
-    float: right;
+.ati_team_name,
+.ati_program{
     font-weight: bold;
 }

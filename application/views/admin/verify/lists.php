@@ -5,7 +5,7 @@
     <h1 class="admin_sec_title"><a href="/admin/team/">본인인증 (총 <?=$data['total']?> 개)</a></h1>
     <div class="admin_sort">
 
-        <div class="btn-toolbar justify-content-between" role="toolbar">
+        <div class="btn-toolbar" role="toolbar">
             <div class="btn-group btn-group-sm" role="group" aria-label="sort group">
                 <a href="/admin/verify/lists/1/q?search=<?=$search_query['search']?>" class="btn <?php echo (is_null($search_query['success'])) ? 'btn-secondary' : 'btn-outline-secondary';?>">전체</a>
                 <a href="/admin/verify/lists/1/q?search=<?=$search_query['search']?>&success=1" class="btn <?php echo ($search_query['success']=='1') ? 'btn-secondary' : 'btn-outline-secondary';?>">성공</a>

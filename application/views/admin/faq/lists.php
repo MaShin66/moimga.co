@@ -9,7 +9,7 @@
 <h1 class="admin_sec_title"><a href="/admin/faq/">자주 묻는 질문 (총 <?=$data['total']?> 개)</a></h1>
 <div class="admin_sort">
 
-    <div class="btn-toolbar justify-content-between" role="toolbar">
+    <div class="btn-toolbar" role="toolbar">
         <div class="dropdown">
             <button type="button" class="btn btn-secondary  btn-sm dropdown-toggle" id="dropdownMenuLevel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <?php echo ($search_query['category']!=null) ? '카테고리: '.$cate_list[$search_query['category']-1]['name'] : '카테고리';?>

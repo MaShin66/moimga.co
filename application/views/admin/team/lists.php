@@ -8,7 +8,7 @@
 <h1 class="admin_sec_title"><a href="/admin/team/">팀  (총 <?=$data['total']?> 개)</a></h1>
 <div class="admin_sort">
 
-    <div class="btn-toolbar justify-content-between" role="toolbar">
+    <div class="btn-toolbar" role="toolbar">
         <div class="btn-group btn-group-sm" role="group" aria-label="sort group">
             <a href="/admin/team/lists/1/q?search=<?=$search_query['search']?>" class="btn <?php echo (is_null($search_query['status'])) ? 'btn-secondary' : 'btn-outline-secondary';?>">전체</a>
             <a href="/admin/team/lists/1/q?search=<?=$search_query['search']?>&status=on" class="btn <?php echo ($search_query['status']=='on') ? 'btn-secondary' : 'btn-outline-secondary';?>">공개</a>

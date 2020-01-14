@@ -9,7 +9,7 @@
 <h1 class="admin_sec_title"><a href="/admin/store_category/">스토어 카테고리 (총 <?=$data['total']?> 개)</a></h1>
 <div class="admin_sort">
 
-    <div class="btn-toolbar justify-content-between" role="toolbar">
+    <div class="btn-toolbar" role="toolbar">
         <form action="/admin/store_category/lists/1/q" method="get">
             <div class="input-group input-group-sm">
                 <input type="text" name="search" class="form-control" placeholder="검색어를 입력해주세요"  value="<?=$search_query['search']?>">

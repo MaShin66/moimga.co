@@ -9,7 +9,7 @@
 <h1 class="admin_sec_title"><a href="/admin/subscribe/">구독 (총 <?=$data['total']?> 개)</a></h1>
 <div class="admin_sort">
 
-    <div class="btn-toolbar justify-content-between" role="toolbar">
+    <div class="btn-toolbar" role="toolbar">
 <!--        <div class="btn-group btn-group-sm" role="group" aria-label="sort group">-->
 <!--            <a href="/admin/subscribe/lists/1/q?search=--><?//=$search_query['search']?><!--" class="btn  --><?php //echo (is_null($search_query['type'])) ? 'btn-secondary' : 'btn-outline-secondary';?><!--">전체</a>-->
 <!--            <a href="/admin/subscribe/lists/1/q?search=--><?//=$search_query['search']?><!--&type=1" class="btn --><?php //echo ($search_query['type']=='1') ? 'btn-secondary' : 'btn-outline-secondary';?><!--">팀장</a>-->

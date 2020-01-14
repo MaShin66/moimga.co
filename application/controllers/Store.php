@@ -45,25 +45,28 @@ class Store extends MY_Controller {
                 'search' => null,
                 'status' =>'on',
                 'crt_date' =>null,
+                'category' =>null,
             );
 
         }else{
             $sort_date = $this->input->get('crt_date');
             $sort_search = $this->input->get('search');
+            $sort_category = $this->input->get('category');
 
             $search_query = array(
                 'search' => $sort_search,
                 'status' => 'on',
                 'crt_date' => $sort_date,
+                'category' => $sort_category,
             );
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'];
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&category='.$search_query['category'];
 
 		$this->load->library('pagination');
 		$config['suffix'] = $q_string;
 		$config['base_url'] = '/store/lists'; // 페이징 주소
-		$config['total_rows'] =$this->store_model->load_store('count','','',$search_query);
+		$config['total_rows'] =$this->store_model->load_store_category('count','','',$search_query);
 
         $config['per_page'] = 8; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 3; // 페이지 번호가 위치한 세그먼트
@@ -88,7 +91,7 @@ class Store extends MY_Controller {
 
 		$limit = $config['per_page'];
 
-		$data['result'] = $this->store_model->load_store('', $start, $limit, $search_query);
+		$data['result'] = $this->store_model->load_store_category('', $start, $limit, $search_query);
 		$data['total']=$config['total_rows'];
 
         if(($sort_search!=null || $sort_search !='')){
@@ -101,7 +104,7 @@ class Store extends MY_Controller {
             'title' => $meta_title,
             'desc' => $meta_desc,
         );
-		$this->layout->view('store/list', array('user'=>$user_data, 'data'=>$data,'search_query'=>$search_query,'meta_array'=>$meta_array));
+		$this->layout->view('contents/list', array('user'=>$user_data, 'data'=>$data,'search_query'=>$search_query,'meta_array'=>$meta_array));
 	}
 
     function view($store_id=''){
@@ -136,7 +139,7 @@ class Store extends MY_Controller {
                 'img' => $result['thumb_url']
             );
 
-            $this->layout->view('store/view', array('user'=>$user_data,'result'=>$result,'meta_array'=>$meta_array));
+            $this->layout->view('contents/view', array('user'=>$user_data,'result'=>$result,'meta_array'=>$meta_array));
         }else{
 
             alert($this->lang->line('hidden_alert'),'/store');
@@ -168,6 +171,7 @@ class Store extends MY_Controller {
 			$user_id = $this->input->post('user_id');
             $category_id = $this->input->post('category_id');
             $contents = $this->input->post('contents');
+            $author = $this->input->post('author');
 			$status = $this->input->post('status');
 
             if($status!='on'){
@@ -178,6 +182,7 @@ class Store extends MY_Controller {
                 'title'=>$title,
                 'user_id'=>$user_id,
                 'category_id'=>$category_id,
+                'author'=>$author,
                 'contents'=>$contents,
                 'status'=>$status,
 
@@ -244,8 +249,102 @@ class Store extends MY_Controller {
 			$this->layout->view('store/upload', array('user'=>$user_data,'result'=>$result,'meta_array'=>$meta_array,'cate_list'=>$cate_list));
 		}
 
-
 	}
+
+    function category(){
+
+        $category_id = $this->input->get('category');
+
+        $status = $this->data['status'];
+        $user_id = $this->data['user_id'];
+        $level = $this->data['level'];
+        $alarm_cnt = $this->data['alarm'];
+        $user_data = array(
+            'status' => $status,
+            'user_id' => $user_id,
+            'username' =>$this->data['username'],
+            'level' => $level,
+            'alarm' =>$alarm_cnt
+        );
+        if(is_null($category_id)){ //
+            alert('콘텐츠 카테고리를 선택해주세요.');
+        }else{
+            $category_info = $this->contents_model->get_contents_category_info($category_id);
+        }
+
+        $search = $this->uri->segment(4);
+        $meta_title = $category_info['title'].' - 모임가';
+        $meta_desc = '모임가 '.$category_info['title'].' 콘텐츠 목록';
+        $sort_search = null;
+
+        if($search==null){
+            $search_query = array(
+                'search' => null,
+                'category_id'=>$category_id,
+                'crt_date'=>null,
+                'status' =>'on',
+            );
+
+        }else{
+            $sort_search = $this->input->get('search');
+            $sort_crt_date = $this->input->get('crt_date');
+
+            $search_query = array(
+                'category_id'=>$category_id,
+                'crt_date'=>$sort_crt_date,
+                'search' => $sort_search,
+                'status' => 'on',
+            );
+
+        }
+
+        $q_string = '/q?search='.$search_query['search'];
+
+        $this->load->library('pagination');
+        $config['suffix'] = $q_string;
+        $config['base_url'] = '/contents/lists'; // 페이징 주소
+        $config['total_rows'] =$this->contents_model->load_contents('count', null, null, $search_query);
+
+        $config['per_page'] = 8; // 한 페이지에 표시할 게시물 수
+        $config['uri_segment'] = 3; // 페이지 번호가 위치한 세그먼트
+
+        $config = pagination_config($config);
+
+        $config['attributes'] = array('class' => 'page-link');
+        $config['use_page_numbers'] = TRUE;
+        // 페이지네이션 초기화
+        $this->pagination->initialize($config);
+        // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
+        $data['pagination'] = $this -> pagination -> create_links();
+
+        // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
+        $page = $this -> uri -> segment(3);
+
+        if($page==null){
+            $start=0;
+        }else{
+            $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
+        }
+
+        $limit = $config['per_page'];
+
+        $data['result'] = $this->contents_model->load_contents('', $start, $limit, $search_query);
+        $data['total']=$config['total_rows'];
+
+        if(($sort_search!=null || $sort_search !='')){
+            $meta_title = '콘텐츠 > '.$sort_search.' - 모임가';
+        }
+
+        $meta_array = array(
+            'location' => 'contents',
+            'section' => 'lists',
+            'title' => $meta_title,
+            'desc' => $meta_desc,
+        );
+        $this->layout->view('contents/category/list', array('user'=>$user_data, 'data'=>$data,'search_query'=>$search_query,'meta_array'=>$meta_array,'category_info'=>$category_info));
+
+
+    }
 
 
 }

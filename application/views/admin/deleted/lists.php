@@ -8,7 +8,7 @@
 <h1 class="admin_sec_title"><a href="/admin/deleted/">삭제 (총 <?=$data['total']?> 개)</a></h1>
 
 <div class="admin_sort">
-    <div class="btn-toolbar justify-content-between" role="toolbar">
+    <div class="btn-toolbar" role="toolbar">
         <div class=""></div>
         <form action="/admin/deleted/lists/1/q" method="get">
             <div class="input-group input-group-sm">

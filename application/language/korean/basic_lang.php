@@ -27,7 +27,11 @@ $lang['d_day']='%s일';
 $lang['day_passed']='지남';
 
 $lang['basic']='기본';
-$lang['shipping']='배송';
+$lang['store']='스토어';
+$lang['contents']='콘텐츠';
+$lang['after']='후기';
+$lang['program']='프로그램';
+$lang['team']='팀';
 
 $lang['number']='번호';
 $lang['view_more']='보기';
@@ -220,7 +224,6 @@ $lang['all']='전체';
 $lang['product_name']='이름';
 $lang['product_user']='판매자';
 $lang['option']='옵션';
-$lang['contents']='내용';
 
 $lang['sort_recent']='최신 순';
 $lang['sort_old']='오래된 순';
