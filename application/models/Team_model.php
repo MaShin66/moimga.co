@@ -315,9 +315,9 @@ GROUP BY A.team_id
     //내가 멤버로 있는것과 동시에 출력하기..
     function load_assigned_team($type = '', $offset = '', $limit = '', $search_query){
 //        //감동적 ㅠㅠㅠ //아래는 mac
-        $this->db->select('team.*, ANY_VALUE(team.team_id),users.nickname, ANY_VALUE(team_member.user_id) as member_user_id,  ANY_VALUE(team_member.type) as type'); // 맥에서는 이렇게 함
+//        $this->db->select('team.*, ANY_VALUE(team.team_id),users.nickname, ANY_VALUE(team_member.user_id) as member_user_id,  ANY_VALUE(team_member.type) as type'); // 맥에서는 이렇게 함
 //본서버 and pc
-//        $this->db->select('team.*, users.nickname, team_member.user_id as member_user_id, team_member.type as type');
+        $this->db->select('team.*, users.nickname, team_member.user_id as member_user_id, team_member.type as type');
         $this->db->join('team','team.team_id = team_member.team_id');
         $this->db->join('users','users.id = team.user_id');
 

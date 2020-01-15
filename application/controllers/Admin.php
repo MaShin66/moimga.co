@@ -589,21 +589,24 @@ class Admin extends Admin_Controller
                 'search' => null,
                 'status' =>null,
                 'crt_date' =>null,
+                'category_id' => null,
             );
 
         }else{
             $sort_date = $this->input->get('crt_date');
             $sort_search = $this->input->get('search');
             $sort_status = $this->input->get('status');
+            $sort_category_id = $this->input->get('category_id');
 
             $search_query = array(
                 'search' => $sort_search,
                 'status' => $sort_status,
                 'crt_date' => $sort_date,
+                'category_id' => $sort_category_id,
             );
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'];
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'].'&category_id='.$search_query['category_id'];
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
@@ -842,6 +845,7 @@ class Admin extends Admin_Controller
                 'search' => null,
                 'status' =>null,
                 'crt_date' =>null,
+                'category_id' => null,
             );
 
         }else{
@@ -849,14 +853,17 @@ class Admin extends Admin_Controller
             $sort_search = $this->input->get('search');
             $sort_status = $this->input->get('status');
 
+            $sort_category_id = $this->input->get('category_id');
+
             $search_query = array(
                 'search' => $sort_search,
                 'status' => $sort_status,
                 'crt_date' => $sort_date,
+                'category_id' => $sort_category_id,
             );
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'];
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'].'&category_id='.$search_query['category_id'];
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
