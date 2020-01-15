@@ -122,7 +122,7 @@
 
         <ul class="nav">
             <a class="navbar-brand" href="/" style="padding: 10px;  z-index: 9;">
-                <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo" >
+                <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo" style="margin-bottom: 3px;" >
             </a>
 
 
@@ -186,45 +186,26 @@
 </div>
 <footer class="footer">
     <div class="container">
-        <div class=" main_footer">
-            <div class="row">
-                <div class="col-lg-3 col-md-2 col-sm-12 footer_left">
-                    <a class="footer_logo" href="/" >
-                        <img src="/www/img/logo_white.png" alt="moimga logo">
-                    </a>
+        <div class="footer_menu">
+            <a href="/info/privacy">개인정보처리방침</a>
+            <span class="footer_divide"></span>
+            <a href="/info/terms">이용약관</a>
+        </div>
+        <div class="row">
+            <div class="col-lg-10 col-md-9 col-sm-12">
+                <div class="footer_info">
+                    상호명: (주)백지장    사업장소재지: 서울특별시 마포구 증산로 87, 문화비축기지 상암소셜박스 | 사업자등록번호: 581-86-00949 | 통신판매업신고: 2018-서울마포-01111<br>
+                    고객센터: Instagram ‘moimga.co’, 카카오톡 ‘백지장’ | 평일 10:00~19:00 (토/일/공휴일 휴무) | 이메일: hello@baek.co | 대표이사: 김차근 | 개인정보책임자: 신호태
                 </div>
-                <div class="col-lg-6 col-md-7 col-sm-12">
-                    <a href="/info/faq" class="footer_link"><?=$this->lang->line('faq')?></a> | <a href="/info/terms" class="footer_link"><?=$this->lang->line('term')?></a> |
-                    <a href="/info/privacy" class="footer_link"><?=$this->lang->line('privacy')?></a> | <a href="/info/pricing" class="footer_link"><?=$this->lang->line('refund_term')?></a>
-                    <br>
-                    COPYRIGHT <span class="footer_bold">moimga</span> ALL RIGHTS RESERVED
-                    <div class="footer_more_link">
-                        <a href="/info/why" class="footer_link"><?=$this->lang->line('about')?></a> | <a href="/blog" class="footer_link">BLOG</a>
-                    </div>
-
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-12 footer_etc">
-                    <a href="mailto:admin@moimga.co" class="footer_link">admin@moimga.co</a><br>
-                    <a href="https://twitter.com/@takemm_com" target="_blank" rel="noopener" class="footer_link">@takemm_com</a>
-
-
-                    <div class="footer_more_link">
-
-                        <span class="lang_choice">
-                            <a href="/lang/set/ko" onclick="ga_send_event('change', 'language', 'korean');">한국어</a>
-                            <span class="">·</span>
-                            <a href="/lang/set/en" onclick="ga_send_event('change', 'language', 'english');">English</a>
-                        </span>
-                    </div>
-
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-12">
+                <div class="footer_sns_wrap">
+                    <a href="" class="footer_sns"><i class="fab fa-facebook-f"></i></a>
+                    <a href="" class="footer_sns"><i class="fab fa-instagram"></i></a>
                 </div>
 
             </div>
-            <div class="row">
-                <div class="">
-                    백지장 | 대표: 김차근 | 서울특별시 용산구 46-1 원효빌딩 879호 백지장 | 사업자등록번호: 424-17-00728 | 개인정보관리책임자: 김차근 | 통신판매신고번호: 2018-서울용산-1081 | 판매자 전용 전화: 070-4001-5560
-                </div>
-            </div>
+
         </div>
     </div>
 

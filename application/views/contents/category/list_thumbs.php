@@ -7,7 +7,7 @@ foreach ($contents as $key=>$item){
         $number = '0'.$number;
     }  ?>
     <li class="list_item list_item_padding">
-        <a href="/<?=$meta_array['location']?>/view/<?=$item['contents_id']?>">
+        <a href="/<?=$meta_array['location']?>/view/<?=$item[$meta_array['location'].'_id']?>">
 
             <span class="pi_title">
                 <span class="pi_num">

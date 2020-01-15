@@ -1048,6 +1048,196 @@ class Admin extends Admin_Controller
 
     }
 
+    function main($type = 'list',$main_id=null)
+    {
+        $this->load->model(array('contents_model'));
+        $status = $this->data['status'];
+        $user_id = $this->data['user_id'];
+        $level = $this->data['level'];
+        $user_data = array(
+            'status' => $status,
+            'user_id' => $user_id,
+            'level' => $level
+        );
+
+        if (!$this->tank_auth->is_logged_in()) {
+
+            show_error('접근이 불가능합니다.');
+        } else {
+            if ($user_data['level'] != 9) {
+
+                show_error('접근이 불가능합니다.');
+            } else {
+
+                switch ($type){
+                    case 'list':
+                        $this->_main_list($user_data);
+                        break;
+                    case 'upload':
+                        $main_id = $this->uri->segment(4);
+                        $this->_main_upload($main_id,$user_data);
+                        break;
+                    case 'delete':
+                        $main_id = $this->input->post('main_id');
+                        $this->_main_delete($main_id);
+                        break;
+                    default:
+                        $this->_main_list($user_data);
+                        break;
+                }
+
+            }
+
+        }
+    }
+
+    function _main_list($user_data){
+        $search = $this->uri->segment(5);
+
+        $this->load->library('pagination');
+        $config['base_url'] = '/admin/main/lists'; // 페이징 주소
+        $config['total_rows'] = $this -> main_model -> load_main('count','',''); // 게시물 전체 개수
+
+        $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
+        $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
+        $config['first_url'] = $config['base_url'].'/1/'; // 첫페이지에 query string 에러나서..
+        $config = pagination_config($config);
+        // 페이지네이션 초기화
+        $this->pagination->initialize($config);
+        // 페이지 링크를 생성하여 view에서 사용하 변수에 할당
+        $data['pagination'] = $this->pagination->create_links();
+
+        // 게시물 목록을 불러오기 위한 offset, limit 값 가져오기
+        $page = $this->uri->segment(4);
+
+
+        if($page==null){
+            $start=0;
+        }else{
+            $start = ($page  == 1) ? 0 : ($page * $config['per_page']) - $config['per_page'];
+        }
+
+        $limit = $config['per_page'];
+
+        $data['result'] = $this->main_model->load_main('', $start, $limit);
+        $data['total']=$config['total_rows'];
+
+        $this->layout->view('admin/main/lists', array('user' => $user_data, 'data' => $data));
+
+    }
+    function _main_upload($main_id, $user_data){
+        $store_cate_1 = $this->input->post('store_cate_1');
+        $write_type = $this->input->post('write_type');
+        if(!is_null($store_cate_1)){ //쓰기 프로세스
+            $store_cate_2 = $this->input->post('store_cate_2');
+            $contents_cate_1 = $this->input->post('contents_cate_1');
+            $contents_cate_2 = $this->input->post('contents_cate_2');
+            $cate_data = array(
+                'store_cate_1'=>$store_cate_1,
+                'store_cate_2'=>$store_cate_2,
+                'contents_cate_1'=>$contents_cate_1,
+                'contents_cate_2'=>$contents_cate_2,
+            );
+            if($write_type=='new'){
+                $cate_data['crt_date'] = date('Y-m-d H:i:s');
+                
+                $cate_data['store_thumb_1'] = null;
+                $cate_data['store_thumb_2'] = null;
+                $cate_data['contents_thumb_1'] = null;
+                $cate_data['contents_thumb_2'] = null;
+
+                $main_id = $this->main_model->insert_main($cate_data);
+            }else{ //modify
+                $main_id = $this->input->post('main_id');
+                $main_info = $this->main_model->get_main_info($main_id);
+                $this->main_model->update_main($this->input->post('main_id'), $cate_data);
+            }
+
+            //thumb 업데이트..
+
+            $thumbs_store_1['store_thumb_1'] = thumbs_upload('main', $main_id.'_s1','horizontal','store_thumb_1'); // 바로 업데이트
+            if(!is_null($thumbs_store_1['store_thumb_1'] )){ //파일을 업로드 했다는 뜻
+
+                if($write_type=='modify'){  //만약 type== modify 면 이전의 파일을 지운다.
+                    if(!is_null($main_info['store_thumb_1'])){
+                        unlink(FCPATH . $main_info['store_thumb_1']);
+                    }
+
+                }
+                $this->main_model->update_main($main_id,$thumbs_store_1);
+            }
+
+            $thumbs_store_2['store_thumb_2'] = thumbs_upload('main', $main_id.'_s2','horizontal','store_thumb_2'); // 바로 업데이트
+            if(!is_null($thumbs_store_2['store_thumb_2'] )){ //파일을 업로드 했다는 뜻
+
+                if($write_type=='modify'){  //만약 type== modify 면 이전의 파일을 지운다.
+                    if(!is_null($main_info['store_thumb_1'])){
+                        unlink(FCPATH . $main_info['store_thumb_2']);
+                    }
+                }
+                $this->main_model->update_main($main_id,$thumbs_store_2);
+            }
+            $thumbs_cont_1['contents_thumb_1'] = thumbs_upload('main', $main_id.'_c1','horizontal','contents_thumb_1'); // 바로 업데이트
+            if(!is_null($thumbs_cont_1['contents_thumb_1'] )){ //파일을 업로드 했다는 뜻
+
+                if($write_type=='modify'){  //만약 type== modify 면 이전의 파일을 지운다.
+                    if(!is_null($main_info['store_thumb_1'])){
+                        unlink(FCPATH . $main_info['contents_thumb_1']);
+                    }
+                }
+                $this->main_model->update_main($main_id,$thumbs_cont_1);
+            }
+            $thumbs_cont_2['contents_thumb_2'] = thumbs_upload('main', $main_id.'_c2','horizontal','contents_thumb_2'); // 바로 업데이트
+            if(!is_null($thumbs_cont_2['contents_thumb_2'] )){ //파일을 업로드 했다는 뜻
+
+                if($write_type=='modify'){  //만약 type== modify 면 이전의 파일을 지운다.
+                    if(!is_null($main_info['store_thumb_1'])){
+                        unlink(FCPATH . $main_info['contents_thumb_2']);
+                    }
+                }
+                $this->main_model->update_main($main_id,$thumbs_cont_2);
+            }
+
+            redirect('/admin/main'); //이동
+
+        }else{ //글쓰기 페이지
+            if(!is_null($main_id)){
+                $data = $this->main_model->get_main_info($main_id);
+                $data['submit_txt'] = '수정';
+                $data['write_type'] = 'modify';
+            }else{
+                $data  = array(
+                    'main_id'=>null,
+                    
+                    'store_cate_1'=>null,
+                    'store_cate_2'=>null,
+                    'contents_cate_1'=>null,
+                    'contents_cate_2'=>null,
+
+                    'store_thumb_1'=>null,
+                    'store_thumb_2'=>null,
+                    'contents_thumb_1'=>null,
+                    'contents_thumb_2'=>null,
+
+                    'submit_txt'=>'등록',
+                    'write_type'=>'new',
+                );
+            }
+
+            $store_cate_list=$this->store_model->load_store_category_plain();
+            $contents_cate_list=$this->contents_model->load_contents_category_plain();
+
+            $this->layout->view('admin/main/upload', array('user'=>$user_data,'data'=>$data,'store_cate_list'=>$store_cate_list,'contents_cate_list'=>$contents_cate_list));
+        }
+
+    }
+
+    function _main_delete($main_id){
+
+        $this->main_model->delete_main($main_id); //진짜 삭제
+        alert('이 메인이 삭제되었습니다.','/admin/main');
+
+    }
     function team_blog($type = 'list',$team_blog_id=null)
     {
         $status = $this->data['status'];

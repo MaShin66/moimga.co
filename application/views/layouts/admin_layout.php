@@ -120,6 +120,9 @@
 
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php if($location=='main'){echo 'active';}?>" href="/admin/main">메인</a>
+                </li>
             </ul>
 
         </div>

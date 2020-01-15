@@ -267,14 +267,14 @@ class Store extends MY_Controller {
             'alarm' =>$alarm_cnt
         );
         if(is_null($category_id)){ //
-            alert('콘텐츠 카테고리를 선택해주세요.');
+            alert('스토어 카테고리를 선택해주세요.');
         }else{
-            $category_info = $this->contents_model->get_contents_category_info($category_id);
+            $category_info = $this->store_model->get_store_category_info($category_id);
         }
 
         $search = $this->uri->segment(4);
         $meta_title = $category_info['title'].' - 모임가';
-        $meta_desc = '모임가 '.$category_info['title'].' 콘텐츠 목록';
+        $meta_desc = '모임가 '.$category_info['title'].' 스토어 목록';
         $sort_search = null;
 
         if($search==null){
@@ -303,7 +303,7 @@ class Store extends MY_Controller {
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
         $config['base_url'] = '/contents/lists'; // 페이징 주소
-        $config['total_rows'] =$this->contents_model->load_contents('count', null, null, $search_query);
+        $config['total_rows'] =$this->store_model->load_store('count', null, null, $search_query);
 
         $config['per_page'] = 8; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 3; // 페이지 번호가 위치한 세그먼트
@@ -328,15 +328,15 @@ class Store extends MY_Controller {
 
         $limit = $config['per_page'];
 
-        $data['result'] = $this->contents_model->load_contents('', $start, $limit, $search_query);
+        $data['result'] = $this->store_model->load_store('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
         if(($sort_search!=null || $sort_search !='')){
-            $meta_title = '콘텐츠 > '.$sort_search.' - 모임가';
+            $meta_title = '스토어 > '.$sort_search.' - 모임가';
         }
 
         $meta_array = array(
-            'location' => 'contents',
+            'location' => 'store',
             'section' => 'lists',
             'title' => $meta_title,
             'desc' => $meta_desc,

@@ -6,7 +6,7 @@
  * Time: 오후 10:14
  */
 
-function thumbs_upload($type='team', $unique_id, $ratio='basic'){
+function thumbs_upload($type='team', $unique_id, $ratio='basic',$field_name='thumbs'){
 
     $CI =& get_instance();
     
@@ -21,7 +21,7 @@ function thumbs_upload($type='team', $unique_id, $ratio='basic'){
     $CI->load->library('upload', $config);
     $CI->upload->initialize($config);
 
-    if ($CI->upload->do_upload('thumbs')){ //있을 때만 업로드 하도록
+    if ($CI->upload->do_upload($field_name)){ //있을 때만 업로드 하도록
 
         $data = array('upload_data' => $CI->upload->data());
 
@@ -38,12 +38,12 @@ function thumbs_upload($type='team', $unique_id, $ratio='basic'){
         if($ratio!='basic'){ //6:4
             if($width<$height){ //세로 기준으로
 
-                $config_gd2['max_height'] = '240';
-                $config_gd2['height'] = 240;
-            }else{ //가로를 320으로 고정했을때 새로운 height는?
-
                 $config_gd2['max_width'] = '360';
                 $config_gd2['width'] = 360;
+            }else{
+
+                $config_gd2['max_height'] = '240';
+                $config_gd2['height'] = 240;
             }
         }else{ //basic은 1:1
 
@@ -78,7 +78,6 @@ function thumbs_upload($type='team', $unique_id, $ratio='basic'){
             $config_gd_crop['height'] = 360;
         }
 
-
         $CI->image_lib->initialize($config_gd_crop);
 
         // 이미지 자르기
@@ -92,6 +91,7 @@ function thumbs_upload($type='team', $unique_id, $ratio='basic'){
     }else{
         $thumbs_url = null;
     }
+
     return $thumbs_url;
 
 }

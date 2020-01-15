@@ -123,8 +123,11 @@ $program_count = count($programs);
 </div>
 <div class="row">
     <div class="col-lg-8 col-md-6 col-sm-12">
-        <div class="team_box"><?=$team_info['contents']?></div>
 
+        <div class="cv_line"></div>
+        <div class="cv_contents">
+            <?=$team_info['contents']?>
+        </div>
         <div class="team_box">
             <h3 class="sub_title">
                 <a href="/<?=$at_url?>/blog/lists"><?=$team_info['name']?>가 만든 콘텐츠</a>

@@ -165,7 +165,7 @@
 
         <ul class="nav">
             <a class="navbar-brand" href="/" style="padding: 10px;  z-index: 9;">
-                <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo" >
+                <img src="/www/img/logo.png" class="nav-logo" alt="moimga logo" style="margin-bottom: 3px;">
             </a>
 
 
@@ -245,16 +245,31 @@
 
 </nav>
 
-<div class="container cont-padding">
+<div class="container <?php if($meta_array['location']!='main') echo 'cont-padding'?>">
     <?= $content_for_layout ?>
 </div>
 <footer class="footer">
     <div class="container">
-        <div class=" main_footer">
-            <a href="/info/terms">이용약관</a> |
-            <a href="/info/privacy">개인정보보호정책</a> |
-            <a href="/info/faq">자주묻는질문</a>  |
-            <a href="/contents">콘텐츠</a>
+        <div class="footer_menu">
+            <a href="/info/privacy">개인정보처리방침</a>
+            <span class="footer_divide"></span>
+            <a href="/info/terms">이용약관</a>
+        </div>
+        <div class="row">
+            <div class="col-lg-10 col-md-9 col-sm-12">
+                <div class="footer_info">
+                    상호명: (주)백지장    사업장소재지: 서울특별시 마포구 증산로 87, 문화비축기지 상암소셜박스 | 사업자등록번호: 581-86-00949 | 통신판매업신고: 2018-서울마포-01111<br>
+                    고객센터: Instagram ‘moimga.co’, 카카오톡 ‘백지장’ | 평일 10:00~19:00 (토/일/공휴일 휴무) | 이메일: hello@baek.co | 대표이사: 김차근 | 개인정보책임자: 신호태
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-12">
+                <div class="footer_sns_wrap">
+                    <a href="" class="footer_sns"><i class="fab fa-facebook-f"></i></a>
+                    <a href="" class="footer_sns"><i class="fab fa-instagram"></i></a>
+                </div>
+
+            </div>
+
         </div>
     </div>
 

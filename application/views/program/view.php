@@ -98,7 +98,13 @@ $qna_count = count($qna_info);
 
 <div class="row">
     <div class="col-lg-8 col-md-6 col-sm-12">
-        <div class="team_box"><?=$program_info['contents']?></div>
+        <div class="team_box">
+            <div class="cv_line"></div>
+            <div class="cv_contents">
+                <?=$program_info['contents']?>
+            </div>
+
+        </div>
         <div class="team_box">
             <h3 class="sub_title">질문과 답변</h3>
             <?php  if($qna_count==0){?>

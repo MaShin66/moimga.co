@@ -12,9 +12,12 @@ $new_date = $date[0];
             <div class="header_box header_space"></div>
             <h1 class="top_title"><?=$result['title']?></h1>
 			<span class="store_date"><?=$new_date?></span>
-			<div class="store_contents">
-				<?=$result['contents']?>
-			</div>
+
+            <div class="cv_line"></div>
+            <div class="cv_contents">
+                <?=$result['contents']?>
+            </div>
+
 			<div class="store_bottom">
 
 				<a href="/store" class="btn btn-round btn-outline-action ">목록</a>
