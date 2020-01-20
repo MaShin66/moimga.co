@@ -58,6 +58,7 @@
     font-weight: bold;
     margin: 10px 0;
     display: block;
+    height: 60px;
 }
 .item_cont{
 
@@ -68,6 +69,7 @@
     word-wrap: break-word;
     display: -webkit-box;
     -webkit-line-clamp: 5;
+    height: 115px;
     -webkit-box-orient: vertical;
 }
 .item_latest{
@@ -188,4 +190,5 @@
 .ati_team_name,
 .ati_program{
     font-weight: bold;
+    display: block;
 }

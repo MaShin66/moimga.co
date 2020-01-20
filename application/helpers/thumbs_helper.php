@@ -14,7 +14,7 @@ function thumbs_upload($type='team', $unique_id, $ratio='basic',$field_name='thu
     $config['allowed_types'] = '*';
     $config['overwrite'] = true;
     $config['remove_spaces'] = TRUE;
-    $config['max_size'] = 3 * 1024; //이미지 최대크기
+    $config['max_size'] = 5 * 1024; //이미지 최대크기
 
     $config['file_name'] = $unique_id.'_'.strtotime("now");
 

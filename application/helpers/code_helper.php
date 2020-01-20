@@ -36,10 +36,11 @@ function generate_random_code($length=6){
 }
 
 function tag_strip($contents){
-    $text = substr($contents, 0, 200);
+    $text =  iconv_substr($contents, 0, 200, "utf-8");
     $text = addslashes($text);
     $content = strip_tags($text);
     $result = str_replace("&nbsp;", "", $content);
+
 
     return $result;
 }

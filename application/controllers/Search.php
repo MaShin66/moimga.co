@@ -50,10 +50,15 @@ class Search extends MY_Controller { //통합검색
                 'price'=>null,//program
                 'event'=>null,//program,
                 'login_user'=>null, //team
+                'category_id'=>null//store, contents
             );
-            $team_list =  $this->team_model->load_team('',0,8,$search_query);
-            $program_list =  $this->program_model->load_program('',0,8,$search_query);
+
+            $this->load->model(array('store_model','contents_model'));
+            $team_list =  $this->team_model->load_team('',0,3,$search_query);
+            $program_list =  $this->program_model->load_program('',0,4,$search_query);
             $after_list =  $this->after_model->load_after('',0,8,$search_query);
+            $store_list =  $this->store_model->load_store('',0,8,$search_query);
+            $contents_list =  $this->contents_model->load_contents('',0,8,$search_query);
             $team_blog_list =  $this->team_model->load_team_blog('',0,8,$search_query);
 
             $meta_array = array(
@@ -63,7 +68,26 @@ class Search extends MY_Controller { //통합검색
                 'desc' => '통합검색 > '.$search.' - 모임가',
             );
 
-            $this->layout->view('search/main', array('user'=>$user_data, 'team_list'=>$team_list,'team_blog_list'=>$team_blog_list,
+            foreach ($team_list as $t_key => $t_item){ //desc 가져오기
+
+                $team_list[$t_key]['contents'] = tag_strip($t_item['contents']);
+                if(!is_null($t_item['program'])){
+                    $day_array = get_kr_date ($team_list[$t_key]['program']['date']);
+                    $team_list[$t_key]['program']['event_date'] = $day_array['kr_date'];
+                    $team_list[$t_key]['program']['weekday'] = $day_array['weekday'];
+                }
+            }
+            foreach ($program_list as $p_key => $p_item){ //desc 가져오기
+
+                $program_list[$p_key]['contents'] = tag_strip($p_item['contents']);
+                if(!is_null($p_item)){
+                    $day_array = get_kr_date ($program_list[$p_key]['event_date']);
+                    $program_list[$p_key]['event_date'] = $day_array['kr_date'];
+                    $program_list[$p_key]['weekday'] = $day_array['weekday'];
+                }
+            }
+
+            $this->layout->view('search/main', array('user'=>$user_data, 'team_list'=>$team_list,'team_blog_list'=>$team_blog_list,'contents_list'=>$contents_list,'store_list'=>$store_list,
                 'program_list'=>$program_list,'after_list'=>$after_list,'search_query'=>$search_query,'meta_array'=>$meta_array));
         }
 

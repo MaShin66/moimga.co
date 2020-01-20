@@ -248,8 +248,13 @@ class Contents extends MY_Controller {
                 'title' => $meta_title,
                 'desc' => $meta_desc,
             );
+            $cate_query = array(
+                'search' => null,
+                'crt_date' =>null,
+                'category'=>null, //category_id
+            );
 
-            $cate_list = $this->contents_model->load_contents_category_plain();
+            $cate_list = $this->contents_model->load_contents_category_plain('','','',$cate_query);
 			$this->layout->view('contents/upload', array('user'=>$user_data,'result'=>$result,'meta_array'=>$meta_array,'cate_list'=>$cate_list));
 		}
 

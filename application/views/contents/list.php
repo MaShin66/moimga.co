@@ -60,5 +60,5 @@
 	</nav>
 
 <?php if($user['level']==9){?>
-    <a href="/contents/upload" class="btn btn-outline-action">등록</a>
+    <a href="/<?=$meta_array['location']?>/upload" class="btn btn-outline-action">등록</a>
 <?php }?>

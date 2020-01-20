@@ -127,6 +127,9 @@ class Store_model extends CI_Model
                 $contents_result = $this->load_store('',null, 3, $sub_query);
                 $result[$key]['sub_cont'] = $contents_result;
                 $result[$key]['sub_cont_count'] = $this->load_store('count',null, '', $sub_query);
+                if($result[$key]['sub_cont_count']==0){ //입력된게 없으면 아예 출력 안됨
+                    unset( $result[$key]);
+                }
 
             }
 
@@ -179,9 +182,33 @@ class Store_model extends CI_Model
         return $result;
     }
 
-    function load_store_category_plain(){
+    function load_store_category_plain($type='', $offset='',$limit='',$search_query){
+
+        $this->db->order_by('store_category_id','asc');
+        if ($limit != '' || $offset != '') {
+            $this->db->limit($limit, $offset);
+        }
+        if(!is_null($search_query['category'])){
+            $this->db->where('store_category_id', $search_query['category']);
+        }
+        if(!is_null($search_query['search'])){
+            //*팀 이름, 팀 title,  프로그램 title, 후기 쓴 사람, 후기 내용//*/
+
+            $name_query = '(store_category.title like "%'.$search_query['search'].'%" or store_category.desc like "%'.$search_query['search'].'%")';
+            $this->db->where($name_query);
+
+        }
         $query = $this->db->get('store_category');
-        $result = $query -> result_array();
+
+        if($type=='count'){
+
+            $result = $query -> num_rows();
+        }else {
+            $result = $query -> result_array();
+
+
+        }
+
         return $result;
     }
 

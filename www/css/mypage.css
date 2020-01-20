@@ -3,25 +3,35 @@
 }
 
 .change_realname,
-.change_nickname
+.change_nickname,
+.input_verify
 {
     margin-top: 10px;
  display: none;
 }
 
-.sch_item{
-    cursor: pointer;
+.mypage_menu{
+    list-style: none;
+    text-align: right;
+    padding: 0;
 }
-.sch_item:hover{
-    background-color: rgba(35,63,149, 0.03);
+.mp_unregister{
+    margin: 20px 0;
 }
-.sch_selected{
+.mypage_menu > li{
+    display: inline-block;
+    margin-left: 12px;
+}
+.mypage_wrap{
+    padding: 10px;
+    margin: 20px 0;
+    border-radius: 8px;
+    border: solid 1px var(--white-eight);
+}
+.mypage_row{
+    margin: 10px 0;
+}
 
-    background-color: rgba(35,63,149, 0.1);
-}
-.mp_title{
-    font-size: 1.25rem;
-}
 .mp_desc{
     border: 1px solid rgba(35,63,149, 0.2);
     padding: 10px;
@@ -32,6 +42,12 @@
     color: #fff;
 
 }
+.open_input{
+    margin-right: 10px;
+    border-top-right-radius: 0.25rem !important;
+    border-bottom-right-radius: 0.25rem !important;
+}
+
 .mp_basic{
     margin-bottom: 20px;
 }
@@ -47,10 +63,17 @@
     clear: both;
 }
 .mp-p-title{
-    color: #868686;
+    font-size: 1rem;
+    color: var(--text-gray);
+}
+.mp-sm-desc{
+    margin-top: 10px;
+
+    font-size: 0.85rem;
+    color: var(--text-gray);
 }
 .mp-p-val{
-    color: #363636;
+    color: var(--text-black);
 }
 .mp-setting-icon{
     cursor: pointer;
@@ -63,33 +86,34 @@
     color: rgba(100,100,100,0.8);
 }
 
-.mp_title_more{
-    float: right;
-    font-size: 0.85rem;
+.mp-setting-link{
+    text-decoration: underline;
+    color: var(--yellow);
+}
+.mp-setting-link:hover{
+
+    color: var(--yellow-hover);
 }
 
-/*point*/
-/*학교 검색*/
-.sch_empty{
-    text-align: center;
+.badge-kakao{
+    color: var(--text-black);
+    background-color: var(--kakao)
 }
-.major_search_desc,
-.school_search_wrap{
-    margin-top: 10px;
+.badge-facebook{
+    color: var(--white);
+    background-color: var(--facebook)
 }
-.sch_item {
-    padding: 5px;
+.badge-naver{
+    color: var(--white);
+    background-color: var(--naver)
 }
-.now_searching,
-.major_search_desc{
-    padding: 10px;
-    text-align: center;
+.badge-google {
+    border: 1px solid #e0e0e0;
 }
+
+
 @media (max-width: 767px) {
 
-    .mp_ness{
-        margin-top: 60px;
-    }
     .nav-mypage {
         margin-top: 47px;
     }
@@ -100,40 +124,4 @@
 .with_tap{
     margin-top: -1px !important;
     border-top: 1px solid #fff;
-}
-
-
-#comp_tab{
-    margin-top: 20px;
-    width: 100%;
-    display: flex;
-    border-top: 1px solid #f2f2f2;
-}
-.ctab_item:first-child{
-
-    border-left: 1px solid #f2f2f2;
-    border-left: 1px solid #f2f2f2;
-}
-
-.ctab_item:last-child{
-
-    border-right: 1px solid #f2f2f2;
-}
-.ctab_item{
-    color: #666666;
-    border-right: 1px solid #f2f2f2;
-    border-bottom: 1px solid #f2f2f2;
-    border-top: 2px solid transparent;
-    text-align: center;
-    padding: 10px;
-    display: inline-block;
-}
-.ctab_item:hover{
-    color: #233f95;
-    border-top: 2px solid #233f95;
-    text-decoration: none;
-}
-.ctab_active{
-    border-bottom: 1px solid transparent;
-    border-top: 2px solid #233f95;
 }

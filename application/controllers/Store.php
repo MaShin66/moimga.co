@@ -245,7 +245,12 @@ class Store extends MY_Controller {
                 'desc' => $meta_desc,
             );
 
-			$cate_list = $this->store_model->load_store_category_plain();
+            $cate_query = array(
+                'search' => null,
+                'crt_date' =>null,
+                'category'=>null, //category_id
+            );
+			$cate_list = $this->store_model->load_store_category_plain('','','',$cate_query);
 			$this->layout->view('store/upload', array('user'=>$user_data,'result'=>$result,'meta_array'=>$meta_array,'cate_list'=>$cate_list));
 		}
 
