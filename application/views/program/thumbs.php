@@ -11,7 +11,29 @@
                 </span>
                 <span class="pii_cont">
                     <span class="pii_desc"><?=$item['contents']?></span>
-                    <span class="pii_date"><?=$item['event_date']?> (<?=$item['weekday']?>) <?=$item['time']?>:00부터 총 <?=$item['round']?>회</span>
+                    <span class="pii_cont_pc hidden-sm-down">
+                         <span class="pii_date"><?=$item['event_date']?> (<?=$item['weekday']?>) <?=$item['time']?>:00부터 총 <?=$item['round']?>회</span>
+
+                        <span class="pii_venue">
+                            <span class="pii_cate">팀</span>
+                            <span class="pii_value"><?=$item['team_name']?></span>
+                        </span>
+                        <span class="pii_price">
+                            <span class="pii_cate">참가비</span>
+                            <span class="pii_value"><?=number_format($item['price'])?>won</span>
+                        </span>
+                        <span class="pii_venue">
+
+                            <span class="pii_cate">장소</span>
+                            <span class="pii_value"><?=$item['district']?> @<?=$item['venue']?></span>
+                        </span>
+                    </span>
+
+                </span>
+
+            </span>
+            <span class="pii_cont_mobile hidden-md-up">
+                <span class="pii_date"><?=$item['event_date']?> (<?=$item['weekday']?>) <?=$item['time']?>:00부터 총 <?=$item['round']?>회</span>
 
                     <span class="pii_venue">
                         <span class="pii_cate">팀</span>
@@ -26,8 +48,6 @@
                         <span class="pii_cate">장소</span>
                         <span class="pii_value"><?=$item['district']?> @<?=$item['venue']?></span>
                     </span>
-                </span>
-
             </span>
             <span class="item_sub_info">
                 <span class="item_heart">

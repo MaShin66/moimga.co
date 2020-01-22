@@ -131,6 +131,7 @@ class Manage extends Manage_Controller {
                 'team_id'=>$team_id,
                 'type'=>null, //member_list
                 'event'=>null,
+                'heart'=>null,
                 'price'=>null,
                 'login_user'=>null,
             );
@@ -534,6 +535,7 @@ class Manage extends Manage_Controller {
                     'event'=>null,
                     'price'=>null,
                     'user_id'=>null,
+                    'heart'=>null,
                     'login_user'=>null,
                 );
 
@@ -549,6 +551,7 @@ class Manage extends Manage_Controller {
                     'team_id'=>$team_id,
                     'event'=>null,
                     'price'=>null,
+                    'heart'=>null,
                     'user_id'=>null,
                 );
 

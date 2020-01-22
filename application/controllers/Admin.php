@@ -423,6 +423,7 @@ class Admin extends Admin_Controller
                 'crt_date' =>null,
                 'user_id' => null,
                 'subscribe'=>null,
+                'heart'=>null,
                 'after'=>null,
                 'login_user'=>null,
             );
@@ -433,6 +434,7 @@ class Admin extends Admin_Controller
             $sort_status = $this->input->get('status');
             $sort_user_id = $this->input->get('user_id');
             $sort_subscribe = $this->input->get('subscribe');
+            $sort_heart = $this->input->get('heart');
             $sort_after = $this->input->get('after');
 
             $search_query = array(
@@ -441,6 +443,7 @@ class Admin extends Admin_Controller
                 'crt_date' => $sort_date,
                 'user_id' => $sort_user_id,
                 'subscribe'=>$sort_subscribe,
+                'heart'=>$sort_heart,
                 'after'=>$sort_after,
                 'login_user'=>null,
             );
@@ -448,7 +451,7 @@ class Admin extends Admin_Controller
         }
 //        print_r($search_query);
         $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&user_id='.$search_query['user_id']
-            .'&status='.$search_query['status'].'&subscribe='.$search_query['subscribe'].'&after='.$search_query['after'];
+            .'&status='.$search_query['status'].'&subscribe='.$search_query['subscribe'].'&heart='.$search_query['heart'].'&after='.$search_query['after'];
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
@@ -493,6 +496,7 @@ class Admin extends Admin_Controller
             'team_id'=>$team_id,
             'type'=>null,// $member_list 때문에
             'event'=>null, //program
+            'heart'=>null, //team, program
             'price'=>null, //program
         );
         $member_list = $this->member_model->load_team_member('','','',$search_query);
@@ -1852,6 +1856,7 @@ class Admin extends Admin_Controller
                 'team_id'=>null,
                 'price'=>null,
                 'user_id'=>null,
+                'heart'=>null, //team, program
                 'event'=>null,
             );
 
@@ -1861,6 +1866,7 @@ class Admin extends Admin_Controller
             $sort_status = $this->input->get('status');
             $sort_team_id = $this->input->get('team_id');
             $sort_user_id = $this->input->get('user_id');
+            $sort_heart = $this->input->get('heart');
 
             $sort_price = $this->input->get('price');
             $sort_event = $this->input->get('event');
@@ -1870,13 +1876,14 @@ class Admin extends Admin_Controller
                 'status' => $sort_status,
                 'crt_date' => $sort_date,
                 'team_id'=>$sort_team_id,
+                'heart'=>$sort_heart,
                 'price'=>$sort_price,
                 'user_id'=>$sort_user_id, //특정 사용자가 작성한 프로그램
                 'event'=>$sort_event,
             );
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'].'&team_id='.$search_query['team_id'].'&price='.$search_query['price'].'&event='.$search_query['event'].'&user_id='.$search_query['user_id'];
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&status='.$search_query['status'].'&team_id='.$search_query['team_id'].'&price='.$search_query['price'].'&event='.$search_query['event'].'&user_id='.$search_query['user_id'].'&heart='.$search_query['heart'];
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;

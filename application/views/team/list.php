@@ -3,9 +3,11 @@
 $crt_sort_txt = null;
 if(!is_null($search_query['after'])){
     $crt_sort_txt = '&after='.$search_query['after'];
-}else if(!is_null($search_query['subscribe'])){
-    $crt_sort_txt = '&subscribe='.$search_query['subscribe'];
+}else if(!is_null($search_query['heart'])){
+    $crt_sort_txt = '&heart='.$search_query['heart'];
 }
+
+
 ?>
 <div class="list_top">
     <h1 class="top_title">팀</h1>
@@ -26,7 +28,7 @@ if(!is_null($search_query['after'])){
                 <a href="/team/lists/1/q?search=<?=$search_query['search']?>&crt_date=asc<?=$crt_sort_txt?>" class="btn <?php echo ($search_query['crt_date']=='asc') ? 'btn-secondary' : 'btn-outline-secondary';?>">오래된 순</a>
             </div>
             <a href="/team/lists/1/q?search=<?=$search_query['search']?>&crt_date=<?=$search_query['crt_date']?>&after=desc" class="btn btn-sm mr-2 <?php echo ($search_query['after']=='desc') ? 'btn-secondary' : 'btn-outline-secondary';?>">후기↑</a>
-            <a href="/team/lists/1/q?search=<?=$search_query['search']?>&crt_date=<?=$search_query['crt_date']?>&subscribe=desc" class="btn btn-sm mr-2 <?php echo ($search_query['subscribe']=='desc') ? 'btn-secondary' : 'btn-outline-secondary';?>">구독↑</a>
+            <a href="/team/lists/1/q?search=<?=$search_query['search']?>&crt_date=<?=$search_query['crt_date']?>&heart=desc" class="btn btn-sm mr-2 <?php echo ($search_query['heart']=='desc') ? 'btn-secondary' : 'btn-outline-secondary';?>">하트↑</a>
 
         </div>
 
@@ -35,7 +37,7 @@ if(!is_null($search_query['after'])){
                 <input type="text" name="search" class="form-control" placeholder="검색어를 입력해주세요"  value="<?=$search_query['search']?>">
                 <input type="hidden" name="crt_date" value="<?=$search_query['crt_date']?>">
                 <input type="hidden" name="after" value="<?=$search_query['after']?>">
-                <input type="hidden" name="subscribe" value="<?=$search_query['subscribe']?>">
+                <input type="hidden" name="heart" value="<?=$search_query['heart']?>">
 
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>

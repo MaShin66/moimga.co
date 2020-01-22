@@ -39,17 +39,6 @@
     overflow: hidden;
     white-space: nowrap;
 }
-.pii_desc{
-    height: 40px;
-    overflow: hidden;
-    word-wrap: break-word;
-    display: -webkit-box;
-    color: var(--text-gray);
-    -webkit-line-clamp: 2;
-    margin-bottom: 10px;
-    -webkit-box-orient: vertical;
-
-}
 .pi_sub_info{
 }
 .pii_cont > span{

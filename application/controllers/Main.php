@@ -45,6 +45,7 @@ class Main extends MY_Controller {
             'status'=>'on',
             'after'=>null,
             'subscribe'=>null,
+            'heart'=>null,
             'team_id'=>null, //program
             'price'=>null, //program
             'event'=>null,//program
@@ -74,6 +75,12 @@ class Main extends MY_Controller {
         }
 
         $after_list = $this->after_model->load_after('', 0, 4,$search_query);
+
+        foreach ($after_list as $a_key => $a_item){ //desc 가져오기
+            $after_list[$a_key]['contents'] = tag_strip($a_item['contents']);
+        }
+
+
         $main_info = $this->main_model->get_latest_main();
         
         $this->layout->view('main/main', array('user'=>$user_data,'meta_array'=>$meta_array,

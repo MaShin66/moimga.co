@@ -18,7 +18,7 @@ if($result['status']=='on'){
 
 <h1>팀 등록</h1>
 
-<form method="post" action="<?=$action_url?>" id="team_form" enctype="multipart/form-data">
+<form method="post" name="team_form" action="<?=$action_url?>" id="team_form" enctype="multipart/form-data">
     <div class="">
         팀 소개 제목
 

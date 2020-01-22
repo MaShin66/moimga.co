@@ -2,7 +2,7 @@
     
     $number = $key+1;
     ?>
-    <div class="col-lg-4 col-md-4 col-sm-6 col-6 item_card">
+    <div class="col-lg-4 col-md-4 col-sm-12 item_card">
         <a href="/@<?=$item['url']?>" class="item_link">
             <img src="<?=$item['thumb_url']?>" class="item_img" alt="<?=$item['title']?>" >
             <div class="item_info">
@@ -17,6 +17,9 @@
                         <span class="item_heart_off"><i class="far fa-heart"></i></span>
                     <?php }?>
                     <span class="item_heart_count"><?=$item['heart_count']?></span>
+                </span>
+                <span class="item_subscribe">
+                   <i class="far fa-bookmark"></i> <span class="item_subscribe_count"><?=$item['subscribe_count']?></span>
                 </span>
                 <span class="item_team_name"> - <?=$item['name']?></span>
             </div>

@@ -146,17 +146,15 @@ $program_count = count($programs);
                     </div>
                 </div>
 
-                <div class="team_box">
-                    <?php foreach ($team_blog as $b_key=>$b_item){?>
-                        <li>  <a href="/<?=$at_url?>/blog/<?=$b_item['team_blog_id']?>"><?=$b_item['title']?></a></li>
-                    <?php }?>
-                </div>
+                <ol class="list_wrap">
+                    <?php $this->load->view('team/blog/thumbs', array('post'=>$team_blog)); ?>
+                </ol>
 
             <?php }?>
         </div>
     </div>
     <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="team_box team_box_border">
+        <div class="team_box">
 
             <h3 class="sub_title">
                 <a href="/after/lists/1/q?team_id=<?=$team_info['team_id']?>">후기</a>
@@ -179,7 +177,7 @@ $program_count = count($programs);
                     </div>
                 </div>
 
-                <ol class="team_box_list">
+                <ol class="list_wrap">
                     <?php  $this->load->view('/after/list_thumbs', array('after_list'=>$after_list)); ?>
                 </ol>
             <?php }?>

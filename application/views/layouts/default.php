@@ -56,6 +56,7 @@
     <link rel="stylesheet" href="/www/css/overlay.css">
     <link rel="stylesheet" href="/www/css/bootstrap.css">
     <link rel="stylesheet" href="/www/css/basic.css">
+    <link rel="stylesheet" href="/www/css/lists.css">
     <link rel="stylesheet" href="/www/css/quill.css"> <!--wzwg--->
     <?php if($meta_array['section']=='upload'){?>
         <link rel="stylesheet" href="/www/css/asDatepicker.css">
@@ -172,7 +173,7 @@
         </ul>
         <ul class="nav">
             <li class="nav-item">
-                <a class="nav-link menu_padding  <?php if ($meta_array['location']== 'team') {
+                <a class="nav-link menu_padding  <?php if ($meta_array['location']== 'team'||$meta_array['location']== 'team_blog') {
                     echo 'active';
                 } ?>" href="/team">팀</a>
             </li>

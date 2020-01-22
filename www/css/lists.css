@@ -90,7 +90,7 @@
 .item_team_name{
     font-weight: bold;
     text-align: right;
-    width: 85%;
+    width: 70%;
     position: relative;
 
 }
@@ -98,7 +98,8 @@
     display: block;
     text-align: right;
 }
-.item_heart{
+.item_heart,
+.item_subscribe{
     width: 14%;
 }
 .item_heart_off{
@@ -109,7 +110,8 @@
 
     color:  var(--red);
 }
-.item_heart_count{
+.item_heart_count,
+.item_subscribe_count{
     margin-left: 4px;
 }
 
@@ -175,6 +177,10 @@
     -webkit-box-orient: vertical;
 
 }
+.pii_cont_pc > *,
+.pii_cont_mobile > *{
+    display: block;
+}
 .pi_sub_info{
 }
 .pii_cont > span{
@@ -191,4 +197,16 @@
 .ati_program{
     font-weight: bold;
     display: block;
+}
+
+
+
+@media (max-width: 767px)
+{
+    .pii_cont > span {
+        font-size: 0.85rem;
+    }
+    .pii_desc {
+        height: 64px !important;
+    }
 }

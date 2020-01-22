@@ -22,6 +22,10 @@ class Team_model extends CI_Model
         // 후기, subscribe 는 둘 다 선택 될 수 없다.
         // crt_date 는 무조건 후순위
 
+
+        if($search_query['heart']!=null){
+            $this->db->order_by('team.heart_count',$search_query['heart']);
+        }
         if($search_query['subscribe']!=null){
             $this->db->order_by('team.subscribe_count',$search_query['subscribe']);
         }

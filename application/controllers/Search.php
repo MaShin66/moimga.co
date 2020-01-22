@@ -46,6 +46,7 @@ class Search extends MY_Controller { //통합검색
                 'status'=>'on', //무조건 공개
                 'team_id'=>null,
                 'subscribe'=>null, //team
+                'heart'=>null, //team
                 'after'=>null, //team
                 'price'=>null,//program
                 'event'=>null,//program,
@@ -116,6 +117,7 @@ class Search extends MY_Controller { //통합검색
                     $search_query['team_id']=null;
                     $search_query['price']=null;
                     $search_query['event']=null;
+                    $search_query['heart']=null;
                     $result = $this->program_model->load_program('', '', '',$search_query);
                     break;
                 case 'team_blog':
@@ -124,6 +126,7 @@ class Search extends MY_Controller { //통합검색
                 default:
                 case 'team':
                     $search_query['login_user']=null;
+                    $search_query['heart']=null;
                     $result =  $this -> team_model->load_team('','','',$search_query);
                     break;
             }

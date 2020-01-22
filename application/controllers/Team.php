@@ -48,6 +48,7 @@ class Team extends MY_Controller {
                 'status'=>'on',
                 'after'=>null,
                 'subscribe'=>null,
+                'heart'=>null,
                 'login_user'=>$user_id,
             );
 
@@ -56,6 +57,7 @@ class Team extends MY_Controller {
             $sort_search = $this->input->get('search');
             $sort_after = $this->input->get('after');
             $sort_subscribe = $this->input->get('subscribe');
+            $sort_heart= $this->input->get('heart');
 
             $search_query = array(
                 'crt_date' => $sort_date,
@@ -64,6 +66,7 @@ class Team extends MY_Controller {
                 'status'=>'on', //무조건 공개
                 'after'=>$sort_after,
                 'subscribe'=>$sort_subscribe,
+                'heart'=>$sort_heart,
                 'login_user'=>$user_id,
             );
 
@@ -73,7 +76,7 @@ class Team extends MY_Controller {
             }
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&after='.$search_query['after'].'&subscribe='.$search_query['subscribe'];
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&after='.$search_query['after'].'&subscribe='.$search_query['subscribe'].'&heart='.$search_query['heart'];
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
@@ -172,6 +175,7 @@ class Team extends MY_Controller {
             );
 
             //print_r($data);
+            print_r($this->input->post());
 
             if($type=='modify'){
                 $team_id = $this->input->post('team_id');
@@ -204,12 +208,15 @@ class Team extends MY_Controller {
             //null일 경우에 아무것도 안함
 
             //thumb 지정.. thumbs_helper 이용한다..
+            print_r($this->input->post('thumbs'));
 
-            $thumbs['thumb_url'] = thumbs_upload('team', $team_id); // 바로 업데이트
+            $thumbs['thumb_url'] = thumbs_upload('team', $team_id,'basic','thumbs'); // 바로 업데이트
             if(!is_null($thumbs['thumb_url'] )){ //파일을 업로드 했다는 뜻
 
                 if($type=='modify'){  //만약 type== modify 면 이전의 파일을 지운다.
-                    unlink(FCPATH . $team_info['thumb_url']);
+                    if($team_info['thumb_url']!='/www/thumbs/team/basic.jpg'){
+                        unlink($team_info['thumb_url']);
+                    }
                 }
                  $this->team_model->update_team($team_id,$thumbs);
             }
@@ -275,6 +282,7 @@ class Team extends MY_Controller {
                 'price'=>null, //program
                 'event'=>null, //program
                 'user_id'=>null, //after
+                'heart'=>null, //program
                 'login_user'=>null, //program
             );
 

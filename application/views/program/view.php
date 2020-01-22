@@ -42,7 +42,7 @@ $qna_count = count($qna_info);
 <div class="row">
     <div class="col-lg-4 col-md-6 col-sm-12">
         <div class="team_img">
-            <img src="<?=$team_info['thumb_url']?>">
+            <img src="<?=$program_info['thumb_url']?>">
         </div>
     </div>
 

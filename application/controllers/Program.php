@@ -55,6 +55,7 @@ class Program extends MY_Controller {
                 'price'=>null,
                 'user_id'=>null,
                 'event'=>null,
+                'heart'=>null,
                 'login_user'=>$user_id,
             );
 
@@ -63,6 +64,7 @@ class Program extends MY_Controller {
             $sort_search = $this->input->get('search');
             $sort_price = $this->input->get('price');
             $sort_event = $this->input->get('event');
+            $sort_heart= $this->input->get('heart');
             if($this->input->get('team_id')!=null){
                 $team_id = $this->input->get('team_id');
             }
@@ -75,11 +77,12 @@ class Program extends MY_Controller {
                 'price'=>$sort_price,
                 'user_id'=>null,
                 'event'=>$sort_event,
+                'heart'=>$sort_heart,
                 'login_user'=>$user_id,
             );
 
         }
-        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&price='.$search_query['price'].'&event='.$search_query['event'];
+        $q_string = '/q?search='.$search_query['search'].'&crt_date='.$search_query['crt_date'].'&price='.$search_query['price'].'&event='.$search_query['event'].'&heart='.$search_query['heart'];
 
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
@@ -427,22 +430,21 @@ class Program extends MY_Controller {
                     //thumb 지정.. thumbs_helper 이용한다..
 
                     $thumbs['thumb_url'] = thumbs_upload('program', $program_id); // 바로 업데이트
-                    if(!is_null($thumbs['thumb_url'] )){
-
-                    }
 
                     if(!is_null($thumbs['thumb_url'] )){ //파일을 업로드 했다는 뜻
 
                         if($type=='modify'){  //만약 type== modify 면 이전의 파일을 지운다.
-                            unlink(FCPATH . $program_info['thumb_url']);
+                            if(!is_null($program_info['thumb_url'])){
+                                unlink($program_info['thumb_url']);
+                            }
+
                         }
                         $this->program_model->update_program($program_id,$thumbs);
                     }
 
-
-
+                    print_r($this->input->post());
                     //다 끝나면 redirect
-                    redirect($at_url.'/program/'.$program_id);
+//                    redirect($at_url.'/program/'.$program_id);
                 }else{ //없으면 글쓰기 화면
 
                     if($type=='modify'){

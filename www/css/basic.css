@@ -424,7 +424,7 @@ body{
     margin-bottom: 0;
 }
 .after_list_item{
-    display: flex;
+    display: flex !important;
 }
 .after_list_item:hover{
     text-decoration: none;

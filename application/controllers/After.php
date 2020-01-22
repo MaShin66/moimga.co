@@ -127,6 +127,11 @@ class After extends MY_Controller
             'title' => $meta_title,
             'desc' => $meta_desc,
         );
+
+        foreach ($data['result'] as $d_key => $d_item){ //desc 가져오기
+            $data['result'][$d_key]['contents'] = tag_strip($d_item['contents']);
+        }
+
         $this->layout->view('after/list', array('user'=>$user_data,'result'=>$data,'search_query'=>$search_query,
             'team_info'=>$team_info,'meta_array'=>$meta_array));
     }

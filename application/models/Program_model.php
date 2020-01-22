@@ -19,13 +19,18 @@ class Program_model extends CI_Model
         if($search_query['user_id']!=null){
             $this->db->where('program.user_id',$search_query['user_id']);
         }
+        if($search_query['price']!=null){
+            $this->db->order_by('program.price',$search_query['price']);
+        }
         if($search_query['event']=='on') { // 가까운 날짜
             $this->db->where('program_date.date > NOW()');
             $this->db->order_by('event_date','asc');
         }
-        if($search_query['price']!=null){
-            $this->db->order_by('program.price',$search_query['price']);
+
+        if($search_query['heart']!=null){
+            $this->db->order_by('program.heart_count',$search_query['heart']);
         }
+
         if($search_query['crt_date']!=null){
             $this->db->order_by('program.crt_date',$search_query['crt_date']);
         }else{

@@ -1,5 +1,5 @@
 <?php foreach ($after_list as $a_key=>$a_item){?>
-    <li>
+    <li class="list_item list_item_padding">
         <a class="after_list_item" href="/after/view/<?=$a_item['after_id']?>">
             <span class="ali_img">
                 <img src="<?=$a_item['thumb_url']?>">
