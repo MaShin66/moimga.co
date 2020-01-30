@@ -723,7 +723,7 @@ class Admin extends Admin_Controller
         $this->load->library('pagination');
         $config['suffix'] = $q_string;
         $config['base_url'] = '/admin/contents_category/lists'; // 페이징 주소
-        $config['total_rows'] = $this -> contents_model -> load_contents_category('count','','',$search_query); // 게시물 전체 개수
+        $config['total_rows'] = $this -> contents_model -> load_contents_category_plain('count','','',$search_query); // 게시물 전체 개수
 
         $config['per_page'] = 16; // 한 페이지에 표시할 게시물 수
         $config['uri_segment'] = 4; // 페이지 번호가 위치한 세그먼트
@@ -746,7 +746,7 @@ class Admin extends Admin_Controller
 
         $limit = $config['per_page'];
 
-        $data['result'] = $this->contents_model->load_contents_category('', $start, $limit, $search_query);
+        $data['result'] = $this->contents_model->load_contents_category_plain('', $start, $limit, $search_query);
         $data['total']=$config['total_rows'];
 
         $this->layout->view('admin/contents/category/lists', array('user' => $user_data, 'data' => $data,'search_query'=>$search_query));

@@ -442,7 +442,6 @@ class Program extends MY_Controller {
                         $this->program_model->update_program($program_id,$thumbs);
                     }
 
-                    print_r($this->input->post());
                     //다 끝나면 redirect
 //                    redirect($at_url.'/program/'.$program_id);
                 }else{ //없으면 글쓰기 화면

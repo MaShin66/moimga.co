@@ -633,11 +633,16 @@ body{
     font-size: 1rem;
     margin: 20px 0;
 }
+
+.cv_contents >  img,
+.cv_contents > p > img{
+    max-width: 100%;
+}
 .cv_manage > form{
     display: inline-block;
 }
 .cv_manage{
-    MARGIN-BOTTOM: 10PX;
+    margin-bottom: 10px;
 }
 /*btn*/
 
