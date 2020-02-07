@@ -85,7 +85,7 @@ if($result['status']=='on'){
                         <div class="btn btn-outline-action  btn-adjust" onclick="javascript:copy_event_date(<?=$key+1?>);">+ 복사</div>
                     </div>
                     <div class="col-md-1 col-sm-6 col-6">
-                        <div class="btn btn-outline-red  btn-delete btn-adjust" onclick="javascript:delete_event_date(<?=$key+1?>);">- 삭제</div>
+                        <div class="btn btn-outline-red  btn-adjust" onclick="javascript:delete_event_date(<?=$key+1?>);">- 삭제</div>
                     </div>
                 </div>
 
@@ -112,7 +112,7 @@ if($result['status']=='on'){
                     <div class="btn btn-outline-action  btn-adjust" onclick="javascript:copy_event_date(1);">+ 복사</div>
                 </div>
                 <div class="col-md-1 col-sm-6 col-6">
-                    <div class="btn btn-outline-red  btn-delete  btn-adjust" onclick="javascript:delete_event_date(1);">- 삭제</div>
+                    <div class="btn btn-outline-red  btn-adjust" onclick="javascript:delete_event_date(1);">- 삭제</div>
                 </div>
             </div>
         <?php }?>
@@ -149,7 +149,7 @@ if($result['status']=='on'){
                     </div>
 
                     <div class="col-md-1">
-                        <div class="btn btn-outline-danger  btn-delete" onclick="javascript:delete_qualify(<?=$qu_key+1?>);">- 삭제</div>
+                        <div class="btn btn-outline-danger" onclick="javascript:delete_qualify(<?=$qu_key+1?>);">- 삭제</div>
                     </div>
 
                 </div>
@@ -165,7 +165,7 @@ if($result['status']=='on'){
                 </div>
 
                 <div class="col-md-1">
-                    <div class="btn btn-outline-danger  btn-delete" onclick="javascript:delete_qualify(1);">- 삭제</div>
+                    <div class="btn btn-outline-danger " onclick="javascript:delete_qualify(1);">- 삭제</div>
                 </div>
 
             </div>
@@ -197,7 +197,7 @@ if($result['status']=='on'){
                 </div>
 
                 <div class="col-md-1">
-                    <div class="btn btn-outline-danger  btn-delete" onclick="javascript:delete_question(<?=$qna_key+1?>);">- 삭제</div>
+                    <div class="btn btn-outline-danger " onclick="javascript:delete_question(<?=$qna_key+1?>);">- 삭제</div>
                 </div>
                 <div class="form-group col-md-12">
 
@@ -218,7 +218,7 @@ if($result['status']=='on'){
                 </div>
 
                 <div class="col-md-1">
-                    <div class="btn btn-outline-danger  btn-delete" onclick="javascript:delete_question(1);">- 삭제</div>
+                    <div class="btn btn-outline-danger" onclick="javascript:delete_question(1);">- 삭제</div>
                 </div>
                 <div class="form-group col-md-12">
 

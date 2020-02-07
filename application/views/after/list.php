@@ -60,7 +60,7 @@
             </ul>
         </nav>
         <?php if($user['status']==='yes'){?>
-            <div class="">
+            <div class="list_bottom">
                 <a href="/<?=$this->uri->segment(1)?>/upload" class="btn btn-action">쓰기 </a>
             </div>
 

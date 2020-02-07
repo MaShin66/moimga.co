@@ -10,13 +10,8 @@ foreach ($contents as $key=>$item){
         <a href="/<?=$meta_array['location']?>/view/<?=$item[$meta_array['location'].'_id']?>">
 
             <span class="pi_title">
-                <span class="pi_num">
-
-
-                    <?=$number?></span>
+                <span class="pi_num"><?=$number?></span>
                 <span class=""><?=$item['title']?></span>
-
-
             </span>
             <span class="pi_info">
                 <span class="pii_img">

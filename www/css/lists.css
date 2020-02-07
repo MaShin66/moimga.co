@@ -114,7 +114,9 @@
 .item_subscribe_count{
     margin-left: 4px;
 }
-
+.list_bottom{
+    margin: 20px 0;
+}
 .list_wrap{
     list-style: none;
     padding-left: 0;
@@ -137,9 +139,11 @@
     transition: all 0.25s ease;
     text-decoration: none;
 }
+.list_item > p > a,
 .list_item > a,
 .list_item > a > span{
     display: block;
+    word-break:break-all;
 }
 .list_item_padding{
     padding: 10px;
@@ -207,6 +211,6 @@
         font-size: 0.85rem;
     }
     .pii_desc {
-        height: 64px !important;
+        height: 60px !important;
     }
 }

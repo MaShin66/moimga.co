@@ -445,7 +445,7 @@ function add_qualify() {
 function delete_qualify(option_num) {
 
     var write_type = $('#write_type').val();
-    var alert_text = null;
+    var alert_text = '';
     if(write_type=='modify'){
         alert_text = ' 확인 버튼을 누르시면 데이터베이스에서도 바로 삭제되고 복구가 불가능합니다.';
     }
@@ -582,7 +582,7 @@ function add_question() {
 function delete_question(option_num) {
 
     var write_type = $('#write_type').val();
-    var alert_text = null;
+    var alert_text = '';
     if(write_type=='modify'){
         var pqna_id =$('#question_'+option_num).data('questionOptionId');
         alert_text = ' 확인 버튼을 누르시면 데이터베이스에서도 바로 삭제되고 복구가 불가능합니다.';

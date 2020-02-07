@@ -58,5 +58,8 @@
 </div>
 
 <?php if($user['level']==9){?>
+
+<div class="list_bottom">
     <a href="/store/upload" class="btn btn-outline-action">등록</a>
+</div>
 <?php }?>

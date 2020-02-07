@@ -345,6 +345,13 @@ class Contents extends MY_Controller {
             $meta_title = '콘텐츠 > '.$sort_search.' - 모임가';
         }
 
+        foreach ($data['result']  as $key => $item){ //desc 가져오기
+
+            $data['result'][$key]['contents'] = tag_strip($item['contents']);
+        }
+
+
+
         $meta_array = array(
             'location' => 'contents',
             'section' => 'lists',
