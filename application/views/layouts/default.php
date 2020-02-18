@@ -9,14 +9,13 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="white">
     <meta name="apple-mobile-web-app-title" content="moimga">
-    <!--google 웹마스터 도구--->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-153793050-1"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-85534776-2"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'UA-153793050-1');
+        gtag('config', 'UA-85534776-2');
     </script>
     <!--naver 웹마스터 도구--->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>

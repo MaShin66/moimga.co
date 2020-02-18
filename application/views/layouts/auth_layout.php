@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-153793050-1"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-85534776-2"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'UA-153793050-1');
+        gtag('config', 'UA-85534776-2');
     </script>
-
     <meta name="google-site-verification" content="HPAFve_ihMdRMey6ZqxxPNC4CRleSf_LT6xFaWF7cLU" />
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
